@@ -2,12 +2,12 @@
 Description=Run 'ptw' service
 After=dokku-protonet.service
 Requires=dokku-protonet.service
+ConditionPathExists=/etc/protonet/ptw/enabled
+ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
 Type=idle
 TimeoutStartSec=0
-ConditionPathExists=/etc/protonet/ptw/enabled
-ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 ExecStartPre=-/usr/bin/docker kill ptw
 ExecStartPre=-/usr/bin/docker rm ptw
 ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
