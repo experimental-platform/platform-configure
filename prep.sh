@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -rf /data/* && cp -a /services/* /data/
+find /data/ ! -name "update-protonet*" -delete && find /services/ ! -name "update-protonet*" -type f -exec cp {} /data \;
