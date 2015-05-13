@@ -1,0 +1,19 @@
+[Unit]
+Description=Run 'ptw' service
+After=dokku-protonet.service
+Requires=dokku-protonet.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill ptw
+ExecStartPre=-/usr/bin/docker rm ptw
+ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/publish_to_web:latest
+ExecStartPre=/bin/mkdir -p /data/ptw
+ExecStart=/usr/bin/docker run --volume=/data/ptw:/data --name=ptw --hostname=prototype006.protonet.info --link=dokku:bindhost dockerregistry.protorz.net/publish_to_web:latest
+Restart=always
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target

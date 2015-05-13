@@ -1,0 +1,19 @@
+[Unit]
+Description=Run 'dokku' service
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill dokku
+ExecStartPre=-/usr/bin/docker rm dokku
+ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/dokku:latest
+ExecStartPre=/bin/mkdir -p /data/dokku
+ExecStart=/bin/bash -c '/usr/bin/docker run --volume=/data/dokku:/data --volume=/var/run/docker.sock:/var/run/docker.sock --hostname=prototype006.protonet.info --name=dokku --publish=80:80 --publish=8022:22 --env DOCKER_GID=$(id -g docker) dockerregistry.protorz.net/dokku:latest'
+Restart=always
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target

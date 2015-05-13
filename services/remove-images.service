@@ -1,0 +1,13 @@
+[Unit]
+Description=Remove unused docker images
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/bin/bash -c '/usr/bin/docker rmi $(/usr/bin/docker images | /usr/bin/awk "/^<none>/{ print $3 }") || true'
+KillMode=none
+Type=oneshot
+StopWhenUnneeded=yes
+
+[Install]
+WantedBy=multi-user.target
