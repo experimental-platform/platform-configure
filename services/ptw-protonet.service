@@ -10,9 +10,9 @@ Type=idle
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker kill ptw
 ExecStartPre=-/usr/bin/docker rm ptw
-ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
+ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/publish_to_web:latest
-ExecStart=/usr/bin/docker run --volume=/etc/protonet/ptw/nodename:/config/nodename --name=ptw --hostname=prototype006.protonet.info --link=dokku:bindhost dockerregistry.protorz.net/publish_to_web:latest
+ExecStart=/usr/bin/docker run --volume=/etc/protonet/ptw/:/config/ --name=ptw --hostname=ptw.protonet.info --link=dokku:bindhost dockerregistry.protorz.net/publish_to_web:latest
 Restart=always
 RestartSec=10s
 
