@@ -1,0 +1,19 @@
+[Unit]
+Description=Run 'simple key value storage' service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill skvs
+ExecStartPre=-/usr/bin/docker rm skvs
+ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
+ExecStartPre=/bin/mkdir -p /etc/protonet
+ExecStart=/usr/bin/docker run --volume=/etc/protonet:/data dockerregistry.protorz.net/skvs:latest
+Restart=always
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target
