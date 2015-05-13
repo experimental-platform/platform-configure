@@ -1,5 +1,6 @@
 FROM dockerregistry.protorz.net/ubuntu:latest
 
 ADD services /services
+ADD prep.sh /prep.sh
 
-CMD [ "rm", "-rf", "/data/*", ";", "cp", "-a", "/services/*", "/data/" ]
+CMD [ "/prep.sh" ]
