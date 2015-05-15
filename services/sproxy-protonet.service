@@ -1,0 +1,18 @@
+[Unit]
+Description=Run systemd-proxy (sproxy) service
+After=skvs-protonet.service
+Requires=skvs-protonet.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill sproxy
+ExecStartPre=-/usr/bin/docker rm sproxy
+ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/systemd-proxy:latest
+ExecStart=/usr/bin/docker run --volume=/etc/protonet/sproxy/:/config/ --volume=/run/systemd:/run/systemd --name=sproxy --hostname=sproxy.innocence.protonet.info dockerregistry.protorz.net/systemd-proxy:latest
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
