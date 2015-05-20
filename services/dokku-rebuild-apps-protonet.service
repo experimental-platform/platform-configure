@@ -5,7 +5,7 @@ Requires=dokku-protonet.service
 
 [Service]
 Type=idle
-TimeoutStartSec=0
+TimeoutStartSec=60
 ExecStart=/bin/bash -c 'docker exec dokku sudo -u dokku dokku ps:rebuildall'
 KillMode=none
 Type=oneshot
