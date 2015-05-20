@@ -12,7 +12,7 @@ ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.in
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
 ExecStartPre=/bin/mkdir -p /etc/protonet
 ExecStart=/usr/bin/docker run \
-    --name skvs \
+    --name=skvs \
     --volume=/etc/protonet:/data
   dockerregistry.protorz.net/skvs:latest
 Restart=always
