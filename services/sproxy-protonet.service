@@ -12,7 +12,7 @@ ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.in
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/systemd-proxy:latest
 ExecStart=/usr/bin/docker run \
     --volume=/etc/protonet/sproxy/:/config/ \
-    --volume=/run/systemd:/run/systemd \
+    --volume=/var/run/dbus/:/var/run/dbus/ \
     --name=sproxy \
     --hostname=sproxy.innocence.protonet.info
   dockerregistry.protorz.net/systemd-proxy:latest
