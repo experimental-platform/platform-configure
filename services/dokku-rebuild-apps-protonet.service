@@ -5,10 +5,12 @@ Requires=dokku-protonet.service
 
 [Service]
 Type=idle
-TimeoutStartSec=60
+TimeoutStartSec=0
 ExecStart=/bin/bash -c 'docker exec dokku sudo -u dokku dokku ps:rebuildall'
 KillMode=none
 Type=oneshot
+Restart=on-failure
+RestartSec=30
 
 [Install]
 WantedBy=multi-user.target
