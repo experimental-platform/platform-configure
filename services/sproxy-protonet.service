@@ -1,7 +1,7 @@
 [Unit]
 Description=Run systemd-proxy (sproxy) service
-After=skvs-protonet.service
-Requires=skvs-protonet.service
+After=docker.service
+Requires=docker.service
 
 [Service]
 Type=idle

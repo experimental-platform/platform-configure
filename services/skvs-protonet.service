@@ -1,7 +1,7 @@
 [Unit]
 Description=Run 'simple key value storage' service
-After=docker.service
-Requires=docker.service
+After=sproxy-protonet.service
+Requires=sproxy-protonet.service
 
 [Service]
 Type=idle
@@ -14,6 +14,7 @@ ExecStartPre=/bin/mkdir -p /etc/protonet
 ExecStart=/usr/bin/docker run \
     --name=skvs \
     --volume=/etc/protonet:/data \
+    --link=sproxy:hook \
   dockerregistry.protorz.net/skvs:latest
 Restart=always
 RestartSec=60s
