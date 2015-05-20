@@ -13,7 +13,7 @@ ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
 ExecStartPre=/bin/mkdir -p /etc/protonet
 ExecStart=/usr/bin/docker run \
     --name=skvs \
-    --volume=/etc/protonet:/data
+    --volume=/etc/protonet:/data \
   dockerregistry.protorz.net/skvs:latest
 Restart=always
 RestartSec=60s

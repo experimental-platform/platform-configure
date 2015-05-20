@@ -14,7 +14,7 @@ ExecStart=/usr/bin/docker run \
     --volume=/etc/protonet/sproxy/:/config/ \
     --volume=/var/run/dbus/:/var/run/dbus/ \
     --name=sproxy \
-    --hostname=sproxy.innocence.protonet.info
+    --hostname=sproxy.innocence.protonet.info \
   dockerregistry.protorz.net/systemd-proxy:latest
 Restart=always
 RestartSec=60s
