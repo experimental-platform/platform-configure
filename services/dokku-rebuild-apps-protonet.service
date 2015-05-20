@@ -1,0 +1,14 @@
+[Unit]
+Description=Rebuild all Dokku Apps after Dokku was updated.
+After=dokku-protonet.service
+Requires=dokku-protonet.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStart=/bin/bash -c 'docker exec dokku sudo -u dokku dokku ps:rebuildall'
+KillMode=none
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
