@@ -19,7 +19,6 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-TimeoutStartSec=120
 TimeoutStopSec=15
 
 [Install]
