@@ -7,13 +7,12 @@ ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill dokku
-ExecStartPre=-/usr/bin/docker rm dokku
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/dokku:latest
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
-ExecStartPre=/bin/bash -c '/usr/bin/docker run -d \
+ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --volume=/data/dokku:/data \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     --volume=/root/.dockercfg:/data/.dockercfg \
@@ -28,11 +27,12 @@ ExecStartPre=/bin/bash -c '/usr/bin/docker run -d \
     --env DOCKER_GID=$(id -g docker) \
     --env HOST_HOSTNAME=$(hostname) \
   dockerregistry.protorz.net/dokku:latest'
-ExecStart=/usr/bin/docker logs -f dokku
-ExecStop=-/usr/bin/docker stop dokku
-ExecStopPost=-/usr/bin/docker stop dokku
 Restart=always
 RestartSec=60s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

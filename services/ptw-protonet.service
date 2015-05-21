@@ -8,11 +8,10 @@ ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill ptw
-ExecStartPre=-/usr/bin/docker rm ptw
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/publish_to_web:latest
-ExecStart=/usr/bin/docker run \
+ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --name=ptw \
     --hostname=ptw.protonet.info \
@@ -20,6 +19,10 @@ ExecStart=/usr/bin/docker run \
   dockerregistry.protorz.net/publish_to_web:latest
 Restart=always
 RestartSec=10s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target
