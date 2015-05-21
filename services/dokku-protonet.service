@@ -2,7 +2,6 @@
 Description=Run 'dokku' service
 After=docker.service network-online.target
 Requires=docker.service network-online.target
-ConditionPathExists=/etc/protonet/ptw/enabled
 ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
