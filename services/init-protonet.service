@@ -1,0 +1,17 @@
+[Unit]
+Description=Initial Protonet Experimental Plattform
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
+ExecStart=/usr/bin/true
+Type=oneshot
+RemainAfterExit=yes
+KillMode=none
+
+[Install]
+WantedBy=multi-user.target

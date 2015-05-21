@@ -1,13 +1,11 @@
 [Unit]
 Description=Run systemd-proxy (sproxy) service
-After=docker.service
-Requires=docker.service
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
-ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/systemd-proxy:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/sproxy/:/config/ \

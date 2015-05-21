@@ -1,14 +1,12 @@
 [Unit]
 Description=Run 'dokku' service
-After=docker.service network-online.target
-Requires=docker.service network-online.target
+After=init-protonet.service network-online.target
+Requires=init-protonet.service network-online.target
 ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
-ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/dokku:latest
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/

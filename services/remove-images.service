@@ -1,7 +1,7 @@
 [Unit]
 Description=Remove unused docker images
-After=docker.service
-Requires=docker.service
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
 ExecStart=/bin/bash -c '/usr/bin/docker rmi $(/usr/bin/docker images | /usr/bin/awk "/^<none>/{ print $3 }") || true'
