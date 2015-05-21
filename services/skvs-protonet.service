@@ -6,18 +6,21 @@ Requires=sproxy-protonet.service
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker kill skvs
-ExecStartPre=-/usr/bin/docker rm skvs
+ExecStartPre=/usr/bin/docker run --rm -v /opt/bin:/opt/bin ibuildthecloud/systemd-docker
 ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.info dockerregistry.protorz.net
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
 ExecStartPre=/bin/mkdir -p /etc/protonet
-ExecStart=/usr/bin/docker run \
+ExecStart=/opt/bin/systemd-docker run --rm \
     --name=skvs \
     --volume=/etc/protonet:/data \
     --link=sproxy:hook \
   dockerregistry.protorz.net/skvs:latest
 Restart=always
 RestartSec=60s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target
