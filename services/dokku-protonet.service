@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker login -u protonet -p geheim -e mvp-aal@protonet.in
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/dokku:latest
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
-ExecStart=/bin/bash -c '/usr/bin/docker run \
+ExecStartPre=/bin/bash -c '/usr/bin/docker run -d \
     --volume=/data/dokku:/data \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     --volume=/root/.dockercfg:/data/.dockercfg \
@@ -29,6 +29,9 @@ ExecStart=/bin/bash -c '/usr/bin/docker run \
     --env DOCKER_GID=$(id -g docker) \
     --env HOST_HOSTNAME=$(hostname) \
   dockerregistry.protorz.net/dokku:latest'
+ExecStart=/usr/bin/docker logs -f dokku
+ExecStop=-/usr/bin/docker stop dokku
+ExecStopPost=-/usr/bin/docker stop dokku
 Restart=always
 RestartSec=60s
 
