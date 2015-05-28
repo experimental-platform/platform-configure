@@ -13,7 +13,6 @@ ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --name=ptw \
     --hostname=ptw.protonet.info \
-    --link=central-gateway:bindhost \
   dockerregistry.protorz.net/publish_to_web:latest
 Restart=always
 RestartSec=10s
