@@ -10,7 +10,7 @@ TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/central-gateway:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --hostname=central-gateway.protonet.info \
-    --name=dokku \
+    --name=central-gateway \
     --publish=80:80 \
   dockerregistry.protorz.net/central-gateway:latest
 Restart=always
