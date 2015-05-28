@@ -9,10 +9,10 @@ Type=idle
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/central-gateway:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
-    --hostname=central-gateway.protonet.info \
     --name=central-gateway \
-    --publish=80:80 \
-  dockerregistry.protorz.net/central-gateway:latest
+    --publish=80:9000 \
+    --net=host \
+  dockerregistry.protorz.net/central-gateway:latest --interface=127.0.0.1:9000 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
 Restart=always
 RestartSec=60s
 Type=notify
