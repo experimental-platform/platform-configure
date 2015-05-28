@@ -1,0 +1,23 @@
+[Unit]
+Description=Run 'central gateway' service
+After=init-protonet.service
+Requires=init-protonet.service
+ConditionFileNotEmpty=/etc/protonet/ptw/nodename
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/central-gateway:latest
+ExecStart=/opt/bin/systemd-docker run --rm \
+    --hostname=central-gateway.protonet.info \
+    --name=dokku \
+    --publish=80:80 \
+  dockerregistry.protorz.net/central-gateway:latest
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
