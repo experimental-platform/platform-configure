@@ -2,7 +2,6 @@
 Description=Run 'central gateway' service
 After=init-protonet.service
 Requires=init-protonet.service
-ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
 Type=idle
