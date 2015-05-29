@@ -1,0 +1,22 @@
+[Unit]
+Description=Run 'session manager' service
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/session-manager:latest
+ExecStart=/opt/bin/systemd-docker run --rm \
+    --name=session-manager \
+    --publish=127.0.0.1:9002:3000 \
+    --link=skvs:skvs \
+  dockerregistry.protorz.net/session-manager:latest
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
