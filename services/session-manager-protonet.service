@@ -1,7 +1,7 @@
 [Unit]
 Description=Run 'session manager' service
-After=init-protonet.service
-Requires=init-protonet.service
+After=skvs-protonet.service
+Requires=skvs-protonet.service
 
 [Service]
 Type=idle
