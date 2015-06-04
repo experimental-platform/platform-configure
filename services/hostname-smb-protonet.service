@@ -1,7 +1,7 @@
 [Unit]
 Description=NMBD Service announces the hostname to windows networks
-After=init-protonet.service network-online.target
-Requires=init-protonet.service network-online.target
+After=network-online.target
+Requires=network-online.target
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
@@ -11,7 +11,7 @@ ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/hostname-smb:lates
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --name=hostname-smb \
     --net=host \
-  dockerregistry.protorz.net/dokku:latest'
+  dockerregistry.protorz.net/hostname-smb:latest'
 Restart=always
 RestartSec=60s
 Type=notify
