@@ -7,7 +7,6 @@ ConditionFileNotEmpty=/etc/protonet/hostname
 ExecStart=/bin/bash -c 'hostnamectl set-hostname $(cat /etc/protonet/hostname)'
 KillMode=none
 Type=oneshot
-StopWhenUnneeded=yes
 
 [Install]
 WantedBy=multi-user.target
