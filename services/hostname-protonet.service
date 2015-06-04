@@ -1,0 +1,13 @@
+[Unit]
+Description=Update system hostname whenever it changes.
+ConditionPathExists=/etc/protonet/hostname
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/bin/bash -c 'hostnamectl set-hostname $(cat /etc/protonet/hostname)'
+KillMode=none
+Type=oneshot
+StopWhenUnneeded=yes
+
+[Install]
+WantedBy=multi-user.target
