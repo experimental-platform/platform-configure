@@ -1,0 +1,13 @@
+[Unit]
+Description=Restart Service hostname-avahi-protonet
+After=hostname-avahi-protonet.service
+Requires=hostname-avahi-protonet.service
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/systemctl restart hostname-avahi-protonet.service
+KillMode=none
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
