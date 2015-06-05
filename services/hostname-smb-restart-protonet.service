@@ -1,0 +1,13 @@
+[Unit]
+Description=Restart Service hostname-smb-protonet
+After=hostname-smb-protonet.service
+Requires=hostname-smb-protonet.service
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/systemctl restart hostname-smb-protonet.service
+KillMode=none
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

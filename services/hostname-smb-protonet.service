@@ -2,7 +2,6 @@
 Description=NMBD Service announces the hostname to windows networks
 After=network-online.target
 Requires=network-online.target
-ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
 Type=idle
