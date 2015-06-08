@@ -1,0 +1,22 @@
+[Unit]
+Description=Run 'app manager' service
+After=dokku-protonet.service
+Requires=dokku-protonet.service
+
+[Service]
+Type=idle
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/app-manager:latest
+ExecStartPre=/bin/mkdir -p /etc/protonet
+ExecStart=/opt/bin/systemd-docker run --rm \
+    --name=app-manager \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+  dockerregistry.protorz.net/app-manager:latest
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target
