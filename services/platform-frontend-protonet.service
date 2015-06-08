@@ -1,18 +1,18 @@
 [Unit]
-Description=Run 'management-proxy' service
+Description=Run 'platform-frontend' service
 After=skvs-protonet.service app-manager-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service
 
 [Service]
 Type=idle
 TimeoutStartSec=0
-ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/management-proxy:latest
+ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/platform-frontend:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
-    --name=management-proxy \
+    --name=platform-frontend \
     --publish=127.0.0.1:9002:3000 \
     --link=skvs:skvs \
     --link=app-manager:app-manager \
-  dockerregistry.protorz.net/management-proxy:latest
+  dockerregistry.protorz.net/platform-frontend:latest
 Restart=always
 RestartSec=60s
 Type=notify
