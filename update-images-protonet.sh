@@ -5,7 +5,7 @@ update_image() {
   local image=$1
   $DOCKER tag -f $image:latest $image:previous
 
-  $DOCKER pull $image:latest && $DOCKER save $image:latest > /dev/null
+  $DOCKER pull $image:latest
   for layer in $(docker history --no-trunc $image:latest | tail -n +2 | awk '{ print $1 }'); do
     if [[ ! -e /var/lib/docker/overlay/$layer || ! -e /var/lib/docker/graph/$layer ]]; then
       echo "Layer '$layer' of '$image' missing. Switching to previous version."
