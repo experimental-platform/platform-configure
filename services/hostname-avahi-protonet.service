@@ -1,6 +1,6 @@
 [Unit]
 Description=AVAHI Service announces the hostname to windows networks
-After=network-online.target
+After=network-online.target update-images-protonet.service
 Requires=network-online.target
 Wants=update-images-protonet.service
 

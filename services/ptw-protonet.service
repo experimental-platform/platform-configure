@@ -1,6 +1,6 @@
 [Unit]
 Description=Run 'ptw' service
-After=central-gateway-protonet.service
+After=central-gateway-protonet.service update-images-protonet.service
 Requires=central-gateway-protonet.service
 Wants=update-images-protonet.service
 ConditionPathExists=/etc/protonet/ptw/enabled

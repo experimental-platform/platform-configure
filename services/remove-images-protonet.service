@@ -1,6 +1,6 @@
 [Unit]
 Description=Remove unused docker images
-After=init-protonet.service
+After=init-protonet.service update-images-protonet.service
 Requires=init-protonet.service
 Wants=update-images-protonet.service
 

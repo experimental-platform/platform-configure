@@ -1,6 +1,6 @@
 [Unit]
 Description=Run 'platform-frontend' service
-After=skvs-protonet.service app-manager-protonet.service
+After=skvs-protonet.service app-manager-protonet.service update-images-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service
 Wants=update-images-protonet.service
 

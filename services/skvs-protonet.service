@@ -1,6 +1,6 @@
 [Unit]
 Description=Run 'simple key value storage' service
-After=sproxy-protonet.service
+After=sproxy-protonet.service update-images-protonet.service
 Requires=sproxy-protonet.service
 Wants=update-images-protonet.service
 
