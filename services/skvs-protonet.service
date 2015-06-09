@@ -4,8 +4,12 @@ After=sproxy-protonet.service
 Requires=sproxy-protonet.service
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
 ExecStartPre=/bin/mkdir -p /etc/protonet
 ExecStart=/opt/bin/systemd-docker run --rm \
@@ -13,11 +17,6 @@ ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet:/data \
     --link=sproxy:hook \
   dockerregistry.protorz.net/skvs:latest
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

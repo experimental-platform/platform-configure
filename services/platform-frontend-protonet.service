@@ -4,8 +4,12 @@ After=skvs-protonet.service app-manager-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/platform-frontend:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --name=platform-frontend \
@@ -13,11 +17,6 @@ ExecStart=/opt/bin/systemd-docker run --rm \
     --link=skvs:skvs \
     --link=app-manager:app-manager \
   dockerregistry.protorz.net/platform-frontend:latest
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

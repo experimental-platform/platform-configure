@@ -5,8 +5,12 @@ Requires=init-protonet.service network-online.target
 ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/dokku:latest
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
@@ -25,11 +29,6 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --env DOCKER_GID=$(id -g docker) \
     --env HOST_HOSTNAME=$(hostname) \
   dockerregistry.protorz.net/dokku:latest'
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

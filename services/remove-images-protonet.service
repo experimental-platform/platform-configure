@@ -4,10 +4,10 @@ After=init-protonet.service
 Requires=init-protonet.service
 
 [Service]
-ExecStart=/bin/bash -c '/usr/bin/docker rmi $(/usr/bin/docker images | /usr/bin/awk "/^<none>/{ print $3 }") || true'
 KillMode=none
 Type=oneshot
 StopWhenUnneeded=yes
+ExecStart=/bin/bash -c '/usr/bin/docker rmi $(/usr/bin/docker images | /usr/bin/awk "/^<none>/{ print $3 }") || true'
 
 [Install]
 WantedBy=multi-user.target

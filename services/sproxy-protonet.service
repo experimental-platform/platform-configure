@@ -4,8 +4,12 @@ After=init-protonet.service
 Requires=init-protonet.service
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/systemd-proxy:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/sproxy/:/config/ \
@@ -13,11 +17,6 @@ ExecStart=/opt/bin/systemd-docker run --rm \
     --name=sproxy \
     --hostname=sproxy.innocence.protonet.info \
   dockerregistry.protorz.net/systemd-proxy:latest
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

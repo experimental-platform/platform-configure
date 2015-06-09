@@ -4,18 +4,17 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/hostname-smb:latest
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --name=hostname-smb \
     --net=host \
   dockerregistry.protorz.net/hostname-smb:latest'
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

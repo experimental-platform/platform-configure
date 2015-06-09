@@ -4,7 +4,7 @@ Description=Start removal of unused docker images.
 [Timer]
 OnStartupSec=45min
 OnCalendar=*-*-* 06:00:00
-Unit=remove-images.service
+Unit=remove-images-protonet.service
 
 [Install]
 WantedBy=multi-user.target

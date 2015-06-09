@@ -6,19 +6,18 @@ ConditionPathExists=/etc/protonet/ptw/enabled
 ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/publish_to_web:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --name=ptw \
     --hostname=ptw.protonet.info \
   dockerregistry.protorz.net/publish_to_web:latest
-Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target

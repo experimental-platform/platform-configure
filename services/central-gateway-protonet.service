@@ -4,18 +4,17 @@ After=init-protonet.service
 Requires=init-protonet.service
 
 [Service]
-Type=idle
 TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
 ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/central-gateway:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --name=central-gateway \
     --net=host \
   dockerregistry.protorz.net/central-gateway:latest --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
-Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-TimeoutStopSec=15
 
 [Install]
 WantedBy=multi-user.target
