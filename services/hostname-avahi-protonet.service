@@ -2,6 +2,7 @@
 Description=AVAHI Service announces the hostname to windows networks
 After=network-online.target
 Requires=network-online.target
+Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0
@@ -10,7 +11,6 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/hostname-avahi:latest
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --name=hostname-avahi \
     --hostname=$(hostname) \

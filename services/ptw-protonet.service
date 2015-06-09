@@ -2,6 +2,7 @@
 Description=Run 'ptw' service
 After=central-gateway-protonet.service
 Requires=central-gateway-protonet.service
+Wants=update-images-protonet.service
 ConditionPathExists=/etc/protonet/ptw/enabled
 ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
@@ -12,7 +13,6 @@ Restart=always
 RestartSec=10s
 Type=notify
 NotifyAccess=all
-ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/publish_to_web:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --name=ptw \

@@ -2,6 +2,7 @@
 Description=Run 'platform-frontend' service
 After=skvs-protonet.service app-manager-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service
+Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0
@@ -10,7 +11,6 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/platform-frontend:latest
 ExecStart=/opt/bin/systemd-docker run --rm \
     --name=platform-frontend \
     --publish=127.0.0.1:9002:3000 \

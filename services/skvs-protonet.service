@@ -2,6 +2,7 @@
 Description=Run 'simple key value storage' service
 After=sproxy-protonet.service
 Requires=sproxy-protonet.service
+Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0
@@ -10,7 +11,6 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStartPre=-/usr/bin/docker pull dockerregistry.protorz.net/skvs:latest
 ExecStartPre=/bin/mkdir -p /etc/protonet
 ExecStart=/opt/bin/systemd-docker run --rm \
     --name=skvs \
