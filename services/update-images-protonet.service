@@ -1,0 +1,13 @@
+[Unit]
+Description=Update Docker Images of Protonet Experimental Plattform
+After=init-protonet.service network-online.target
+Requires=init-protonet.service network-online.target
+
+[Service]
+TimeoutStartSec=0
+Type=notify
+NotifyAccess=all
+ExecStart=/etc/systemd/system/update-images-protonet.sh
+
+[Install]
+WantedBy=multi-user.target
