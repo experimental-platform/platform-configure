@@ -6,6 +6,7 @@ Requires=init-protonet.service network-online.target
 [Service]
 TimeoutStartSec=0
 Type=idle
+RemainAfterExit=yes
 ExecStart=/etc/systemd/system/update-images-protonet.sh
 
 [Install]
