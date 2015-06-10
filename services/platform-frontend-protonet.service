@@ -1,7 +1,7 @@
 [Unit]
 Description=Run 'platform-frontend' service
-After=skvs-protonet.service app-manager-protonet.service update-images-protonet.service
-Requires=skvs-protonet.service app-manager-protonet.service
+After=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service update-images-protonet.service
+Requires=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service
 Wants=update-images-protonet.service
 
 [Service]
@@ -16,6 +16,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --publish=127.0.0.1:9002:3000 \
     --link=skvs:skvs \
     --link=app-manager:app-manager \
+    --link=monitoring:monitoring \
   dockerregistry.protorz.net/platform-frontend:latest
 
 [Install]
