@@ -1,0 +1,20 @@
+[Unit]
+Description=Run 'monitoring' service
+After=init-protonet.service update-images-protonet.service
+Requires=init-protonet.service
+Wants=update-images-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker run --rm \
+    --name=monitoring \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
+  dockerregistry.protorz.net/monitoring:latest
+
+[Install]
+WantedBy=multi-user.target
