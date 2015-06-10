@@ -13,6 +13,7 @@ Type=notify
 NotifyAccess=all
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
     --name=hostname-smb \
+    --hostname=$(hostname) \
     --net=host \
   dockerregistry.protorz.net/hostname-smb:latest'
 
