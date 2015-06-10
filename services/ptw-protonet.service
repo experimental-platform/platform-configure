@@ -13,7 +13,7 @@ Restart=always
 RestartSec=10s
 Type=notify
 NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker run --rm \
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --name=ptw \
     --hostname=ptw.protonet.info \

@@ -11,7 +11,7 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStart=/bin/bash -c '/opt/bin/systemd-docker run --rm \
+ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostname-avahi \
     --hostname=$(hostname) \
     --net=host \
