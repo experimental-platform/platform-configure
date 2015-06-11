@@ -6,7 +6,7 @@ Requires=hostname-avahi-protonet.service
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
-ExecStart=/usr/bin/systemctl restart hostname-avahi-protonet.service
+ExecStart=/usr/bin/env systemctl restart hostname-avahi-protonet.service
 KillMode=none
 Type=oneshot
 

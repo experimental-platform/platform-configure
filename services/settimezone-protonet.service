@@ -5,4 +5,4 @@ Description=Set the timezone
 [Service]
 RemainAfterExit=yes
 Type=oneshot
-ExecStart=/usr/bin/timedatectl set-timezone Europe/Berlin
+ExecStart=/usr/bin/env timedatectl set-timezone Europe/Berlin

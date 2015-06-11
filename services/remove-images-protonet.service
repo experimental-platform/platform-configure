@@ -9,7 +9,7 @@ Wants=update-images-protonet.service
 KillMode=none
 Type=oneshot
 StopWhenUnneeded=yes
-ExecStart=/bin/bash -c '/usr/bin/docker rmi $(/usr/bin/docker images | /usr/bin/awk "/^<none>/{ print $3 }") || true'
+ExecStart=/bin/bash -c '/usr/bin/env docker rmi $(/usr/bin/env docker images | /usr/bin/env awk "/^<none>/{ print $3 }") || true'
 
 [Install]
 WantedBy=multi-user.target
