@@ -1,3 +1,4 @@
+# ExperimentalPlatform
 [Unit]
 Description=Update system hostname whenever it changes.
 ConditionPathExists=/etc/protonet/hostname
