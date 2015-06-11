@@ -12,11 +12,10 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostname-avahi \
-    --hostname=$(hostname) \
     --net=host \
-  dockerregistry.protorz.net/hostname-avahi:latest'
+  dockerregistry.protorz.net/hostname-avahi:latest
 
 [Install]
 WantedBy=multi-user.target
