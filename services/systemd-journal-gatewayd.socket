@@ -1,9 +1,0 @@
-# ExperimentalPlatform
-[Unit]
-Description=Journal Gateway Service Socket
-
-[Socket]
-ListenStream=127.0.0.1:19531
-
-[Install]
-WantedBy=sockets.target
