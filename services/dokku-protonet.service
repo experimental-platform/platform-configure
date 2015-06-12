@@ -4,7 +4,6 @@ Description=Run 'dokku' service
 After=init-protonet.service update-images-protonet.service network-online.target
 Requires=init-protonet.service network-online.target
 Wants=update-images-protonet.service
-ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
 TimeoutStartSec=0
