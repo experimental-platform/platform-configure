@@ -55,7 +55,7 @@ coreos:
 
         [Service]
         Type=idle
-        TimeoutStartSec=
+        TimeoutStartSec=0
         ExecStartPre=-/usr/bin/docker kill update
         ExecStartPre=-/usr/bin/docker rm update
         ExecStartPre=/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
