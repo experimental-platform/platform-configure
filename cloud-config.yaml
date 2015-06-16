@@ -1,0 +1,69 @@
+#cloud-config
+hostname: experimental-platform
+
+users:
+  - name: hinnerk
+    passwd: $6$YwySnX0A0nRm21HV$S42zxjThxmJRsEPlzLlpyDFN3XgMLdCc6GgfupZY6TVJ4Co.dzXcgdo/SENIY42pKNPkTV/xaXlzbPak7S.9f1
+    groups:
+      - sudo
+      - docker
+      - wheel
+      - systemd-journal
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3yeBkATVjq4PptelYLXQDUijLIzQpySLdjHFQAg4V4bwAerIRrEVie5qiGj3utPiXEicMo+GbRBQyRwenPLkpMxObm510cWFfcOKmbKqR0bDcM1V78tDL40BnOzWb4gwG6mQXUj0oYnMAj4i6OCfPTpSH7hqsCKxggfNKX36wDDSAnOYTcMetTwwtUkkK0eecENZJN5QbStJ33KJwX7TkXS2ill4B9LULe4LSRH9IfHJLHv6jdydCJSUkYL/v/tLUAQnCfmk6KGOhmJY/fDNl29zTBb/EFxNuRL9XhPfUd+eB6RgSHpt0EGOb+IAyki4DmFW+KMeJOUyDPbx/MRfZ hinnerk
+  - name: root
+    passwd: $6$YwySnX0A0nRm21HV$S42zxjThxmJRsEPlzLlpyDFN3XgMLdCc6GgfupZY6TVJ4Co.dzXcgdo/SENIY42pKNPkTV/xaXlzbPak7S.9f1
+    groups:
+      - sudo
+      - docker
+      - wheel
+      - systemd-journal
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCc7lg3LtmRorxO22L2dSh4kleFKtMwsseJJNrbmYQD1iMqjI/gGPDU86ECDkF45O5xfIPq6Wm7vtlxMUTihAXd909AUtSNtuauoeT3vDgpNvQMWp27N+ygEteklH1KzFUfRQbFa1YcfRXxNXBRHBS91VIYs93VwbE+cSp8/4U4Z9FRxtOJv1j+u38ktDDfXdsTEHbCtd/JHkqIvkl5eGUa406Hjg748QMD4yA08S7hny5Lslw0OF9c2S2bFGlp2rYAj7u6+5gpncYcX44Z2+5hc6ub4EKNIsifehC9p1JBplZTi7DIlgj++GbFoeBA45QKZlLdglBcJ9KvAz2PE1Xz root
+  - name: andreas
+    passwd: $6$7hXGKhCxJzWCqfLQ$KPaFyC1mb0BZoskZ0wPYXgKKZhgJvjtOWXu.XrIaBrVq3.qrC3vImNJlwjbEFkiLWLxMMbhb.mX41NXGRN/oH/
+    groups:
+      - sudo
+      - docker
+      - wheel
+      - systemd-journal
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTdwt7NZ6lmLkBvUfK1UgfLQ83WhbdaQF2Auqx0uzllZd1goX88IqE3BJYRoLsbfCPQNFk8avOYlqRBKSr2hruTApGHom4KqS1wn4k6GqvoUtUgQ7izzhmSwgOy1bZSKsv3uLNZgnYtjBaSI396l4wLfg5T8MHcCDzS5gVfvpmQVPSBUBED1C1urw/KGpKrvruzE7QicWFpTAqq0lpjRmyl0XNAXnDAsoe/CxQ6GGKtrMeEyHKGbE+rKQ0fdYaQbvupokqmB8T4nBByXTkJVAqWmwNQAVV2odtyzcd3W97VcNKIyx2dIXfeq1aegDk5cWPYIq5xIHmWMEdQRCqG9IV andreas.litt@protonet.info
+  - name: christopher
+    passwd: $6$sKGwru7qV4JPsPvf$YTuKLCYc44Ze3NKmvcMkvJTl3SdrVvVn8joGLaTORk3BjRy9hGIKMgnUgz/Oouy/NmgO6Nsuu5InEp/Oa8g57.
+    groups:
+      - sudo
+      - docker
+      - wheel
+      - systemd-journal
+    ssh-authorized-keys:
+      - ssh-dss AAAAB3NzaC1kc3MAAACBAMnQlzSjyJwsFxydhPL4HFvi489cYfuMrVVnJO2nZqFq03k+h/4BeP/JRZx6k3cih8NTJgT7H4jbtIhZiWCpSmWruDfXl55zTwcmUHMibJAPtWBMcMEeQbmoXwi6VJokW343iHYe4pg5lxYdPDgquTJzuhFx1ozTENgE0s7Y5gNTAAAAFQDD0y7xzgGSuSQsLS90NMa69xQS1QAAAIEAwqjc4RcMWSxRlpggWKbOv+XzTp5zSQ7N2VqHLhzxlrLAKDZpy46m0F0I6RWADsoLjJ+2zy9Skcm2S2uDLTNw7Ffwrlwjj0kiNy+XV5X3VjWLI1RygeB7DW3OaTU8UcmtsiQeGe8vQUhwJ2rx45eRMgYQmd4aYDeI2pGrsoMXQfoAAACBAI7WIXXo+OhT1f4yuJHGPLrR8zryGztOr2HPuMlG7ww3M/ESB1Pr/t1z1rXJ7RD+NeBGjzjPTjNXs7jbxYc7wi2YiNu9WQ/XEwBbjaoC2jkOU9dtfoOZc9/YAjid9PIimKX+V3VVvj2N5H8/HqisuISQS4fz7DIWfeCxaLbDtFmu christopher.blum@pc-cblum.xing.hh
+
+coreos:
+  update:
+    reboot-strategy: off
+  units:
+    - name: update-protonet.service
+      command: start
+      enable: true
+      content: |
+        # ExperimentalPlatform
+        [Unit]
+        Description=Protonet basic configuration update service
+        After=docker.service network-online.target
+        Requires=docker.service network-online.target
+
+        [Service]
+        Type=idle
+        TimeoutStartSec=
+        ExecStartPre=-/usr/bin/docker kill update
+        ExecStartPre=-/usr/bin/docker rm update
+        ExecStartPre=/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
+        ExecStartPre=/usr/bin/docker pull dockerregistry.protorz.net/update:latest
+        ExecStartPre=/usr/bin/docker run --rm --volume=/etc/systemd/system:/data --hostname=update.initialsetup.protonet.info --name=update dockerregistry.protorz.net/update:latest
+        ExecStart=/etc/systemd/system/update-protonet.sh
+        KillMode=none
+        Type=oneshot
+
+        [Install]
+        WantedBy=multi-user.target
