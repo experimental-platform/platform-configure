@@ -14,11 +14,12 @@ Type=notify
 NotifyAccess=all
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
+ExecStartPre=-/bin/bash -c '[ ! -f /etc/protonet/hostname ] && hostname > /etc/protonet/hostname'
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/data/dokku:/data \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     --volume=/root/.dockercfg:/data/.dockercfg \
-    --volume=/etc/protonet/ptw/nodename:/config/nodename \
+    --volume=/etc/protonet/hostname:/config/hostname \
     --volume=/etc/protonet/ssh/:/config/ssh/ \
     --volume=/etc/ssh/:/etc/ssh/:ro \
     --volume=/usr/share/ssh/:/usr/share/ssh/:ro \
@@ -27,7 +28,6 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm 
     --publish=127.0.0.1:9001:80 \
     --publish=8022:22 \
     --env DOCKER_GID=$(id -g docker) \
-    --env HOST_HOSTNAME=$(hostname) \
   dockerregistry.protorz.net/dokku:latest'
 
 [Install]
