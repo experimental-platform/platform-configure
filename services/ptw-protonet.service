@@ -5,7 +5,6 @@ After=central-gateway-protonet.service update-images-protonet.service
 Requires=central-gateway-protonet.service
 Wants=update-images-protonet.service
 ConditionPathExists=/etc/protonet/ptw/enabled
-ConditionFileNotEmpty=/etc/protonet/ptw/nodename
 
 [Service]
 TimeoutStartSec=0
@@ -14,8 +13,10 @@ Restart=always
 RestartSec=10s
 Type=notify
 NotifyAccess=all
+ExecStartPre=-/bin/bash -c '[ ! -f /etc/protonet/hostname ] && hostname > /etc/protonet/hostname'
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
+    --volume=/etc/protonet/hostname:/config/hostname \
     --name=ptw \
     --hostname=ptw.protonet.info \
   dockerregistry.protorz.net/publish_to_web:latest
