@@ -1,8 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'app manager' service
-After=dokku-protonet.service update-images-protonet.service
-Requires=dokku-protonet.service
+After=update-images-protonet.service
 Wants=update-images-protonet.service
 
 [Service]
