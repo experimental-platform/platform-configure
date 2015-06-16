@@ -2,7 +2,7 @@
 [Unit]
 Description=Run 'dokku' service
 After=init-protonet.service update-images-protonet.service network-online.target
-Requires=init-protonet.service network-online.target
+Requires=init-protonet.service hostname-protonet.service network-online.target
 Wants=update-images-protonet.service
 
 [Service]
