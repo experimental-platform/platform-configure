@@ -4,10 +4,7 @@
 
 1. install virtualbox
 2. install vagrant
-
-3.
-        $ git clone //github.com/coreos/coreos-vagrant.git
-
+3. `$ git clone //github.com/coreos/coreos-vagrant.git`
 4. set `$share_home = true` in `Vagrantfile`
 
 ## 1. Test the product deployment
