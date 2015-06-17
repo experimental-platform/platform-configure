@@ -1,7 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'app manager' service
-After=update-images-protonet.service
+After=init-protonet.service update-images-protonet.service
+Requires=init-protonet.service
 Wants=update-images-protonet.service
 
 [Service]
