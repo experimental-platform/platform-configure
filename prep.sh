@@ -8,4 +8,4 @@ cp /services/* /data/systemd/system/
 
 cp /stuff/update-images-protonet.sh /data/systemd/system/update-images-protonet.sh
 cp /stuff/update-protonet.sh /data/systemd/system/update-protonet.sh
-cp /stuff/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
+mkdir -p /data/systemd/journald.conf.d && cp /stuff/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
