@@ -23,7 +23,6 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm 
     --volume=/etc/protonet/ssh/:/config/ssh/ \
     --volume=/etc/ssh/:/etc/ssh/:ro \
     --volume=/usr/share/ssh/:/usr/share/ssh/:ro \
-    --hostname=dokku.protonet.info \
     --name=dokku \
     --publish=127.0.0.1:9001:80 \
     --publish=8022:22 \

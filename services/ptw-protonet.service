@@ -18,7 +18,6 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --volume=/etc/protonet/hostname:/config/hostname \
     --name=ptw \
-    --hostname=ptw.protonet.info \
   dockerregistry.protorz.net/publish_to_web:latest
 
 [Install]
