@@ -15,7 +15,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=monitoring \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
-  dockerregistry.protorz.net/monitoring:latest
+  dockerregistry.protorz.net/monitoring:{{tag}}
 
 [Install]
 WantedBy=multi-user.target

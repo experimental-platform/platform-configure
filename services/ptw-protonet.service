@@ -18,7 +18,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --volume=/etc/protonet/hostname:/config/hostname \
     --name=ptw \
-  dockerregistry.protorz.net/publish_to_web:latest
+  dockerregistry.protorz.net/publish_to_web:{{tag}}
 
 [Install]
 WantedBy=multi-user.target

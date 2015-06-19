@@ -29,7 +29,7 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm 
     --publish=127.0.0.1:9001:80 \
     --publish=8022:22 \
     --env DOCKER_GID=$(id -g docker) \
-  dockerregistry.protorz.net/dokku:latest'
+  dockerregistry.protorz.net/dokku:{{tag}}'
 
 [Install]
 WantedBy=multi-user.target
