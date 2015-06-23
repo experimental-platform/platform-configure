@@ -17,7 +17,6 @@ do
   mv $SERVICE_FILE.new $SERVICE_FILE
 done
 
-git commit --all --message="Jenkins Build $BUILD_NUMBER for $VERSION." --author="Jack Jenkins <jenkins@protonet.info>"
-git push origin HEAD:build/$VERSION/$BUILD_NUMBER
-
-exit 1
+# Cannot push with deploy key :)
+# git commit --all --message="Jenkins Build $BUILD_NUMBER for $VERSION." --author="Jack Jenkins <jenkins@protonet.info>"
+# git push origin HEAD:build/$VERSION/$BUILD_NUMBER
