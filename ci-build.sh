@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 # Current branch name will be default Version if nothing else is set
 VERSION=${VERSION:=${GIT_BRANCH#*/}}
 
