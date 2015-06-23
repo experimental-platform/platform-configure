@@ -20,7 +20,7 @@ function print_usage() {
 
 function download_and_verify_image() {
   local image=$1
-  $DOCKER tag -f $image "$image-previous" || true # do not fail, this is just for backup reason
+  $DOCKER tag -f $image "$image-previous" 2>/dev/null || true # do not fail, this is just for backup reason
 
   $DOCKER pull $image
   for layer in $(docker history --no-trunc $image | tail -n +2 | awk '{ print $1 }'); do
@@ -28,8 +28,8 @@ function download_and_verify_image() {
     # But it is the fastest one. The docker save command takes about 30 Minutes for all images,
     # even with output piped to /dev/null.
     if [[ ! -e /var/lib/docker/overlay/$layer || ! -e /var/lib/docker/graph/$layer ]]; then
-      echo "Layer '$layer' of '$image' missing. Switching to previous version."
-      $DOCKER tag -f "$image-previous" $image
+      echo "Layer '$layer' of '$image' missing. Switching to previous version (if there was one)."
+      $DOCKER tag -f "$image-previous" $image 2>/dev/null
       exit 1
     fi
   done
@@ -93,6 +93,12 @@ $DOCKER run --rm --name=$CONTAINER_NAME \
 find /etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f -exec systemctl enable {} +
 
 # Pre-Fetch all Images
+# Complex regexp to find all images names in all service files
+IMAGES=$(grep -hor -i 'dockerregistry\.protorz\.net\/[a-zA-Z0-9:_-]\+\s\?' /etc/systemd/system/*.service)
+for IMAGE in $IMAGES; do
+  download_and_verify_image $IMAGE
+done
+
 # TODO: implement!
 
 if [ "$RELOAD" = true ]; then
