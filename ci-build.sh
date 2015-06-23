@@ -21,7 +21,7 @@ done
 
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   # this configure build image needs to be tagged with SERVICE_TAG
-  export GIT_BRANCH=$SERVICE_TAG
+  echo "GIT_BRANCH = $SERVICE_TAG" > export.props
 fi
 
 env
