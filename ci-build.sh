@@ -1,5 +1,6 @@
 #!/bin/bash
-VERSION=${VERSION:=development}
+# Current branch name will be default Version if nothing else is set
+VERSION=${VERSION:=${GIT_BRANCH#*/}}
 
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   SERVICE_FILE=services/${SERVICE_NAME#platform-}-protonet.service
@@ -16,7 +17,7 @@ do
   mv $SERVICE_FILE.new $SERVICE_FILE
 done
 
-env
-git diff
+git commit --all --message="Jenkins Build $BUILD_NUMBER for $VERSION." --author="Jack Jenkins <jenkins@protonet.info>"
+git push origin HEAD:build/$VERSION/$BUILD_NUMBER
 
 exit 1
