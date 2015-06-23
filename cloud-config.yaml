@@ -42,28 +42,3 @@ users:
 coreos:
   update:
     reboot-strategy: off
-  units:
-    - name: update-protonet.service
-      command: start
-      enable: true
-      content: |
-        # ExperimentalPlatform
-        [Unit]
-        Description=Protonet basic configuration update service
-        After=docker.service network-online.target
-        Requires=docker.service network-online.target
-
-        [Service]
-        Type=idle
-        TimeoutStartSec=0
-        ExecStartPre=-/usr/bin/docker kill update
-        ExecStartPre=-/usr/bin/docker rm update
-        ExecStartPre=/usr/bin/docker login -u protonet -p geheim -e product001@protonet.info dockerregistry.protorz.net
-        ExecStartPre=/usr/bin/docker pull dockerregistry.protorz.net/update:latest
-        ExecStartPre=/usr/bin/docker run --rm --volume=/etc:/data --name=update dockerregistry.protorz.net/update:latest
-        ExecStart=/etc/systemd/system/scripts/update-protonet.sh
-        KillMode=none
-        Type=oneshot
-
-        [Install]
-        WantedBy=multi-user.target
