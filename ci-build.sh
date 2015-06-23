@@ -24,8 +24,6 @@ if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   echo "GIT_BRANCH = $SERVICE_TAG" > export.props
 fi
 
-env
-
 # Cannot push with deploy key :)
 # git commit --all --message="Jenkins Build $BUILD_NUMBER for $VERSION." --author="Jack Jenkins <jenkins@protonet.info>"
 # git push origin HEAD:build/$VERSION/$BUILD_NUMBER
