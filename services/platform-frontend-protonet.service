@@ -1,9 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'platform-frontend' service
-After=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service update-images-protonet.service
+After=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service
-Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0

@@ -1,9 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'simple key value storage' service
-After=sproxy-protonet.service update-images-protonet.service
+After=sproxy-protonet.service
 Requires=sproxy-protonet.service
-Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0

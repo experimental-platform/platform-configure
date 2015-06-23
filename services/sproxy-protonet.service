@@ -1,9 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run systemd-proxy (sproxy) service
-After=init-protonet.service update-images-protonet.service
+After=init-protonet.service
 Requires=init-protonet.service
-Wants=update-images-protonet.service
 
 [Service]
 TimeoutStartSec=0
