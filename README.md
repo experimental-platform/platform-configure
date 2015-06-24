@@ -20,7 +20,7 @@
 2. `cd /Users/...wherever your Dockerfile resides/`
 3. `docker build ...` and `docker run ...`
 
-## 3. Install a CoreOS somewhere else
+## 3. Install a CoreOS somewhere else [OUTDATED]
 
 1. `vagrant up`
 2. `vagrant down`
