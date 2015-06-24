@@ -1,7 +1,7 @@
 FROM experimentalplatform/ubuntu:latest
 
 ADD services /services
-ADD stuff /stuff
+ADD config /config
 ADD prep.sh /prep.sh
 ADD platform-configure.sh /platform-configure.sh
 

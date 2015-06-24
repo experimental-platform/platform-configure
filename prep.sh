@@ -17,4 +17,4 @@ if [ -d /host-bin/ ]; then
   ln -sf /etc/systemd/system/scripts/platform-configure.sh /host-bin/platform-configure
 fi
 
-mkdir -p /data/systemd/journald.conf.d && cp /stuff/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
+mkdir -p /data/systemd/journald.conf.d && cp /config/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
