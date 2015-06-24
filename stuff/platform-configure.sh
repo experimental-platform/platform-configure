@@ -91,7 +91,7 @@ find /etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f -exec systemctl enab
 
 # Pre-Fetch all Images
 # Complex regexp to find all images names in all service files
-IMAGES=$(grep -hor -i '$REGISTRY\/[a-zA-Z0-9:_-]\+\s\?' /etc/systemd/system/*.service)
+IMAGES=$(grep -hor -i "$REGISTRY\/[a-zA-Z0-9:_-]\+\s\?" /etc/systemd/system/*.service)
 for IMAGE in $IMAGES; do
   download_and_verify_image $IMAGE
 done
