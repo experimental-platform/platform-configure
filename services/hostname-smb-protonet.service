@@ -14,7 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostname-smb \
     --net=host \
-  dockerregistry.protorz.net/hostname-smb:{{tag}}
+  experimentalplatform/hostname-smb:{{tag}}
 
 [Install]
 WantedBy=multi-user.target

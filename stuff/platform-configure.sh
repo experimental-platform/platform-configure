@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 DOCKER=$(which docker)
-REGISTRY="dockerregistry.protorz.net"
+REGISTRY="experimentalplatform"
 CONTAINER_NAME="configure"
 
 REBOOT=false
@@ -76,9 +76,6 @@ if [ -z "$TAG" ]; then
   exit 1
 fi
 
-# This is ugly and we need a read-only registry!
-$DOCKER login -u protonet -p geheim -e alpha@experimental-platform.io $REGISTRY
-
 download_and_verify_image $REGISTRY/configure:$TAG
 
 # clean up running update task!
@@ -94,12 +91,10 @@ find /etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f -exec systemctl enab
 
 # Pre-Fetch all Images
 # Complex regexp to find all images names in all service files
-IMAGES=$(grep -hor -i 'dockerregistry\.protorz\.net\/[a-zA-Z0-9:_-]\+\s\?' /etc/systemd/system/*.service)
+IMAGES=$(grep -hor -i '$REGISTRY\/[a-zA-Z0-9:_-]\+\s\?' /etc/systemd/system/*.service)
 for IMAGE in $IMAGES; do
   download_and_verify_image $IMAGE
 done
-
-# TODO: implement!
 
 if [ "$RELOAD" = true ]; then
   echo "Reloading systemctl after update."

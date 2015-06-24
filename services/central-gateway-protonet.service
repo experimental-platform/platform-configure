@@ -14,7 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=central-gateway \
     --net=host \
-  dockerregistry.protorz.net/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
+  experimentalplatform/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
 
 [Install]
 WantedBy=multi-user.target

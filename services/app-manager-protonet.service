@@ -14,7 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=app-manager \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
-  dockerregistry.protorz.net/app-manager:{{tag}}
+  experimentalplatform/app-manager:{{tag}}
 
 [Install]
 WantedBy=multi-user.target
