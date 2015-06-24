@@ -1,4 +1,4 @@
-FROM dockerregistry.protorz.net/ubuntu:latest
+FROM experimentalplatform/ubuntu:latest
 
 ADD services /services
 ADD stuff /stuff
