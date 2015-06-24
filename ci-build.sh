@@ -19,6 +19,9 @@ do
   mv $SERVICE_FILE.new $SERVICE_FILE
 done
 
+# Download current version of platform-configure.sh
+curl https://git.protorz.net/AAL/platform-configure-script/raw/$VERSION/platform-configure.sh > platform-configure.sh
+
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   # this configure build image needs to be tagged with SERVICE_TAG
   echo "GIT_BRANCH = $SERVICE_TAG" > export.props
