@@ -11,6 +11,7 @@ cp /services/* /data/systemd/system/
 
 mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
+chmod +x /data/systemd/system/scripts/platform-configure.sh
 
 if [ -d /host-bin/ ]; then
   # this needs to be the full path on host, not in container
