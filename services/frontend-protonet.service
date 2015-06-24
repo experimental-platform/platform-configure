@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Run 'platform-frontend' service
+Description=Run 'frontend' service
 After=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service
 
@@ -11,17 +11,17 @@ Restart=always
 RestartSec=60s
 Type=notify
 NotifyAccess=all
-ExecStartPre=/bin/mkdir -p /data/platform-frontend
+ExecStartPre=/bin/mkdir -p /data/frontend
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --name=platform-frontend \
+    --name=frontend \
     --publish=127.0.0.1:9002:3000 \
     --link=skvs:skvs \
     --link=app-manager:app-manager \
     --link=monitoring:monitoring \
     --volume=/var/log/journal:/var/log/journal:ro \
     --volume=/etc/machine-id:/etc/machine-id:ro \
-    --volume=/data/platform-frontend:/data \
-  experimentalplatform/platform-frontend:{{tag}}
+    --volume=/data/frontend:/data \
+  experimentalplatform/frontend:{{tag}}
 
 [Install]
 WantedBy=multi-user.target
