@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Experimental Platform Channel Path Trigger
+
+[Path]
+PathModified=/etc/protonet/system/channel
+
+[Install]
+WantedBy=multi-user.target
