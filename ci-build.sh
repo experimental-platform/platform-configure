@@ -1,8 +1,17 @@
 #!/bin/bash
-set -ex
+set -e
+
+DEBUG=/bin/false
+
+${DEBUG} && set -e
+
 # Current branch name will be default Version if nothing else is set
 VERSION=${VERSION:=${GIT_BRANCH#*/}}
 SERVICE_TAG=${SERVICE_TAG#*/}
+
+echo -e "\nBuilding platform-configure version ${VERSION}, service_tag ${SERVICE_TAG}.\n\n"
+
+${DEBUG} && echo -e "(DEBUG) CHANNEL: ${CHANNEL}\n\n"
 
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   SERVICE_FILE=services/${SERVICE_NAME#platform-}-protonet.service
