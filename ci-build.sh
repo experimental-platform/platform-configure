@@ -3,7 +3,7 @@ set -e
 
 DEBUG=/bin/false
 
-${DEBUG} && set -e
+${DEBUG} && set -x
 
 # Current branch name will be default Version if nothing else is set
 VERSION=${VERSION:=${GIT_BRANCH#*/}}
@@ -29,7 +29,7 @@ do
 done
 
 # Download current version of platform-configure.sh
-curl https://git.protorz.net/AAL/platform-configure-script/raw/master/platform-configure.sh > platform-configure.sh
+curl -f https://git.protorz.net/AAL/platform-configure-script/raw/master/platform-configure.sh > platform-configure.sh
 
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
   # this configure build image needs to be tagged with SERVICE_TAG
