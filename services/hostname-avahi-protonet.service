@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=AVAHI Service announces the hostname to windows networks
+Description=AVAHI Service -- hostname resolution via mDNS
 After=init-protonet.service network-online.target
 Requires=init-protonet.service network-online.target
 
@@ -14,7 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostname-avahi \
     --net=host \
-  experimentalplatform/hostname-avahi:{{tag}}
+    experimentalplatform/hostname-avahi:{{tag}}
 
 [Install]
 WantedBy=multi-user.target
