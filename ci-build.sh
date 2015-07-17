@@ -9,7 +9,7 @@ ${DEBUG} && set -x
 VERSION=${VERSION:=${GIT_BRANCH#*/}}
 SERVICE_TAG=${SERVICE_TAG#*/}
 
-echo -e "\nBuilding platform-configure version '${VERSION}', service_tag '${SERVICE_TAG}'.\n\n"
+echo -e "\nBuilding platform-configure version '${VERSION}', service_tag '${SERVICE_TAG}', service_name '${SERVICE_NAME}'.\n\n"
 
 ${DEBUG} && echo -e "(DEBUG) CHANNEL: ${CHANNEL}\n\n"
 
