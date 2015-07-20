@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Restart Service hostname-smb-protonet
-After=hostname-smb-protonet.service
-Requires=hostname-smb-protonet.service
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]

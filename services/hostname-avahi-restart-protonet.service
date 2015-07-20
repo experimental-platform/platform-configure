@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Restart Service hostname-avahi-protonet
-After=hostname-avahi-protonet.service
-Requires=hostname-avahi-protonet.service
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
