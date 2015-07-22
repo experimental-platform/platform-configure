@@ -1,9 +1,11 @@
 # ExperimentalPlatform
 [Unit]
 Description=Protonet hostname changer
+ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Path]
-PathModified=/etc/protonet/hostname
+# PathModified=/etc/protonet/hostname
+PathChanged=/etc/protonet/hostname
 
 [Install]
 WantedBy=multi-user.target
