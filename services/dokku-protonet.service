@@ -13,7 +13,7 @@ Type=notify
 NotifyAccess=all
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
-ExecStartPre=-/bin/bash -c '[ ! -f /etc/protonet/hostname ] && hostname > /etc/protonet/hostname'
+ExecStartPre=-/bin/bash -c '[ ! -f /etc/protonet/hostname ] && echo "paleale" > /etc/protonet/hostname'
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/data/dokku:/data \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
