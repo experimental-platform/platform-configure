@@ -1,4 +1,4 @@
-# Experimental Platform: BUILDSTEP
+# Experimental Platform: CONFIGURATION
 
 Configuration of the experimenatl platform, based on systemd.
 
