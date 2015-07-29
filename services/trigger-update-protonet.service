@@ -7,6 +7,3 @@ ConditionFileNotEmpty=/etc/protonet/system/channel
 ExecStart=/etc/systemd/system/scripts/platform-configure.sh --reboot
 KillMode=none
 Type=oneshot
-
-[Install]
-WantedBy=multi-user.target
