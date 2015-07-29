@@ -1,6 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Experimental Platform Channel Path Trigger
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
 
 [Path]
 PathModified=/etc/protonet/system/channel
