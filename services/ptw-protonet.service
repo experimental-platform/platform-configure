@@ -12,7 +12,6 @@ Restart=always
 RestartSec=10s
 Type=notify
 NotifyAccess=all
-ExecStartPre=-/bin/bash -c '[ ! -f /etc/protonet/hostname ] && echo "paleale" > /etc/protonet/hostname'
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/ptw/:/config/ \
     --volume=/etc/protonet/hostname:/config/hostname \
