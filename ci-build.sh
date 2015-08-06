@@ -35,7 +35,7 @@ done
 
 ${DEBUG} && echo "DEBUG: START Fetching current version of platform-configure.sh."
 # Download current version of platform-configure.sh
-curl -f https://git.protorz.net/AAL/platform-configure-script/raw/master/platform-configure.sh > platform-configure.sh
+curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > platform-configure.sh
 ${DEBUG} && echo "DEBUG: DONE Fetching current version of platform-configure.sh."
 
 
