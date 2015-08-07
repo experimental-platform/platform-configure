@@ -6,7 +6,7 @@ DEBUG=/bin/true
 ${DEBUG} && set -x
 
 # VERSION is the branch THIS REPO is on, usually this will be 'development'
-VERSION=${VERSION:=${CIRCLE_BRANCH}}
+VERSION=${VERSION:=$CIRCLE_BRANCH}
 # SERVICE_NAME is the name of a service on a feature branch
 # SERVICE_TAG ist the name of the feature branch the SERVICE_NAME is on
 
