@@ -4,6 +4,7 @@ machine:
 
 dependencies:
   override:
+    - npm install -g mustache
     - ./ci-build.sh
     - SERVICE_TAG=${SERVICE_TAG:=$CIRCLE_BRANCH} docker build -t experimentalplatform/configure:$SERVICE_TAG .
 
