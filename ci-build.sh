@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DEBUG=/bin/true
+DEBUG=/bin/false
 
 ${DEBUG} && set -x
 
