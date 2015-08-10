@@ -7,8 +7,9 @@ ${DEBUG} && set -x
 
 # VERSION is the branch THIS REPO is on, usually this will be 'development'
 VERSION=${VERSION:=$CIRCLE_BRANCH}
-# SERVICE_NAME is the name of a service on a feature branch
 # SERVICE_TAG ist the name of the feature branch the SERVICE_NAME is on
+SERVICE_TAG=${SERVICE_TAG:=$CIRCLE_BRANCH}
+# SERVICE_NAME is the name of a service on a feature branch
 
 
 echo -e "\nBuilding platform-configure version '${VERSION}', service_tag '${SERVICE_TAG}', service_name '${SERVICE_NAME}', channel '${CHANNEL}'.\n\n"
