@@ -1,53 +1,37 @@
 #!/bin/bash
 set -e
 
-DEBUG=/bin/true
+DEBUG=/bin/false
 
 ${DEBUG} && set -x
 
-# Current branch name will be default Version if nothing else is set
-VERSION=${VERSION:=${GIT_BRANCH#*/}}
-SERVICE_TAG=${SERVICE_TAG#*/}
+# VERSION is the branch THIS REPO is on, usually this will be 'development'
+VERSION=${VERSION:=$CIRCLE_BRANCH}
+# SERVICE_TAG ist the name of the feature branch the SERVICE_NAME is on
+SERVICE_TAG=${SERVICE_TAG:=$CIRCLE_BRANCH}
+# SERVICE_NAME is the name of a service on a feature branch
+
 
 echo -e "\nBuilding platform-configure version '${VERSION}', service_tag '${SERVICE_TAG}', service_name '${SERVICE_NAME}', channel '${CHANNEL}'.\n\n"
 
-# TODO: Why oh why do you build this image this way?
-# CASE 1: There's a image tagged with a with a GIT_BRANCH that's defined in
+# CASE 1: We build an exciting new (feature) branch. That means:
+# 1. there is one systemd service file (SERVICE_NAME) that links to the special docker tag SERVICE_TAG (a.k.a. the branch name)
+# 2. the docker image for platform-configure (this project) will be tagged with SERVICE_TAG
 if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
-  SERVICE_FILE=services/${SERVICE_NAME#platform-}-protonet.service
-  ${DEBUG} && echo "DEBUG: Trying to write unique file '${SERVICE_FILE}'."
+  SERVICE_FILE=services/${SERVICE_NAME}-protonet.service
   if [ -e ${SERVICE_FILE} ]; then
     echo "{\"tag\":\"$SERVICE_TAG\"}" | mustache - ${SERVICE_FILE} > ${SERVICE_FILE}.new
     mv ${SERVICE_FILE}.new ${SERVICE_FILE}
-    ${DEBUG} && echo "DEBUG: Unique file '${SERVICE_FILE}' written successfully."
   fi
 fi
 
-# TODO: What are we trying to do here?
+# CASE 2: Build everything else on a boring old branch, (usually 'development').
 for SERVICE_FILE in services/*
 do
-  ${DEBUG} && echo "DEBUG: Trying to write file '${SERVICE_FILE}'."
   echo "{\"tag\":\"${VERSION}\"}" | mustache - ${SERVICE_FILE} > ${SERVICE_FILE}.new
   mv ${SERVICE_FILE}.new ${SERVICE_FILE}
-  ${DEBUG} && echo "DEBUG: File '${SERVICE_FILE}' written successfully."
 done
 
 
-${DEBUG} && echo "DEBUG: START Fetching current version of platform-configure.sh."
 # Download current version of platform-configure.sh
-curl -f https://git.protorz.net/AAL/platform-configure-script/raw/master/platform-configure.sh > platform-configure.sh
-${DEBUG} && echo "DEBUG: DONE Fetching current version of platform-configure.sh."
-
-
-# TODO: Why, precisely?
-if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
-  ${DEBUG} && echo "DEBUG: Tagging file '${SERVICE_NAME}' with TAG '${SERVICE_TAG}'."
-  # this configure build image needs to be tagged with SERVICE_TAG
-  echo "GIT_BRANCH = $SERVICE_TAG" > export.props
-fi
-
-${DEBUG} && echo "DEBUG: DONE."
-
-# Cannot push with deploy key :)
-# git commit --all --message="Jenkins Build ${BUILD_NUMBER} for ${VERSION}." --author="Jack Jenkins <jenkins@protonet.info>"
-# git push origin HEAD:build/${VERSION}/${BUILD_NUMBER}
+curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > platform-configure.sh
