@@ -8,3 +8,6 @@ Requires=dokku-protonet.service
 ExecStart=/bin/bash -c 'sleep 5 && docker exec dokku sudo -u dokku dokku ps:rebuildall'
 KillMode=none
 Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
