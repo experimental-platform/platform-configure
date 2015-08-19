@@ -1,14 +1,12 @@
 # ExperimentalPlatform
 [Unit]
 Description=Remove unused docker images
-After=init-protonet.service update-images-protonet.service
+After=init-protonet.service
 Requires=init-protonet.service
-Wants=update-images-protonet.service
 
 [Service]
 KillMode=none
 Type=oneshot
-StopWhenUnneeded=yes
 ExecStart=/bin/bash -c '/usr/bin/env docker rmi $(/usr/bin/env docker images | /usr/bin/env awk "/^<none>/{ print $3 }") || true'
 
 [Install]
