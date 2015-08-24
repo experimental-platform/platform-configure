@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 # new systems need sometimes dont have systemd/system/
 mkdir -p /data/systemd/system/
 # First remove broken links, this should avoid confusing error messages
