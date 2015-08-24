@@ -13,6 +13,9 @@ mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
 chmod +x /data/systemd/system/scripts/platform-configure.sh
 
+cp /systemd-docker /host-bin/
+chmod +x /host-bin/systemd-docker
+
 if [ -d /host-bin/ ]; then
   # this needs to be the full path on host, not in container
   ln -sf /etc/systemd/system/scripts/platform-configure.sh /host-bin/platform-configure
