@@ -15,6 +15,7 @@ mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
 chmod +x /data/systemd/system/scripts/platform-configure.sh
 
+rm -f /host-bin/systemd-docker || true
 cp /systemd-docker /host-bin/
 chmod +x /host-bin/systemd-docker
 
