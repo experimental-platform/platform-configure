@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 # new systems need sometimes dont have systemd/system/
 mkdir -p /data/systemd/system/
 # First remove broken links, this should avoid confusing error messages
@@ -13,6 +15,7 @@ mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
 chmod +x /data/systemd/system/scripts/platform-configure.sh
 
+rm -f /host-bin/systemd-docker || true
 cp /systemd-docker /host-bin/
 chmod +x /host-bin/systemd-docker
 
