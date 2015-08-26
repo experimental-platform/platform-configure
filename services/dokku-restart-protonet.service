@@ -1,0 +1,14 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service dokku-protonet.service
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart dokku-protonet.service
+KillMode=none
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
