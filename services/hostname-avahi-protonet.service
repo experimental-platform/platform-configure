@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=AVAHI Service -- hostname resolution via mDNS
-After=dokku-protonet.service network-online.target
-Requires=dokku-protonet.service network-online.target
+After=network-online.target
+Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
