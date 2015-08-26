@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet dokku restart on hostname change
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
+
+[Path]
+PathModified=/etc/protonet/hostname
+
+[Install]
+WantedBy=multi-user.target
