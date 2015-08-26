@@ -1,0 +1,18 @@
+# ExperimentalPlatform
+[Unit]
+Description=dokku hostname changer
+After=dokku-protonet.service network-online.target
+Requires=dokku-protonet.service network-online.target
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+
+ExecStart=/usr/bin/env docker exec dokku bash -c 'cat /config/hostname > $DOKKU_ROOT/HOSTNAME'
+ExecStart=/usr/bin/env docker exec dokku bash -c 'cat /config/hostname > $DOKKU_ROOT/VHOST'
+ExecStart=/usr/bin/env docker exec dokku bash -c 'dokku apps | tail -n +2 | xargs -n1 dokku domains:clear || true'
+
+KillMode=none
+Type=oneshot
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=dokku hostname changer
+After=network-online.target
+Requires=network-online.target
+
+[Path]
+PathModified=/etc/protonet/hostname
+
+[Install]
+WantedBy=multi-user.target
