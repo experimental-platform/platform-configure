@@ -6,7 +6,7 @@ dependencies:
   override:
     - npm install -g mustache
     - ./ci-build.sh
-    - SERVICE_TAG=${SERVICE_TAG:-$CIRCLE_BRANCH} docker build -t experimentalplatform/configure:${SERVICE_TAG} .
+    - SERVICE_TAG=${SERVICE_TAG:-$CIRCLE_BRANCH}; docker build -t experimentalplatform/configure:${SERVICE_TAG} .
 
 test:
   override:
@@ -23,5 +23,5 @@ deployment:
     branch: /.*/
     commands:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
-      - SERVICE_TAG=${SERVICE_TAG:-$CIRCLE_BRANCH} docker push experimentalplatform/configure:${SERVICE_TAG}
+      - SERVICE_TAG=${SERVICE_TAG:-$CIRCLE_BRANCH}; docker push experimentalplatform/configure:${SERVICE_TAG}
 

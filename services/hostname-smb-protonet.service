@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=NMBD Service announces the hostname to windows networks
-After=dokku-protonet.service network-online.target
-Requires=dokku-protonet.service network-online.target
+After=network-online.target
+Requires=network-online.target
 
 [Service]
 TimeoutStartSec=0
