@@ -1,6 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Start removal of unused docker images.
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Timer]
 OnStartupSec=45min
