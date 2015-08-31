@@ -1,8 +1,6 @@
 # ExperimentalPlatform
 [Unit]
 Description=Experimental Platform Channel Path Trigger
-After=network-online.target
-Requires=network-online.target
 
 [Path]
 PathModified=/etc/protonet/system/channel
