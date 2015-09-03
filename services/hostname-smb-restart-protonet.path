@@ -1,8 +1,6 @@
 # ExperimentalPlatform
 [Unit]
 Description=Protonet hostname SMB
-After=dokku-protonet.service network-online.target
-Requires=dokku-protonet.service network-online.target
 
 [Path]
 PathModified=/etc/protonet/hostname

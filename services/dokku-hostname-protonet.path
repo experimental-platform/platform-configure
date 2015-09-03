@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Protonet hostname AVAHI
+Description=dokku hostname changer
 
 [Path]
 PathModified=/etc/protonet/hostname
