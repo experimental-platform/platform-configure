@@ -10,6 +10,7 @@ grep -Hlr '# ExperimentalPlatform' /data/systemd/system/ | xargs rm -rf
 find -L /data/systemd/system/ -type l -exec rm -f {} +
 
 cp /services/* /data/systemd/system/
+cp /config/docker.conf /data/systemd/system/
 
 mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
