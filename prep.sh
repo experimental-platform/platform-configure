@@ -14,6 +14,9 @@ cp /services/* /data/systemd/system/
 mkdir -p /data/systemd/system/docker.service.d
 cp /config/50-log-warn.conf /data/systemd/system/docker.service.d/50-log-warn.conf
 
+mkdir -p /data/udev/rules.d
+cp /config/sound-permissions.rules /data/udev/rules.d/sound-permissions.rules
+
 mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
 chmod +x /data/systemd/system/scripts/platform-configure.sh

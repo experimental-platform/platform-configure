@@ -1,0 +1,1 @@
+SUBSYSTEM=="sound", MODE="0666"
