@@ -5,7 +5,7 @@ After=dokku-protonet.service
 Requires=dokku-protonet.service
 
 [Service]
-ExecStart=/bin/bash -c 'sleep 5 && docker exec dokku sudo -u dokku dokku ps:rebuildall'
+ExecStart=/bin/bash -c 'sleep 5 && docker exec dokku sudo -E -H -u dokku dokku ps:rebuildall'
 KillMode=none
 Type=oneshot
 
