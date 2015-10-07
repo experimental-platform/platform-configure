@@ -1,0 +1,12 @@
+# ExperimentalPlatform
+[Unit]
+Description=Dump update-engine status to skvm directory
+After=update-engine.service
+Requires=update-engine.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env bash -c "update_engine_client -status > /etc/protonet/system/update-engine-status"
+
+[Install]
+WantedBy=multi-user.target
