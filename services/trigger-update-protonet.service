@@ -4,6 +4,6 @@ Description=Update trigger for Experimental Platform
 ConditionFileNotEmpty=/etc/protonet/system/channel
 
 [Service]
-ExecStart=/etc/systemd/system/scripts/platform-configure.sh --reboot
+ExecStart=/usr/bin/env bash -c 'OLDSCRIPT=$(</etc/systemd/system/scripts/platform-configure.sh); bash -c "$OLDSCRIPT" -s "--osupdate" "--reboot"'
 KillMode=none
 Type=oneshot

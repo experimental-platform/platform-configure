@@ -1,0 +1,12 @@
+# ExperimentalPlatform
+[Unit]
+Description=Dump update-engine status to skvm directory
+After=update-engine.service
+Requires=update-engine.service
+
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=1m
+
+[Install]
+WantedBy=multi-user.target
