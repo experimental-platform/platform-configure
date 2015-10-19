@@ -2,9 +2,6 @@ sudo: required
 services:
   - docker
 
-branches:
-  except:
-    - master
 script:
   - npm install -g mustache
 # building PRs with shell scripts is a credential leak vulnerability
