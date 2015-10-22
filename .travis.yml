@@ -1,0 +1,19 @@
+sudo: required
+services:
+  - docker
+
+script:
+  - npm install -g mustache
+# building PRs with shell scripts is a credential leak vulnerability
+  - >
+    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+      ./ci-build.sh
+      SERVICE_TAG=${SERVICE_TAG:-$TRAVIS_BRANCH}; docker build -t experimentalplatform/configure:${SERVICE_TAG} .
+      if [ "$TRAVIS_BRANCH" == "master" ]; then
+        echo -e "\n\nWe're not uploading master anywhere."
+      else
+        docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+        SERVICE_TAG=${SERVICE_TAG:-$TRAVIS_BRANCH}; docker push experimentalplatform/configure:${SERVICE_TAG}
+      fi
+    fi
+
