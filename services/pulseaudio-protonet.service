@@ -1,0 +1,25 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run 'pulseaudio' service
+After=init-protonet.service network-online.target
+Requires=init-protonet.service network-online.target
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStartPre=/usr/bin/mkdir /data/pulseaudio -p
+# const gid 35234 is used by 'pulseaudio' user inside the container to get write-access to host's /data/pulseaudio
+ExecStartPre=/usr/bin/chown 35234 /data/pulseaudio
+ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --volume /data/pulseaudio:/home/pulseaudio/socket-directory:rw \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --volume /dev:/dev \
+    --volume /var/run/dbus:/var/run/dbus \
+    --name=pulseaudio \
+    --privileged \
+    --net host \
+  experimentalplatform/pulseaudio:development'
