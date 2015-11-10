@@ -7,7 +7,7 @@ Requires=init-protonet.service
 [Service]
 KillMode=none
 Type=oneshot
-ExecStart=/bin/bash -c '/usr/bin/env docker rmi $(/usr/bin/env docker images -f dangling=true) || true'
+ExecStart=/bin/bash -c '/usr/bin/env docker rmi $(/usr/bin/env docker images -q -f dangling=true) || true'
 
 [Install]
 WantedBy=multi-user.target
