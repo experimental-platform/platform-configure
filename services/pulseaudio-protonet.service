@@ -22,7 +22,7 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm 
     --name=pulseaudio \
     --privileged \
     --net host \
-  experimentalplatform/pulseaudio:development'
+  experimentalplatform/pulseaudio:{{tag}}'
 
 [Install]
 WantedBy=multi-user.target
