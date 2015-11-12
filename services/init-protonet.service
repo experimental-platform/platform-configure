@@ -11,6 +11,7 @@ KillMode=none
 RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/dokku
 ExecStartPre=/bin/mkdir -p /data/frontend
+ExecStartPre=/bin/mkdir -p /data/pulseaudio
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
 ExecStartPre=-/bin/bash -c '[[ -d /etc/protonet/hostname ]] && rm -rf /etc/protonet/hostname'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/hostname ]] && echo "paleale" > /etc/protonet/hostname'
