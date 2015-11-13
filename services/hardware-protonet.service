@@ -1,0 +1,21 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run 'hardware monitor' service
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=hardware \
+    --volume=/dev:/dev \
+    --privileged=true \
+  experimentalplatform/hardware:{{tag}}
+
+[Install]
+WantedBy=multi-user.target
