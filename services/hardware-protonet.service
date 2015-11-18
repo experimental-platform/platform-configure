@@ -15,6 +15,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hardware \
     --volume=/dev:/dev \
     --privileged=true \
+    --net=host \
   experimentalplatform/hardware:{{tag}}
 
 [Install]
