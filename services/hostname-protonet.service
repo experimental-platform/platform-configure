@@ -1,5 +1,7 @@
 # ExperimentalPlatform
 [Unit]
+After=init-protonet.service
+Requires=init-protonet.service
 Description=Update system hostname whenever it changes.
 ConditionFileNotEmpty=/etc/protonet/hostname
 
