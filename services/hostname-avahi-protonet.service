@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=AVAHI Service -- hostname resolution via mDNS
-After=network-online.target
-Requires=network-online.target
+After=network-online.target hostname-protonet.service
+Requires=network-online.target hostname-protonet.service
 
 [Service]
 TimeoutStartSec=0
