@@ -13,4 +13,3 @@ ExecStart=/usr/bin/env docker exec dokku bash -c 'dokku apps | tail -n +2 | xarg
 
 KillMode=none
 Type=oneshot
-
