@@ -9,6 +9,3 @@ ConditionFileNotEmpty=/etc/protonet/hostname
 ExecStart=/usr/bin/env systemctl restart hostname-avahi-protonet.service
 KillMode=none
 Type=oneshot
-
-[Install]
-WantedBy=multi-user.target
