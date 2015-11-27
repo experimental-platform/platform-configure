@@ -17,8 +17,8 @@ ExecStartPre=/usr/bin/chown 35234 /data/pulseaudio
 ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume /data/pulseaudio:/home/pulseaudio/socket-directory:rw \
     --volume /etc/localtime:/etc/localtime:ro \
-    --volume /dev:/dev \
-    --volume /var/run/dbus:/var/run/dbus \
+    --volume /dev:/dev:rw \
+    --volume /var/run/dbus:/var/run/dbus:rw \
     --volume /var/run/udev:/var/run/udev:ro \
     --name=pulseaudio \
     --privileged \
