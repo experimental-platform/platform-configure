@@ -15,6 +15,7 @@ Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=rabbitmq \
+    --volume=/data/rabbitmq:/var/lib/rabbitmq \
   rabbitmq@3.5-management
 
 [Install]
