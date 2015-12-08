@@ -10,6 +10,7 @@ Type=oneshot
 KillMode=none
 RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/dokku
+ExecStartPre=/bin/mkdir -p /data/elasticsearch
 ExecStartPre=/bin/mkdir -p /data/frontend
 ExecStartPre=/bin/mkdir -p /data/hardware
 ExecStartPre=/bin/mkdir -p /data/mysql
