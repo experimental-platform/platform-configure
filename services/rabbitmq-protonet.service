@@ -1,0 +1,21 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run 'RabbitMQ' service
+ConditionPathExists=/etc/protonet/rabbitmq/enabled
+ConditionPathExists=!/etc/protonet/rabbitmq/disabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=rabbitmq \
+  rabbitmq@3.5-management
+
+[Install]
+WantedBy=multi-user.target
