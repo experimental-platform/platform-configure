@@ -15,6 +15,7 @@ ExecStartPre=/bin/mkdir -p /data/frontend
 ExecStartPre=/bin/mkdir -p /data/hardware
 ExecStartPre=/bin/mkdir -p /data/mysql
 ExecStartPre=/bin/mkdir -p /data/pulseaudio
+ExecStartPre=/bin/mkdir -p /data/rabbitmq
 ExecStartPre=/bin/mkdir -p /data/redis
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
 ExecStartPre=-/bin/bash -c '[[ -d /etc/protonet/hostname ]] && rm -rf /etc/protonet/hostname'
