@@ -4,6 +4,7 @@ Description=Restart Service hostname-smb-protonet
 After=network-online.target
 Requires=network-online.target
 ConditionFileNotEmpty=/etc/protonet/hostname
+ConditionPathExists=!/etc/protonet/soul/enabled
 
 [Service]
 ExecStart=/usr/bin/env systemctl restart hostname-smb-protonet.service

@@ -1,7 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'RabbitMQ' service
-ConditionPathExists=/etc/protonet/rabbitmq/enabled
+ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=!/etc/protonet/rabbitmq/disabled
 After=init-protonet.service
 Requires=init-protonet.service

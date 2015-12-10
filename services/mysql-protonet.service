@@ -1,7 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'mysql' service
-ConditionPathExists=/etc/protonet/mysql/enabled
+ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=!/etc/protonet/mysql/disabled
 After=init-protonet.service
 Requires=init-protonet.service
