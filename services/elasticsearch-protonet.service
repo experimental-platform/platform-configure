@@ -1,7 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'elasticsearch' service
-ConditionPathExists=/etc/protonet/elasticsearch/enabled
+ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=!/etc/protonet/elasticsearch/disabled
 After=init-protonet.service
 Requires=init-protonet.service

@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=NMBD Service announces the hostname to windows networks
+ConditionPathExists=!/etc/protonet/soul/enabled
 After=network-online.target
 Requires=network-online.target
 

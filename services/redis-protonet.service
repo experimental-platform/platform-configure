@@ -1,7 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'redis' service
-ConditionPathExists=/etc/protonet/redis/enabled
+ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=!/etc/protonet/redis/disabled
 After=init-protonet.service
 Requires=init-protonet.service
