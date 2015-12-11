@@ -2,8 +2,8 @@
 [Unit]
 Description=Initial Protonet Soul Configuration
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.service elasticsearch-protonet.service mysql-protonet.service rabbitmq-protonet.service redis-protonet.service
-Requires=init-protonet.service elasticsearch-protonet.service mysql-protonet.service rabbitmq-protonet.service redis-protonet.service
+After=init-protonet.service elasticsearch.service mysql.service rabbitmq.service redis.service
+Requires=init-protonet.service elasticsearch.service mysql.service rabbitmq.service redis.service
 
 [Service]
 TimeoutStartSec=0
