@@ -1,0 +1,25 @@
+# ExperimentalPlatform
+[Unit]
+Description=Initial Protonet Soul Configuration
+ConditionPathExists=/etc/protonet/soul/enabled
+After=init-protonet.service elasticsearch-protonet.service mysql-protonet.service rabbitmq-protonet.service redis-protonet.service
+Requires=init-protonet.service elasticsearch-protonet.service mysql-protonet.service rabbitmq-protonet.service redis-protonet.service
+
+[Service]
+TimeoutStartSec=0
+Type=oneshot
+KillMode=none
+RemainAfterExit=yes
+ExecStartPre=/bin/mkdir -p /data/soul
+ExecStartPre=docker run -i -t --rm \
+               --link mysql \
+               --link rabbitmq \
+               --link redis \
+               --link elasticsearch \
+               --volume /data/soul:/home/protonet/dashboard/shared/files/ \
+               experimentalplatform/german-shepherd:development \
+               bundle exec rake docker:prepare
+ExecStart=/usr/bin/env true
+
+[Install]
+WantedBy=multi-user.target
