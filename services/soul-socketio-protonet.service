@@ -12,7 +12,7 @@ RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --name soul-socket-io \
+    --name soul-socketio \
     --link rabbitmq \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start socketio
