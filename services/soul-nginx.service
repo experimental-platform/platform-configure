@@ -2,8 +2,8 @@
 [Unit]
 Description=Initial Protonet Soul Configuration
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.service soul-prepare-protonet.service
-Requires=init-protonet.service soul-prepare-protonet.service
+After=init-protonet.service soul-prepare.service soul-web.service soul-socketio.service
+Requires=init-protonet.service soul-prepare.service soul-web.service soul-socketio.service
 
 TimeoutStartSec=0
 TimeoutStopSec=15
@@ -12,10 +12,12 @@ RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --name soul-webdav \
+    --name soul-nginx \
     --link soul-web \
-    experimentalplatform/german-shepherd:development \
-    bundle exec foreman start webdav
+    --link soul-socketio \
+    -p 5000:80 \
+    experimentalplatform/soul-nginx:development \
+    nginx
 
 [Install]
 WantedBy=multi-user.target
