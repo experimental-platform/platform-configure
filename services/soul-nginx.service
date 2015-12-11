@@ -2,8 +2,8 @@
 [Unit]
 Description=Initial Protonet Soul Configuration
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.service soul-prepare-protonet.service
-Requires=init-protonet.service soul-prepare-protonet.service
+After=init-protonet.service soul-prepare.service
+Requires=init-protonet.service soul-prepare.service
 
 TimeoutStartSec=0
 TimeoutStopSec=15
