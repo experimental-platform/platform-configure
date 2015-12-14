@@ -5,6 +5,7 @@ ConditionPathExists=/etc/protonet/soul/enabled
 After=init-protonet.service soul-prepare.service
 Requires=init-protonet.service soul-prepare.service
 
+[Service]
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
