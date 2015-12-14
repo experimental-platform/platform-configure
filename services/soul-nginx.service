@@ -2,8 +2,8 @@
 [Unit]
 Description=Initial Protonet Soul Configuration
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.service soul-prepare.service soul-web.service soul-socketio.service
-Requires=init-protonet.service soul-prepare.service soul-web.service soul-socketio.service
+After=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
+Requires=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
 
 [Service]
 TimeoutStartSec=0
