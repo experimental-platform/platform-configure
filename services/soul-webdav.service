@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Initial Protonet Soul Configuration
+Description=Protonet Soul WebDAV Service
 ConditionPathExists=/etc/protonet/soul/enabled
 After=soul-prepare.service soul-web.service
 Requires=soul-prepare.service soul-web.service
