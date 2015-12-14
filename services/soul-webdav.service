@@ -14,6 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name soul-webdav \
     --link soul-web \
+    --volume /data/soul:/home/protonet/dashboard/shared/files/ \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start webdav
 

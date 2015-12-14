@@ -15,6 +15,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name soul-nginx \
     --link soul-web \
     --link soul-socketio \
+    --link soul-webdav \
     -p 5000:80 \
     experimentalplatform/soul-nginx:development \
     nginx
