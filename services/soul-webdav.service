@@ -1,0 +1,24 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul WebDAV Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service soul-web.service
+Requires=soul-prepare.service soul-web.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name soul-webdav \
+    --link soul-web \
+    --link rabbitmq \
+    --volume /data/soul:/home/protonet/dashboard/shared/files/ \
+    experimentalplatform/german-shepherd:development \
+    bundle exec foreman start webdav
+
+[Install]
+WantedBy=multi-user.target

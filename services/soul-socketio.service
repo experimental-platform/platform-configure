@@ -1,0 +1,22 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul SocketIO Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service
+Requires=soul-prepare.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name soul-socketio \
+    --link rabbitmq \
+    experimentalplatform/german-shepherd:development \
+    bundle exec foreman start socketio
+
+[Install]
+WantedBy=multi-user.target
