@@ -19,7 +19,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --link redis \
     --link elasticsearch \
     --link soul-web \
-    --volume /data/soul:/home/protonet/dashboard/shared/files/ \
+    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
+    --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start worker
 

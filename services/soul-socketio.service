@@ -15,6 +15,9 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name soul-socketio \
     --link rabbitmq \
+    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
+    --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start socketio
 
