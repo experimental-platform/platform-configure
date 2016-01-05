@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service ptw-protonet
+After=network-online.target
+Requires=network-online.target
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart ptw-protonet.service
+KillMode=none
+Type=oneshot
