@@ -17,7 +17,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --link mysql \
     --link rabbitmq \
     --link redis \
-    --link=skvs:skvs \
+    --link=skvs \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start push_service
 
