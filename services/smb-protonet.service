@@ -2,8 +2,8 @@
 [Unit]
 Description=Samba file server
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.target
-Requires=init-protonet.target
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
 TimeoutStartSec=0
