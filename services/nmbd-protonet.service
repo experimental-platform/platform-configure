@@ -13,7 +13,7 @@ RestartSec=60s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --name=smb \
+    --name=nmbd \
     --net=host \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/samba/etc:/etc/samba/ \
