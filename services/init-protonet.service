@@ -17,6 +17,7 @@ ExecStartPre=/bin/mkdir -p /data/mysql
 ExecStartPre=/bin/mkdir -p /data/pulseaudio
 ExecStartPre=/bin/mkdir -p /data/rabbitmq
 ExecStartPre=/bin/mkdir -p /data/redis
+ExecStartPre=/bin/bash -c 'mkdir -p /data/samba/{extrausers,etc}'
 ExecStartPre=/bin/mkdir -p /data/soul/files
 ExecStartPre=/bin/mkdir -p /data/soul/public
 ExecStartPre=/bin/mkdir -p /data/soul/uploads

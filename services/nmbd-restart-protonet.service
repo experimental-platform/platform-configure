@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service nmbd-protonet
+After=init-protonet.service
+Requires=init-protonet.service
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart nmbd-protonet.service
+KillMode=none
+Type=oneshot
