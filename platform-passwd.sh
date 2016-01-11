@@ -17,7 +17,7 @@ status=${PIPESTATUS[0]}
 
 if [[ ${status} == 0 ]]; then
     rm -f ${ERROR_FILE} || true
-    touch ${SUCCESS_FILE}
+    echo 'Well done!' > ${SUCCESS_FILE}
     logger -p INFO -s "Successfully changed password for user ${SYSTEM_USER}."
     exit 0
 else
