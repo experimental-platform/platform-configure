@@ -22,8 +22,10 @@ if [[ ${status} == 0 ]]; then
     exit 0
 else
     logger -s -p ERROR "An ERROR occurred setting the password for user ${SYSTEM_USER}."
-    if [[ -f ${ERROR_FILE} ]]; then
+    if [[ -s ${ERROR_FILE} ]]; then
         logger -p ERROR -s -e -f ${ERROR_FILE}
+    else
+        echo 'Some error occurred.' > ${ERROR_FILE}
     fi
     rm -f ${SUCCESS_FILE} || true
     exit 23
