@@ -16,6 +16,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=skvs \
     --volume=/etc/protonet:/data \
     --link=sproxy:hook \
+    -p 127.0.0.1:9200:82 \
   experimentalplatform/skvs:{{tag}}
 
 [Install]
