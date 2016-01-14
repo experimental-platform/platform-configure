@@ -14,8 +14,6 @@ RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --volume=/etc/protonet/ptw/:/config/ \
-    --volume=/etc/protonet/hostname:/config/hostname \
     --link=skvs \
     --name=ptw \
   experimentalplatform/ptw:{{tag}}
