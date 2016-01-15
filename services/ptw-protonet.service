@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'ptw' service
-After=central-gateway-protonet.service
-Requires=central-gateway-protonet.service
+After=skvs-protonet.service
+Requires=skvs-protonet.service
 ConditionPathExists=/etc/protonet/ptw/enabled
 
 [Service]
