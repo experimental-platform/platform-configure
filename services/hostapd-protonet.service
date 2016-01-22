@@ -1,0 +1,23 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run and configure the WIFI HOSTSPOT 'hostapd' service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStartPre=/bin/bash -c '/usr/sbin/lspci | egrep "Wireless Network|Atheros" || (CODE=$?; echo "ERROR: WIFI device not found"; exit $CODE)'
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=hostapd \
+    --net=host \
+    --volume=/etc/protonet/system/wifi:/wifi \
+    experimentalplatform/hostapd:{{tag}}
+
+[Install]
+WantedBy=multi-user.target
