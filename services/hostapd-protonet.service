@@ -16,6 +16,7 @@ ExecStartPre=/bin/bash -c '/usr/sbin/lspci | egrep "Wireless Network|Atheros" ||
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostapd \
     --net=host \
+    --volume=/dev:/dev \
     --volume=/etc/protonet/system/wifi:/wifi \
     experimentalplatform/hostapd:{{tag}}
 
