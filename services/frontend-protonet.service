@@ -15,9 +15,9 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=frontend \
     --publish=127.0.0.1:9002:3000 \
-    --link=skvs:skvs \
-    --link=app-manager:app-manager \
-    --link=monitoring:monitoring \
+    --link=skvs \
+    --link=app-manager \
+    --link=monitoring \
     --volume=/var/log/journal:/var/log/journal:ro \
     --volume=/etc/machine-id:/etc/machine-id:ro \
     --volume=/data/frontend:/data \

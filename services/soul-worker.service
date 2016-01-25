@@ -1,0 +1,30 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul Worker Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service soul-web.service
+Requires=soul-prepare.service soul-web.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name soul-worker \
+    --link mysql \
+    --link rabbitmq \
+    --link redis \
+    --link elasticsearch \
+    --link soul-web \
+    --link=skvs \
+    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
+    --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
+    experimentalplatform/german-shepherd:development \
+    bundle exec foreman start worker
+
+[Install]
+WantedBy=multi-user.target

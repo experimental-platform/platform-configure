@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Publish To Web Restarter
+
+[Path]
+PathModified=/etc/protonet/hostname
+
+[Install]
+WantedBy=multi-user.target

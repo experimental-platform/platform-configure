@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'ptw' service
-After=central-gateway-protonet.service
-Requires=central-gateway-protonet.service
+After=skvs-protonet.service
+Requires=skvs-protonet.service
 ConditionPathExists=/etc/protonet/ptw/enabled
 
 [Service]
@@ -13,8 +13,7 @@ RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --volume=/etc/protonet/ptw/:/config/ \
-    --volume=/etc/protonet/hostname:/config/hostname \
+    --link=skvs \
     --name=ptw \
   experimentalplatform/ptw:{{tag}}
 

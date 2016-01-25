@@ -1,0 +1,26 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul nginx Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
+Requires=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name soul-nginx \
+    --link soul-web \
+    --link soul-socketio \
+    --link soul-webdav \
+    --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
+    --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
+    -p 80:80 \
+    experimentalplatform/soul-nginx:development
+
+[Install]
+WantedBy=multi-user.target
