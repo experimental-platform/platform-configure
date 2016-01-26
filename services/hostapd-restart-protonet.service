@@ -1,0 +1,10 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service hostapd-protonet
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart hostapd-protonet.service
+KillMode=none
+Type=oneshot
