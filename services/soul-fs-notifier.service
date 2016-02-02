@@ -1,0 +1,26 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul FS Notifier Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service
+Requires=soul-prepare.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+  --name soul-fs-notifier \
+  --link mysql \
+  --link rabbitmq \
+  --link redis \
+  --link skvs \
+  --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+  experimentalplatform/german-shepherd:development \
+  bundle exec foreman start fs_notifier
+
+[Install]
+WantedBy=multi-user.target
