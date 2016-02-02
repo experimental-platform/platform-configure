@@ -3,6 +3,7 @@
 Description=Run 'central gateway' service
 After=init-protonet.service
 Requires=init-protonet.service
+ConditionPathExists=!/etc/protonet/soul/enabled
 
 [Service]
 TimeoutStartSec=0

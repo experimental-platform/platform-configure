@@ -1,0 +1,24 @@
+# ExperimentalPlatform
+[Unit]
+Description=NMBD file server
+ConditionPathExists=/etc/protonet/soul/enabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=nmbd \
+    --net=host \
+    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    --volume /data/samba/etc:/etc/samba/ \
+    --volume /data/samba/extrausers:/var/lib/extrausers/ \
+    experimentalplatform/smb:{{tag}} /usr/sbin/nmbd -F -S
+
+[Install]
+WantedBy=multi-user.target

@@ -1,6 +1,8 @@
 # ExperimentalPlatform
 [Unit]
-Description=AVAHI Service -- hostname resolution via mDNS
+Description=Run 'elasticsearch' service
+ConditionPathExists=/etc/protonet/soul/enabled
+ConditionPathExists=!/etc/protonet/elasticsearch/disabled
 After=init-protonet.service
 Requires=init-protonet.service
 
@@ -8,13 +10,13 @@ Requires=init-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
+RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
-    --name=hostname-avahi \
-    --net=host \
-    experimentalplatform/hostname-avahi:{{tag}} /bin/bash -c 'sleep 1 && avahi-daemon'
+    --volume=/data/elasticsearch:/usr/share/elasticsearch/data \
+    --name=elasticsearch \
+  elasticsearch@1.7
 
 [Install]
 WantedBy=multi-user.target

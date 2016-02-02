@@ -1,0 +1,24 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run 'mysql' service
+ConditionPathExists=/etc/protonet/soul/enabled
+ConditionPathExists=!/etc/protonet/mysql/disabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --volume=/data/mysql:/var/lib/mysql \
+    --name=mysql \
+    -e "MYSQL_ROOT_PASSWORD=s3kr3t" \
+    -e "MYSQL_DATABASE=german-shepherd" \
+  mysql
+
+[Install]
+WantedBy=multi-user.target

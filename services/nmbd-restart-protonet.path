@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet NMBD
+
+[Path]
+PathModified=/etc/protonet/hostname
+
+[Install]
+WantedBy=multi-user.target
