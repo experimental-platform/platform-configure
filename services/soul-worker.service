@@ -19,7 +19,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --link redis \
     --link elasticsearch \
     --link soul-web \
-    --link=skvs \
+    --link skvs \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
