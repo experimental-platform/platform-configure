@@ -19,6 +19,7 @@ ExecStartPre=/bin/mkdir -p /data/rabbitmq
 ExecStartPre=/bin/mkdir -p /data/redis
 ExecStartPre=/bin/bash -c 'mkdir -p /data/samba/{extrausers,etc}'
 ExecStartPre=/bin/mkdir -p /data/soul/files
+ExecStartPre=/bin/mkdir -p /data/soul/trash
 ExecStartPre=/bin/mkdir -p /data/soul/public
 ExecStartPre=/bin/mkdir -p /data/soul/uploads
 ExecStartPre=/bin/chown 1000:1000 /data/soul/files
