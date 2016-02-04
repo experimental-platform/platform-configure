@@ -18,8 +18,10 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
       --link rabbitmq \
       --link redis \
       --link elasticsearch \
-      --link=skvs \
+      --link skvs \
       --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+      --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
+      --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
       --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
       --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
       experimentalplatform/german-shepherd:development \
