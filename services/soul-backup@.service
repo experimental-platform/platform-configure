@@ -1,0 +1,20 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul backup Service
+
+[Service]
+Type=oneshot
+KillMode=none
+ExecStart=-/usr/bin/env docker run --rm -i \
+    --link mysql \
+    --cap-add=SYS_ADMIN \
+    --volume /dev:/dev:rw \
+    --volume /data/soul:/protonet/data:rw \
+    --volume /protonet/firmware \
+    --volume /var/run/dbus:/var/run/dbus:rw \
+    --volume /usr/bin/systemctl:/usr/bin/systemctl:ro \
+    --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
+    --volume /var/run/systemd:/var/run/systemd:ro \
+    experimentalplatform/soul-backup:latest protonet-backup stdio
+StandardInput=socket
+
