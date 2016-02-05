@@ -1,0 +1,12 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul backup Service
+ConditionPathExists=/etc/protonet/soul/enabled
+
+[Socket]
+ListenStream=/data/soul-backup/socket
+Accept=yes
+
+[Install]
+WantedBy=sockets.target
+

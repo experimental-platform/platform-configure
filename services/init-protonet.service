@@ -23,6 +23,7 @@ ExecStartPre=/bin/mkdir -p /data/soul/trash
 ExecStartPre=/bin/mkdir -p /data/soul/log
 ExecStartPre=/bin/mkdir -p /data/soul/public
 ExecStartPre=/bin/mkdir -p /data/soul/uploads
+ExecStartPre=/bin/mkdir -p /data/soul-backup
 ExecStartPre=/bin/chown 1000:1000 /data/soul/files
 ExecStartPre=/bin/chown 1000:1000 /data/soul/trash
 ExecStartPre=/bin/chown 1000:1000 /data/soul/log
