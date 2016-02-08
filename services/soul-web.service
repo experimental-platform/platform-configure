@@ -20,6 +20,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
       --link elasticsearch \
       --link skvs \
       --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+      --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
       --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
       --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
       --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
