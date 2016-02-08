@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet SMB: Trigger shares reconfiguration
+
+[Path]
+PathModified=/etc/samba/
+
+[Install]
+WantedBy=multi-user.target

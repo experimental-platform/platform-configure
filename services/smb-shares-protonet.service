@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet SMB: Reconfigure Shares
+After=init-protonet.service
+Requires=init-protonet.service
+ConditionFileNotEmpty=/etc/protonet/hostname
+
+[Service]
+ExecStart=/usr/bin/env docker exec smb /bin/bash -c 'net conf drop && net conf import /etc/samba/user_volumes.conf'
+KillMode=none
+Type=oneshot
