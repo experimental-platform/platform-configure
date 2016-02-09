@@ -26,6 +26,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
   --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
   --volume /data/samba/etc:/etc/samba/ \
   --volume /data/samba/extrausers:/var/lib/extrausers/ \
+  --volume /data/hardware/hardware.sock:/tmp/hardware.sock \
   experimentalplatform/german-shepherd:development \
   bundle exec foreman start dispatcher
 
