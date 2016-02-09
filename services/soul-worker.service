@@ -21,12 +21,14 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --link soul-web \
     --link skvs \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
     --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
     --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
+    --volume /data/hardware/hardware.sock:/tmp/hardware.sock \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start worker
 
