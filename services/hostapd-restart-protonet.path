@@ -1,0 +1,14 @@
+# ExperimentalPlatform
+[Unit]
+Description=Experimental Platform WIFI Path Trigger
+
+[Path]
+PathModified=/etc/protonet/system/wifi/enabled
+PathModified=/etc/protonet/system/wifi/password
+PathModified=/etc/protonet/system/wifi/channel
+PathModified=/etc/protonet/system/wifi/guest/enabled
+PathModified=/etc/protonet/system/wifi/guest/password
+PathModified=/etc/protonet/hostname
+
+[Install]
+WantedBy=multi-user.target

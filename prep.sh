@@ -14,6 +14,9 @@ cp /services/* /data/systemd/system/
 mkdir -p /data/systemd/system/docker.service.d
 cp /config/50-log-warn.conf /data/systemd/system/docker.service.d/50-log-warn.conf
 
+# Network configuration
+cp /config/wlp2s0.network  /data/systemd/network
+
 mkdir -p /data/udev/rules.d
 cp /config/sound-permissions.rules /data/udev/rules.d/sound-permissions.rules
 cp /config/video-permissions.rules /data/udev/rules.d/video-permissions.rules
