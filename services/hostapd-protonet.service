@@ -15,7 +15,7 @@ RestartSec=10s
 Type=notify
 NotifyAccess=all
 ExecStartPre=/bin/bash -c '/usr/sbin/lspci | egrep "Wireless Network|Atheros" || (CODE=$?; echo "ERROR: WIFI device not found"; exit $CODE)'
-ExecStartPre=/bin/bash -c '/usr/bin/ip link show | egrep ""^[0-9: \t]+wl[0-9a-z]+" || (CODE=$?; echo "ERROR: WIFI interface not found"; exit $CODE)'
+ExecStartPre=/bin/bash -c '/usr/bin/ip link show | egrep "^[0-9: \t]+wl[0-9a-z]+" || (CODE=$?; echo "ERROR: WIFI interface not found"; exit $CODE)'
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostapd \
     --net=host \
