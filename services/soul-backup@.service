@@ -8,6 +8,9 @@ KillMode=none
 ExecStart=-/usr/bin/env docker run --rm -i \
     --link mysql \
     --cap-add=SYS_ADMIN \
+    -e MYSQL_USER=root \
+    -e MYSQL_PASS=s3kr3t \
+    -e MYSQL_HOST=mysql \
     --volume /dev:/dev:rw \
     --volume /data/soul:/protonet/data:rw \
     --volume /protonet/firmware \

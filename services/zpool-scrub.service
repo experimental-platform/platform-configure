@@ -1,0 +1,9 @@
+[Unit]
+Description=Scrub zpools
+After=zfs.service
+Requires=zfs.service
+
+[Service]
+KillMode=none
+Type=oneshot
+ExecStart=/usr/bin/env bash -c 'zpool list -H | cut -f1 | xargs --no-run-if-empty --max-args=1 zpool scrub'
