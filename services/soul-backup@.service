@@ -5,6 +5,7 @@ Description=Protonet Soul backup Service
 [Service]
 Type=oneshot
 KillMode=none
+ExecStartPre=-/usr/bin/env bash -c '/usr/sbin/lshw &>/dev/null'
 ExecStart=-/usr/bin/env docker run --rm -i \
     --link mysql \
     --cap-add=SYS_ADMIN \
