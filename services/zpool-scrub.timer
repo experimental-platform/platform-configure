@@ -1,0 +1,12 @@
+[Unit]
+Description=Scrub zpools
+After=zfs.service
+Requires=zfs.service
+
+[Timer]
+OnStartupSec=30min
+OnUnitActiveSec=1M
+Unit=zpool-scrub.service
+
+[Install]
+WantedBy=multi-user.target
