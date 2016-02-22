@@ -21,6 +21,7 @@ mkdir -p /data/udev/rules.d
 cp /config/sound-permissions.rules /data/udev/rules.d/sound-permissions.rules
 cp /config/video-permissions.rules /data/udev/rules.d/video-permissions.rules
 cp /config/tty-permissions.rules   /data/udev/rules.d/tty-permissions.rules
+cp /config/80-protonet.rules       /data/udev/rules.d/80-protonet.rules
 
 mkdir -p /data/systemd/system/scripts/
 cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
