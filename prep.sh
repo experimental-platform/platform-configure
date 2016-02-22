@@ -32,6 +32,8 @@ rm -f /host-bin/systemd-docker || true
 cp /systemd-docker /host-bin/
 chmod +x /host-bin/systemd-docker
 
+cp /button /host-bin/
+
 if [ -d /host-bin/ ]; then
   # this needs to be the full path on host, not in container
   ln -sf /etc/systemd/system/scripts/platform-configure.sh /host-bin/platform-configure
