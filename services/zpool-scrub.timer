@@ -5,7 +5,7 @@ Requires=zfs.service
 
 [Timer]
 OnStartupSec=30min
-OnUnitActiveSec=1M
+OnUnitActiveSec=1month
 Unit=zpool-scrub.service
 
 [Install]
