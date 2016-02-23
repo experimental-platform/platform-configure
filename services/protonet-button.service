@@ -1,11 +1,16 @@
 # Soul
 [Unit]
 Description=Protonet Button switcher
-After=init-protonet.service
-Requires=init-protonet.service
+After=systemd-udev-settle.service
+Before=network.target local-fs.target
 ConditionFileNotEmpty=/etc/protonet/system/button
 
 [Service]
+ExecStartPre=/usr/bin/mkdir -p /etc/protonet/system
+ExecStartPre=/usr/bin/env bash -c 'if [ ! -f /etc/protonet/system/button ]; then echo busy > /etc/protonet/system/button; fi'
 ExecStart=/bin/bash -c '/opt/bin/button $(cat /etc/protonet/system/button)'
 KillMode=none
 Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
