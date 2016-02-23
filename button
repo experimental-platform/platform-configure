@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -eu
+
+declare -A animations
+animations[busy]="b 1000"
+animations[warning]="w 400"
+animations[error]="e 400"
+animations[noise]="n 1000"
+animations[shimmer]="s 1000"
+animations[rainbow]="r 1000"
+animations[power]="p 700"
+animations[hdd]="h 700"
+animations[startup]="u 700"
+animations[shutdown]="d 700"
+
+
+usage() {
+  joinedkeys=$(echo ${!animations[@]} | sed 's/ /|/g')
+  echo "$0 [$joinedkeys|help]"
+}
+
+# must have a single parameter
+if [ $# != 1 ]; then
+  usage
+  exit 1
+fi
+
+# user wants to print help
+if [ $1 == "help" ]; then
+  usage
+  exit 0
+fi
+
+# animations array's key list must contain the parameter
+if ! [[ " ${!animations[@]} " =~ " $1 " ]]; then
+  usage
+  exit 1
+fi
+
+devices=($(ls -d /dev/protobutton* 2>/dev/null || true))
+
+if [ -z ${devices[0]+x} ]; then
+  echo "no button found"
+  exit 1
+fi
+
+button=${devices[0]}
+
+stty -F $button -brkint -icrnl -imaxbel -opost -onlcr -isig -icanon -iexten -echo -echoe -echok -echoctl -echoke 9600
+echo "${animations[$1]}" > "$button"

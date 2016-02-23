@@ -1,0 +1,9 @@
+# Protonet Soul
+[Unit]
+Description=Protonet Button switcher
+
+[Path]
+PathModified=/etc/protonet/system/button
+
+[Install]
+WantedBy=multi-user.target

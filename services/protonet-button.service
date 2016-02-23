@@ -1,0 +1,11 @@
+# Soul
+[Unit]
+Description=Protonet Button switcher
+After=init-protonet.service
+Requires=init-protonet.service
+ConditionFileNotEmpty=/etc/protonet/system/button
+
+[Service]
+ExecStart=/bin/bash -c '/opt/bin/button $(cat /etc/protonet/system/button)'
+KillMode=none
+Type=oneshot
