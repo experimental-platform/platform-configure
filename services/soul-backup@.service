@@ -14,7 +14,7 @@ ExecStart=-/usr/bin/env docker run --rm -i \
     -e MYSQL_HOST=mysql \
     --volume /dev:/dev:rw \
     --volume /data/soul:/protonet/data:rw \
-    --volume /protonet/firmware \
+    --volume /etc/protonet:/protonet/config:rw \
     --volume /var/run/dbus:/var/run/dbus:rw \
     --volume /usr/bin/systemctl:/usr/bin/systemctl:ro \
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
