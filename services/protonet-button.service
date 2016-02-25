@@ -2,7 +2,7 @@
 [Unit]
 Description=Protonet Button switcher
 After=systemd-udev-settle.service
-Before=network.target local-fs.target
+Before=network.target
 ConditionFileNotEmpty=/etc/protonet/system/button
 
 [Service]
