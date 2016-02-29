@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Experimental Platform SSH Key path trigger
+
+[Path]
+PathModified=/etc/protonet/proxytunnel/keys
+
+[Install]
+WantedBy=multi-user.target
