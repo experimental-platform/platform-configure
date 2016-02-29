@@ -1,5 +1,5 @@
 [Match]
-Name=wlp2s0
+Name=wl_private
 
 [Network]
 Address=10.42.0.1/16
