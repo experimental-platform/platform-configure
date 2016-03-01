@@ -16,8 +16,7 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name soul-protosync-api \
     --link skvs \
     --volume /data/soul/protosync:/etc/syncthing \
-    experimentalplatform/soul-protosync:development \
-    start-api
+    experimentalplatform/soul-protosync:development start-api
 
 [Install]
 WantedBy=multi-user.target
