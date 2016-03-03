@@ -14,7 +14,7 @@ NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostname-avahi \
     --net=host \
-    experimentalplatform/hostname-avahi:{{tag}} /bin/bash -c 'sleep 1 && avahi-daemon'
+    experimentalplatform/hostname-avahi:{{tag}}
 
 [Install]
 WantedBy=multi-user.target
