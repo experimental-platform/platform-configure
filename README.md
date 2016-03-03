@@ -9,12 +9,12 @@ This is a component of the experimental platform. To read more about it please g
 
 ## Branch: Development
 
-[![Circle CI](https://circleci.com/gh/experimental-platform/platform-configure.svg?style=svg&circle-token=746e396ff88f65b2a66948ce070ac80ab91697d8)](https://circleci.com/gh/experimental-platform/platform-configure)
+[![Build Status](https://travis-ci.org/experimental-platform/platform-configure.svg?branch=development)](https://travis-ci.org/experimental-platform/platform-configure)
 
 All development branches stem from and (re-)integrate here.
 
 ## Branch: Master
 
-[![Circle CI](https://circleci.com/gh/experimental-platform/platform-configure/tree/master.svg?style=svg&circle-token=746e396ff88f65b2a66948ce070ac80ab91697d8)](https://circleci.com/gh/experimental-platform/platform-configure/tree/master)
+[![Build Status](https://travis-ci.org/experimental-platform/platform-configure.svg?branch=master)](https://travis-ci.org/experimental-platform/platform-configure)
 
 This is the base for &alpha;-channel releases.
