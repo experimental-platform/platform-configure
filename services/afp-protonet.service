@@ -1,0 +1,23 @@
+# ExperimentalPlatform
+[Unit]
+Description=Time Machine AFPD service
+After=init-protonet.service hostname-avahi-protonet.service
+Requires=init-protonet.service hostname-avahi-protonet.service
+ConditionPathExists=/etc/protonet/soul/enabled
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=60s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=afpd \
+    -p 548:548 \
+    --volume /data/samba/extrausers/:/var/lib/extrausers/:ro \
+    --volume /data/soul/files/:/home/protonet/dashboard/shared/files/:rw \
+    experimentalplatform/afpd:{{tag}}
+
+[Install]
+WantedBy=multi-user.target
