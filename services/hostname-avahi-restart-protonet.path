@@ -4,6 +4,8 @@ Description=Protonet hostname AVAHI
 
 [Path]
 PathModified=/etc/protonet/hostname
+PathModified=/etc/protonet/system/wifi/enabled
+PathModified=/etc/protonet/system/wifi/guest/enabled
 
 [Install]
 WantedBy=multi-user.target
