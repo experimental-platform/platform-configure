@@ -1,0 +1,24 @@
+# ExperimentalPlatform
+[Unit]
+Description=public dns and dhcp for WIFI HOTSPOT, 'dnsmasq' service
+ConditionPathExists=/etc/protonet/soul/enabled
+ConditionPathExists=/etc/protonet/system/wifi/guest/enabled
+After=hostapd-protonet.service
+Requires=hostapd-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=10s
+Type=notify
+NotifyAccess=all
+ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+    --name=dnsmasq-public \
+    --net=host \
+    --privileged=true \
+    experimentalplatform/dnsmasq:{{tag}} \
+    -C /etc/dnsmasq-public.conf -k -h --log-facility=-
+
+[Install]
+WantedBy=multi-user.target
