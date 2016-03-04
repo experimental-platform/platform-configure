@@ -1,0 +1,12 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service dnsmasq-private-protonet
+After=network-online.target
+Requires=network-online.target
+ConditionFileNotEmpty=/etc/protonet/hostname
+ConditionPathExists=!/etc/protonet/soul/enabled
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart dnsmasq-private-protonet.service
+KillMode=none
+Type=oneshot
