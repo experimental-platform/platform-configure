@@ -19,8 +19,12 @@ ExecStartPre=/bin/bash -c '/usr/bin/ip link show | egrep "^[0-9: \t]+wl[0-9a-z_\
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --name=hostapd \
     --net=host \
-    --privileged=true \
-    --volume=/dev:/dev \
+    --cap-add=SYS_ADMIN \
+    --volume /dev:/dev:rw \
+    --volume /var/run/dbus:/var/run/dbus:rw \
+    --volume /usr/bin/systemctl:/usr/bin/systemctl:ro \
+    --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
+    --volume /var/run/systemd:/var/run/systemd:ro \
     --volume=/etc/protonet/system/wifi:/etc/protonet/system/wifi \
     experimentalplatform/hostapd:{{tag}}
 
