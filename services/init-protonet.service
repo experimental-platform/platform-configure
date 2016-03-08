@@ -42,7 +42,7 @@ ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/guest/password ]] 
 ExecStartPre=-/bin/bash -c 'echo "busy" > /etc/protonet/system/button'
 ExecStartPre=-/bin/bash -c '[[ -d /etc/protonet/hostname ]] && rm -rf /etc/protonet/hostname'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/hostname ]] && echo "paleale" > /etc/protonet/hostname'
-ExecStartPre=-/bin/bash -c '/usr/sbin/useradd -c "Created by init-protonet.service" -m -s /bin/false -p "!" proxytunnel'
+ExecStartPre=-/bin/bash -c '/usr/sbin/useradd -c "Created by init-protonet.service" -m -s /bin/false -p "*" proxytunnel'
 ExecStart=/usr/bin/env true
 
 [Install]
