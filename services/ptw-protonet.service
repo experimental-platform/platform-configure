@@ -10,12 +10,14 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=0.1s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f ptw
+ExecStartPre=/usr/bin/docker run -d \
     --link skvs \
     --name=ptw \
-  experimentalplatform/ptw:{{tag}}
+  experimentalplatform/ptw:development
+ExecStart=/usr/bin/docker logs -f ptw
+ExecStop=/usr/bin/docker stop ptw
+ExecStopPost=/usr/bin/docker stop ptw
 
 [Install]
 WantedBy=multi-user.target
