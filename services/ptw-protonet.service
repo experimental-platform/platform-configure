@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f ptw
 ExecStartPre=/usr/bin/docker run -d \
     --link skvs \
     --name=ptw \
-  experimentalplatform/ptw:development
+  experimentalplatform/ptw:{{tag}}
 ExecStart=/usr/bin/docker logs -f ptw
 ExecStop=/usr/bin/docker stop ptw
 ExecStopPost=/usr/bin/docker stop ptw
