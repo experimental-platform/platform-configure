@@ -9,7 +9,7 @@ ConditionPathExists=/etc/protonet/ptw/enabled
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
+RestartSec=0.1s
 Type=notify
 NotifyAccess=all
 ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
