@@ -5,7 +5,7 @@ set -e
 : ${PASSWD_FILE:=/etc/protonet/system/ssh/password}
 : ${SUCCESS_FILE:=/etc/protonet/system/ssh/success}
 : ${ERROR_FILE:=/etc/protonet/system/ssh/error}
-: ${SYSTEM_USER:=core}
+: ${SYSTEM_USER:=platform}
 
 logger -p INFO -s "Setting password for user '${SYSTEM_USER}'."
 # remove all newlines
