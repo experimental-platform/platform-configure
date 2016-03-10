@@ -10,12 +10,14 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=60s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f central-gateway
+ExecStartPre=/usr/bin/docker run -d \
     --name=central-gateway \
     --net=host \
   experimentalplatform/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
+ExecStart=/usr/bin/docker logs -f central-gateway
+ExecStop=/usr/bin/docker stop central-gateway
+ExecStopPost=/usr/bin/docker stop central-gateway
 
 [Install]
 WantedBy=multi-user.target

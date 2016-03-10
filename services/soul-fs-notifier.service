@@ -10,9 +10,8 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f soul-fs-notifier
+ExecStartPre=/usr/bin/docker run -d \
   --name soul-fs-notifier \
   --link mysql \
   --link rabbitmq \
@@ -21,6 +20,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
   experimentalplatform/german-shepherd:development \
   bundle exec foreman start fs_notifier
+ExecStart=/usr/bin/docker logs -f soul-fs-notifier
+ExecStop=/usr/bin/docker stop soul-fs-notifier
+ExecStopPost=/usr/bin/docker stop soul-fs-notifier
 
 [Install]
 WantedBy=multi-user.target

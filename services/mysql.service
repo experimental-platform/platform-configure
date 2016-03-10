@@ -11,14 +11,16 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f mysql
+ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/mysql:/var/lib/mysql \
     --name=mysql \
     -e "MYSQL_ROOT_PASSWORD=s3kr3t" \
     -e "MYSQL_DATABASE=german-shepherd" \
   mysql
+ExecStart=/usr/bin/docker logs -f mysql
+ExecStop=/usr/bin/docker stop mysql
+ExecStopPost=/usr/bin/docker stop mysql
 
 [Install]
 WantedBy=multi-user.target

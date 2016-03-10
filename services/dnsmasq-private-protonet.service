@@ -11,13 +11,15 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f dnsmasq-private
+ExecStartPre=/usr/bin/docker run -d \
     --name=dnsmasq-private \
     --net=host \
     --privileged=true \
     experimentalplatform/dnsmasq:{{tag}} dnsmasq -C /etc/dnsmasq-private.conf -k -h --log-facility=-
+ExecStart=/usr/bin/docker logs -f dnsmasq-private
+ExecStop=/usr/bin/docker stop dnsmasq-private
+ExecStopPost=/usr/bin/docker stop dnsmasq-private
 
 [Install]
 WantedBy=multi-user.target

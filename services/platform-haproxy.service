@@ -10,13 +10,15 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f platform-haproxy
+ExecStartPre=/usr/bin/docker run -d \
     --name platform-haproxy \
     -p 80:5000 \
     --volume /dev/log:/dev/log \
     experimentalplatform/haproxy:development
+ExecStart=/usr/bin/docker logs -f platform-haproxy
+ExecStop=/usr/bin/docker stop platform-haproxy
+ExecStopPost=/usr/bin/docker stop platform-haproxy
 
 [Install]
 WantedBy=multi-user.target

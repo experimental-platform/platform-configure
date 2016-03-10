@@ -10,9 +10,8 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f soul-dispatcher
+ExecStartPre=/usr/bin/docker run -d \
   --name soul-dispatcher \
   --link mysql \
   --link rabbitmq \
@@ -29,6 +28,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
   --volume /data/hardware:/tmp/hardware \
   experimentalplatform/german-shepherd:development \
   bundle exec foreman start dispatcher
+ExecStart=/usr/bin/docker logs -f soul-dispatcher
+ExecStop=/usr/bin/docker stop soul-dispatcher
+ExecStopPost=/usr/bin/docker stop soul-dispatcher
 
 [Install]
 WantedBy=multi-user.target
