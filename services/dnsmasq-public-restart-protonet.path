@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Trigger Protonet dnsmasq public restart
+
+[Path]
+PathModified=/etc/protonet/system/wifi/guest/enabled
+
+[Install]
+WantedBy=multi-user.target

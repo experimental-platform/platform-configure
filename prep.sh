@@ -15,6 +15,7 @@ mkdir -p /data/systemd/system/docker.service.d
 cp /config/50-log-warn.conf /data/systemd/system/docker.service.d/50-log-warn.conf
 
 # Network configuration
+grep -Hlr '# ExperimentalPlatform' /data/systemd/network | xargs rm -rf
 cp /config/*.network  /data/systemd/network
 
 mkdir -p /data/udev/rules.d

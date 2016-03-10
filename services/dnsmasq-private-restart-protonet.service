@@ -1,0 +1,10 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart Service dnsmasq-private-protonet
+After=hostapd-protonet.service
+Requires=hostapd-protonet.service
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart dnsmasq-private-protonet.service
+KillMode=none
+Type=oneshot
