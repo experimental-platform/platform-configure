@@ -4,6 +4,7 @@ Description=Protonet Soul backup Service
 ConditionPathExists=/etc/protonet/soul/enabled
 
 [Socket]
+ExecStartPre=-/usr/bin/rm -rf /data/soul-backup/socket
 ListenStream=/data/soul-backup/socket
 Accept=yes
 
