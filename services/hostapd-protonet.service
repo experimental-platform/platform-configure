@@ -28,5 +28,18 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume=/etc/protonet/system/wifi:/etc/protonet/system/wifi \
     experimentalplatform/hostapd:{{tag}}
 
+ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i wl_private -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
+ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_private -j ACCEPT'
+ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i wl_public -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
+ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_public -j ACCEPT'
+ExecStartPost=/bin/bash -c '/sbin/iptables -t nat -A POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.42.0.0/16 -j MASQUERADE'
+ExecStartPost=/bin/bash -c '/sbin/iptables -t nat -A POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.43.0.0/16 -j MASQUERADE'
+ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i wl_private -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
+ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_private -j ACCEPT'
+ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i wl_public -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
+ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_public -j ACCEPT'
+ExecStop=-/bin/bash -c '/sbin/iptables -t nat -D POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.42.0.0/16 -j MASQUERADE'
+ExecStop=-/bin/bash -c '/sbin/iptables -t nat -D POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.43.0.0/16 -j MASQUERADE'
+
 [Install]
 WantedBy=multi-user.target
