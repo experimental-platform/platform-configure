@@ -9,7 +9,7 @@ Requires=soul-prepare.service soul-web.service soul-socketio.service soul-webdav
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
+RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-nginx
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-nginx \

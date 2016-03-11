@@ -8,7 +8,7 @@ Requires=sproxy-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
+RestartSec=5s
 # ATTN: all needed directories are created in init-protonet.service
 ExecStartPre=-/usr/bin/docker rm -f skvs
 ExecStartPre=/usr/bin/docker run -d \

@@ -8,7 +8,7 @@ Requires=init-protonet.service network-online.target
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
+RestartSec=5s
 ExecStartPre=/usr/bin/mkdir /data/pulseaudio -p
 # const gid 35234 is used by 'pulseaudio' user inside the container to get write-access to host's /data/pulseaudio
 ExecStartPre=/usr/bin/chown 35234 /data/pulseaudio

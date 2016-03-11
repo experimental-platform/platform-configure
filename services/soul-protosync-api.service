@@ -9,7 +9,7 @@ Requires=soul-protosync-server.service skvs-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
+RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-protosync-api
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-protosync-api \
