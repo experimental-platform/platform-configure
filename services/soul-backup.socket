@@ -10,5 +10,5 @@ ListenStream=/data/soul-backup/socket
 Accept=yes
 
 [Install]
-WantedBy=sockets.target
+WantedBy=multi-user.target
 

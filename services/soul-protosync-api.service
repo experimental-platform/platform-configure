@@ -2,8 +2,8 @@
 [Unit]
 Description=Protonet Soul Protosync API Service
 ConditionPathExists=/etc/protonet/soul/enabled
-After=soul-protosync-server.service
-Requires=soul-protosync-server.service
+After=soul-protosync-server.service skvs-protonet.service
+Requires=soul-protosync-server.service skvs-protonet.service
 
 [Service]
 TimeoutStartSec=0
