@@ -11,7 +11,7 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-worker
-ExecStartPre=/usr/bin/docker run --rm \
+ExecStartPre=/usr/bin/docker run -d \
     --name soul-worker \
     --link mysql \
     --link rabbitmq \
