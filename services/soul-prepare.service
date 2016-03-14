@@ -11,7 +11,7 @@ Type=oneshot
 KillMode=none
 RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/soul
-ExecStartPre=/usr/bin/docker run --rm \
+ExecStartPre=/usr/bin/docker run -d \
                --link mysql \
                --link rabbitmq \
                --link skvs \
