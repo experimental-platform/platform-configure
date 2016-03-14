@@ -1,0 +1,6 @@
+[Unit]
+Description=Run zfs-status.service periodically
+ConditionPathExists=/etc/protonet/soul/enabled
+
+[Timer]
+OnCalendar=*:0/15
