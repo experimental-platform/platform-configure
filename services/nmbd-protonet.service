@@ -9,16 +9,18 @@ Requires=init-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f nmbd
+ExecStartPre=/usr/bin/docker run -d \
     --name=nmbd \
     --net=host \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
     experimentalplatform/smb:{{tag}} /usr/sbin/nmbd -F -S
+ExecStart=/usr/bin/docker logs -f nmbd
+ExecStop=/usr/bin/docker stop nmbd
+ExecStopPost=/usr/bin/docker stop nmbd
 
 [Install]
 WantedBy=multi-user.target

@@ -9,10 +9,9 @@ Requires=soul-prepare.service soul-web.service soul-socketio.service soul-webdav
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f soul-nginx
+ExecStartPre=/usr/bin/docker run -d \
     --name soul-nginx \
     --link soul-web \
     --link soul-socketio \
@@ -22,6 +21,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     -p 5000:80 \
     experimentalplatform/soul-nginx:development
 ExecStartPost=-/bin/bash -c 'echo "power" > /etc/protonet/system/button'
+ExecStart=/usr/bin/docker logs -f soul-nginx
+ExecStop=/usr/bin/docker stop soul-nginx
+ExecStopPost=/usr/bin/docker stop soul-nginx
 
 [Install]
 WantedBy=multi-user.target

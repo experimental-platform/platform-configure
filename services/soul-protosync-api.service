@@ -9,15 +9,17 @@ Requires=soul-protosync-server.service skvs-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f soul-protosync-api
+ExecStartPre=/usr/bin/docker run -d \
     --name soul-protosync-api \
     --link skvs \
     --link soul-protosync-server:syncthing \
     --volume /data/soul/protosync:/etc/syncthing \
     experimentalplatform/soul-protosync:development start-api
+ExecStart=/usr/bin/docker logs -f soul-protosync-api
+ExecStop=/usr/bin/docker stop soul-protosync-api
+ExecStopPost=/usr/bin/docker stop soul-protosync-api
 
 [Install]
 WantedBy=multi-user.target

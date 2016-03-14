@@ -8,11 +8,10 @@ Requires=init-protonet.service network-online.target
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f dokku
 # ATTN: all needed directories and files are created in init-protonet.service
-ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=/bin/bash -c 'docker run -d \
     --volume=/data/dokku:/data \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     --volume=/etc/protonet/hostname:/config/hostname \
@@ -26,6 +25,9 @@ ExecStart=/bin/bash -c '/opt/bin/systemd-docker --cgroups name=systemd run --rm 
     --publish=8022:22 \
     --env DOCKER_GID=$(id -g docker) \
   experimentalplatform/dokku:{{tag}}'
+ExecStart=/usr/bin/docker logs -f dokku
+ExecStop=/usr/bin/docker stop dokku
+ExecStopPost=/usr/bin/docker stop dokku
 
 [Install]
 WantedBy=multi-user.target

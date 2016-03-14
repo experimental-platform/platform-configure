@@ -8,17 +8,19 @@ Requires=init-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
+RestartSec=5s
 ExecStartPre=/usr/bin/rm -f /data/hardware/hardware.sock
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f hardware
+ExecStartPre=/usr/bin/docker run -d \
     --name=hardware \
     --volume=/dev:/dev \
     --volume=/data/hardware:/socketdir \
     --privileged=true \
     --net=host \
   experimentalplatform/hardware:{{tag}}
+ExecStart=/usr/bin/docker logs -f hardware
+ExecStop=/usr/bin/docker stop hardware
+ExecStopPost=/usr/bin/docker stop hardware
 
 [Install]
 WantedBy=multi-user.target

@@ -10,14 +10,16 @@ Requires=init-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f rabbitmq
+ExecStartPre=/usr/bin/docker run -d \
     --name=rabbitmq \
     -h rabbitmq \
     --volume=/data/rabbitmq:/var/lib/rabbitmq \
   rabbitmq@3.5-management
+ExecStart=/usr/bin/docker logs -f rabbitmq
+ExecStop=/usr/bin/docker stop rabbitmq
+ExecStopPost=/usr/bin/docker stop rabbitmq
 
 [Install]
 WantedBy=multi-user.target

@@ -9,10 +9,9 @@ Requires=nmbd-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f smb
+ExecStartPre=/usr/bin/docker run -d \
     --name=smb \
     --net=host \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
@@ -22,6 +21,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
     experimentalplatform/soul-smb:{{tag}}
+ExecStart=/usr/bin/docker logs -f smb
+ExecStop=/usr/bin/docker stop smb
+ExecStopPost=/usr/bin/docker stop smb
 
 [Install]
 WantedBy=multi-user.target

@@ -9,14 +9,16 @@ Requires=soul-prepare.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f soul-socketio
+ExecStartPre=/usr/bin/docker run -d \
     --name soul-socketio \
     --link rabbitmq \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start socketio
+ExecStart=/usr/bin/docker logs -f soul-socketio
+ExecStop=/usr/bin/docker stop soul-socketio
+ExecStopPost=/usr/bin/docker stop soul-socketio
 
 [Install]
 WantedBy=multi-user.target

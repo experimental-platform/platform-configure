@@ -8,16 +8,18 @@ Requires=sproxy-protonet.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
+RestartSec=5s
 # ATTN: all needed directories are created in init-protonet.service
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+ExecStartPre=-/usr/bin/docker rm -f skvs
+ExecStartPre=/usr/bin/docker run -d \
     --name=skvs \
     --volume=/etc/protonet:/data \
     --link=sproxy:hook \
     -p 127.0.0.1:9200:82 \
   experimentalplatform/skvs:{{tag}}
+ExecStart=/usr/bin/docker logs -f skvs
+ExecStop=/usr/bin/docker stop skvs
+ExecStopPost=/usr/bin/docker stop skvs
 
 [Install]
 WantedBy=multi-user.target

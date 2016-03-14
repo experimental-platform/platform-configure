@@ -9,15 +9,17 @@ ConditionPathExists=/etc/protonet/soul/enabled
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=60s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f afpd
+ExecStartPre=/usr/bin/docker run -d \
     --name=afpd \
     -p 548:548 \
     --volume /data/samba/extrausers/:/var/lib/extrausers/:ro \
     --volume /data/soul/files/:/home/protonet/dashboard/shared/files/:rw \
     experimentalplatform/afpd:{{tag}}
+ExecStart=/usr/bin/docker logs -f afpd
+ExecStop=/usr/bin/docker stop afpd
+ExecStopPost=/usr/bin/docker stop afpd
 
 [Install]
 WantedBy=multi-user.target

@@ -9,10 +9,9 @@ Requires=soul-prepare.service soul-web.service
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
-RestartSec=10s
-Type=notify
-NotifyAccess=all
-ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f soul-worker
+ExecStartPre=/usr/bin/docker run --rm \
     --name soul-worker \
     --link mysql \
     --link rabbitmq \
@@ -33,6 +32,9 @@ ExecStart=/opt/bin/systemd-docker --cgroups name=systemd run --rm \
     --volume /data/soul-backup:/tmp/backup \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start worker
+ExecStart=/usr/bin/docker logs -f soul-worker
+ExecStop=/usr/bin/docker stop soul-worker
+ExecStopPost=/usr/bin/docker stop soul-worker
 
 [Install]
 WantedBy=multi-user.target
