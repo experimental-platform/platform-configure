@@ -24,23 +24,27 @@ cp /config/video-permissions.rules /data/udev/rules.d/video-permissions.rules
 cp /config/tty-permissions.rules   /data/udev/rules.d/tty-permissions.rules
 cp /config/80-protonet.rules       /data/udev/rules.d/80-protonet.rules
 
+# Automates installation of utility scripts and services from scripts/* into
+# $PATH on target systems.
 mkdir -p /data/systemd/system/scripts/
-cp /platform-configure.sh /data/systemd/system/scripts/platform-configure.sh
-cp /platform-passwd.sh /data/systemd/system/scripts/platform-passwd.sh
-cp /zfs-status.sh /data/systemd/system/scripts/zfs-status.sh
-chmod +x /data/systemd/system/scripts/platform-configure.sh /data/systemd/system/scripts/platform-passwd.sh /data/systemd/system/scripts/zfs-status.sh 
+for f in scripts/*.sh
+do
+  name=$(basename $f .sh)
+  dest=/data/systemd/system/scripts/$name.sh
+  echo "Installing $name to $dest"
+
+  cp /scripts/$name.sh $dest
+  chmod +x $dest
+  if [ -d /host-bin/ ]; then
+    # this needs to be the full path on host, not in container
+    ln -sf /etc/systemd/system/scripts/$name.sh /host-bin/$name
+  fi
+done
 
 rm -f /host-bin/systemd-docker || true
 cp /systemd-docker /host-bin/
 chmod +x /host-bin/systemd-docker
 
 cp /button /host-bin/
-
-if [ -d /host-bin/ ]; then
-  # this needs to be the full path on host, not in container
-  ln -sf /etc/systemd/system/scripts/platform-configure.sh /host-bin/platform-configure
-  ln -sf /etc/systemd/system/scripts/platform-passwd.sh /host-bin/platform-passwd
-  ln -sf /etc/systemd/system/scripts/zfs-status.sh /host-bin/zfs-status
-fi
 
 mkdir -p /data/systemd/journald.conf.d && cp /config/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
