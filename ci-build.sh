@@ -43,7 +43,7 @@ done
 
 
 # Download current version of platform-configure.sh
-curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > platform-configure.sh
+curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh
 
 # build current version of systemd-docker
 rm -rf systemd-docker ; git clone https://github.com/ibuildthecloud/systemd-docker.git
