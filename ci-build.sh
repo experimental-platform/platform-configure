@@ -44,7 +44,3 @@ done
 
 # Download current version of platform-configure.sh
 curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh
-
-# build current version of systemd-docker
-rm -rf systemd-docker ; git clone https://github.com/ibuildthecloud/systemd-docker.git
-docker run -v $(pwd)/systemd-docker:/usr/src/systemd-docker -w /usr/src/systemd-docker golang:1.4 /bin/bash -c 'go get -d && go build -v'
