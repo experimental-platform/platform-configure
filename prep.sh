@@ -41,10 +41,6 @@ do
   fi
 done
 
-rm -f /host-bin/systemd-docker || true
-cp /systemd-docker /host-bin/
-chmod +x /host-bin/systemd-docker
-
 cp /button /host-bin/
 
 mkdir -p /data/systemd/journald.conf.d && cp /config/journald_protonet.conf /data/systemd/journald.conf.d/journald_protonet.conf
