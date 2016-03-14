@@ -1,0 +1,6 @@
+[Unit]
+Description=Checks zpool status of protonet storage and writes it to skvs
+
+[Service]
+Type=oneshot
+ExecStart=/opt/bin/zfs-status
