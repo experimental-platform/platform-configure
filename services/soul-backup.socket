@@ -2,10 +2,9 @@
 [Unit]
 Description=Protonet Soul backup Service
 ConditionPathExists=/etc/protonet/soul/enabled
-After=init-protonet.service
-Requires=init-protonet.service
 
 [Socket]
+ExecStartPre=/bin/mkdir -p /data/soul-backup
 ListenStream=/data/soul-backup/socket
 Accept=yes
 
