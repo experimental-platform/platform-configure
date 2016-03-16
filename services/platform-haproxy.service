@@ -13,7 +13,8 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f platform-haproxy
 ExecStartPre=/usr/bin/docker run -d \
     --name platform-haproxy \
-    -p 80:5000 \
+    -p 80:80 \
+    -p 443:443 \
     --volume /dev/log:/dev/log \
     --volume /data/haproxy/ssl:/data/ssl \
     experimentalplatform/haproxy:development
