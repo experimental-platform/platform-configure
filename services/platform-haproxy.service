@@ -17,6 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     -p 443:443 \
     --volume /dev/log:/dev/log \
     --volume /data/haproxy/ssl:/data/ssl \
+    --volume /data/haproxy/socket:/run/haproxy \
     experimentalplatform/haproxy:development
 ExecStart=/usr/bin/docker logs -f platform-haproxy
 ExecStop=/usr/bin/docker stop platform-haproxy
