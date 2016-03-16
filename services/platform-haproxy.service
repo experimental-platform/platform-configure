@@ -15,6 +15,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --name platform-haproxy \
     -p 80:5000 \
     --volume /dev/log:/dev/log \
+    --volume /data/haproxy/ssl:/data/ssl \
     experimentalplatform/haproxy:development
 ExecStart=/usr/bin/docker logs -f platform-haproxy
 ExecStop=/usr/bin/docker stop platform-haproxy
