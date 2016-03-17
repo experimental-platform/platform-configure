@@ -10,6 +10,8 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+StartLimitInterval=1200
+StartLimitBurst=10
 
 ExecStartPre=/bin/bash -c '/usr/sbin/lspci | egrep "Wireless Network|Atheros" || (CODE=$?; echo "ERROR: WIFI device not found"; exit $CODE)'
 ExecStartPre=/bin/bash -c '/usr/bin/ip link show | egrep "^[0-9: \t]+wl[0-9a-z_\-]+" || (CODE=$?; echo "ERROR: WIFI interface not found"; exit $CODE)'
