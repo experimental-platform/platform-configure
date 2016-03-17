@@ -1,9 +1,7 @@
 # ExperimentalPlatform
+# https://www.freedesktop.org/software/systemd/man/systemd.link.html
 [Match]
-Name=wlp2s0
-
-[Network]
-Address=10.42.0.1/16
+OriginalName=wlp2s0
 
 [Link]
 Description=Private WIFI Interface
