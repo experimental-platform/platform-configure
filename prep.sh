@@ -16,7 +16,7 @@ cp /config/50-log-warn.conf /data/systemd/system/docker.service.d/50-log-warn.co
 
 # Network configuration
 grep -Hlr '# ExperimentalPlatform' /data/systemd/network | xargs rm -rf
-cp /config/*.network /config/*.link  /data/systemd/network
+cp /config/*.network /data/systemd/network
 
 mkdir -p /data/udev/rules.d
 cp /config/sound-permissions.rules /data/udev/rules.d/sound-permissions.rules
