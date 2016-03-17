@@ -4,8 +4,6 @@ Description=Run and configure the WIFI HOSTSPOT 'hostapd' service
 ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=|/etc/protonet/system/wifi/enabled
 ConditionPathExists=|/etc/protonet/system/wifi/guest/enabled
-After=init-protonet.service
-Requires=init-protonet.service
 
 [Service]
 TimeoutStartSec=0
@@ -15,6 +13,11 @@ RestartSec=5s
 
 ExecStartPre=/bin/bash -c '/usr/sbin/lspci | egrep "Wireless Network|Atheros" || (CODE=$?; echo "ERROR: WIFI device not found"; exit $CODE)'
 ExecStartPre=/bin/bash -c '/usr/bin/ip link show | egrep "^[0-9: \t]+wl[0-9a-z_\-]+" || (CODE=$?; echo "ERROR: WIFI interface not found"; exit $CODE)'
+
+ExecStartPre=/bin/mkdir -p /etc/protonet/system/wifi/guest/
+ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/password || true'
+ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/guest/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/guest/password || true'
+
 ExecStartPre=-/usr/bin/docker rm -f hostapd
 ExecStartPre=/usr/bin/docker run -d \
     --name=hostapd \
