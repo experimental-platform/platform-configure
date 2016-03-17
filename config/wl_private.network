@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Match]
 Name=wl_private
+Name=wlp2s0
 
 [Network]
 Address=10.42.0.1/16
