@@ -1,8 +1,0 @@
-# ExperimentalPlatform
-# https://www.freedesktop.org/software/systemd/man/systemd.link.html
-[Match]
-OriginalName=wlp2s0
-
-[Link]
-Description=Private WIFI Interface
-Name=wl_private
