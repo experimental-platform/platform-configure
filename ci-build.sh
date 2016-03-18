@@ -43,4 +43,8 @@ done
 
 
 # Download current version of platform-configure.sh
-curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh
+echo -e "\n\nAdding 'platform-configure-script' with VERSION 'development':"
+curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/development/platform-configure.sh > scripts/platform-configure.sh
+
+
+echo -e "\n\n\nALL DONE.\n\n\n"
