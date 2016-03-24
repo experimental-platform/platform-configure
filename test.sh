@@ -2,4 +2,4 @@
 set -e
 set -x
 
-grep -q '{{tag}}' /system/*.{service,timer} && exit 1 || true
+grep -q '{{tag}}' /services/*.{service,timer} && exit 1 || true
