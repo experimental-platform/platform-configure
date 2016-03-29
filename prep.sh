@@ -105,24 +105,6 @@ function download_and_verify_image() {
 }
 
 
-function update_os_image() {
-    set_status "osupdate"
-    # run update and save its exit code
-    echo "Forcing system image update"
-    update_engine_client -update &>/dev/null | true
-    update_status=${PIPESTATUS[0]}
-    echo "Done."
-
-    if [[ "$update_status" -eq 0 ]]; then
-        echo "System image update successfull."
-        return 0
-    else
-        echo "System image update failed."
-        return 1
-    fi
-}
-
-
 function setup_images() {
     # Pre-Fetch all Images
     # When using a feature branch most images come from the development channel:
@@ -199,7 +181,6 @@ function setup_utility_scripts () {
 # FIRST: Update the platform-configure.script itself!
 setup_utility_scripts
 # Now the stuff that may break...
-enable_os_updates
 setup_paths
 cleanup_systemd
 setup_udev

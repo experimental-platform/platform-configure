@@ -89,6 +89,25 @@ EOM
     rm -f ${PLATFORM_BASENAME}/tmp/protonet-image.pub.pem || true
 }
 
+function update_os_image() {
+    # run update and save its exit code
+    echo "Forcing system image update"
+    update_engine_client -update &>/dev/null | true
+    update_status=${PIPESTATUS[0]}
+    echo "Done."
+
+    if [[ "$update_status" -eq 0 ]]; then
+        echo "System image update successfull."
+        return 0
+    else
+        echo "System image update failed."
+        return 1
+    fi
+}
+
+
+
 set_variables
 prepare_os_update
 enable_os_updates
+update_os_image
