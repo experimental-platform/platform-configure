@@ -2,12 +2,12 @@
 set -e
 set -x
 
-MOUNTROOT=/mnt
+MOUNTROOT=${MOUNTROOT:="/mnt"}
 DOCKER=$(which docker)
 
 
 function set_status() {
-  mkdir -p /etc/protonet/system
+  mkdir -p ${MOUNTROOT}/etc/protonet/system
   echo "$@" > ${MOUNTROOT}/etc/protonet/system/configure-script-status
 }
 
@@ -88,7 +88,7 @@ function download_and_verify_image() {
             # This is the most stupid way to check if all layer were downloaded correctly.
             # But it is the fastest one. The docker save command takes about 30 Minutes for all images,
             # even with output piped to /dev/null.
-            if [[ ! -e /var/lib/docker/overlay/${layer} || ! -e /var/lib/docker/graph/${layer} ]]; then
+            if [[ ! -e ${MOUNTROOT}/var/lib/docker/overlay/${layer} || ! -e ${MOUNTROOT}/var/lib/docker/graph/${layer} ]]; then
                 ${DOCKER} tag -f "${image}-previous" ${image} 2>/dev/null
                 # TODO: return instead?
                 exit 1
