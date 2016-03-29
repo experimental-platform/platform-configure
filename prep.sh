@@ -123,36 +123,6 @@ function update_os_image() {
 }
 
 
-function enable_os_updates() {
-    # TODO: Bail if either PLATFORM_SYS_GROUP or UPDATE_ENGINE_CONFIG or  are not set
-    if [[ -z "${PLATFORM_SYS_GROUP}" ]]; then
-        if [ -e ${UPDATE_ENGINE_CONFIG} ]; then
-            PLATFORM_SYS_GROUP=$(cat ${UPDATE_ENGINE_CONFIG} | grep '^GROUP=' | cut -f2 -d '=')
-            echo "Using OS group '${PLATFORM_SYS_GROUP}' from ${UPDATE_ENGINE_CONFIG}."
-        else
-            PLATFORM_SYS_GROUP="protonet"
-            echo "No OS group given. Using '${PLATFORM_SYS_GROUP}' (default group)."
-        fi
-    else
-        echo "Using OS group '${PLATFORM_SYS_GROUP}' from the command line."
-    fi
-
-    # reset backoff timestamp
-    rm -f ${MOUNTROOT}/var/lib/update_engine/prefs/backoff-expiry-time
-
-    # configure update source
-    echo | tee ${MOUNTROOT}/etc/coreos/update.conf &>/dev/null <<- EOM
-GROUP=${PLATFORM_SYS_GROUP}
-SERVER=https://coreos-update.protorz.net/update
-REBOOT_STRATEGY=off
-EOM
-
-	# apply changes to update-engine
-	systemctl restart update-engine.service
-}
-
-
-
 function setup_images() {
     # Pre-Fetch all Images
     # When using a feature branch most images come from the development channel:
