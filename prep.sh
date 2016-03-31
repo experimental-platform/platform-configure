@@ -39,7 +39,7 @@ function setup_systemd() {
     cp /config/*.network  ${MOUNTROOT}/etc/systemd/network
     # Make sure we're actually waiting for the network if it's required.
     systemctl --root=${MOUNTROOT} enable systemd-networkd-wait-online.service
-    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f \
+    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f | \
         xargs --no-run-if-empty basename -a | \
         xargs --no-run-if-empty systemctl --root=${MOUNTROOT} enable
     # .path files need to be started!
