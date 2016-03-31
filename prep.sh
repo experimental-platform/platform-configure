@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-set -x
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
 DOCKER=$(which docker)
@@ -63,10 +62,10 @@ function setup_channel_file() {
     # TODO: Bail if either CHANNEL or CHANNEL_FILE are not set
     if [[ ! -f ${CHANNEL_FILE} ]] || [[ ! $(cat ${CHANNEL_FILE}) = "${CHANNEL}" ]]; then
         echo "NEW channel is '${CHANNEL}'."
-        systemctl --root=${MOUNTROOT} stop trigger-update-protonet.path
+        systemctl stop trigger-update-protonet.path
         mkdir -p $(dirname ${CHANNEL_FILE})
         echo ${CHANNEL} > ${CHANNEL_FILE}
-        systemctl --root=${MOUNTROOT} start trigger-update-protonet.path
+        systemctl start trigger-update-protonet.path
     else
         echo "Keeping old channel '${CHANNEL}'."
     fi
