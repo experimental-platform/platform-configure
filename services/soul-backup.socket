@@ -2,6 +2,7 @@
 [Unit]
 Description=Protonet Soul backup Service
 ConditionPathExists=/etc/protonet/soul/enabled
+After=zfs.service
 
 [Socket]
 ExecStartPre=/bin/mkdir -p /data/soul-backup
