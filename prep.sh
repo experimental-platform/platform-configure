@@ -37,12 +37,15 @@ function setup_systemd() {
     cp /config/journald_protonet.conf ${MOUNTROOT}/etc/systemd/journald.conf.d/journald_protonet.conf
     # Network configuration
     cp /config/*.network  ${MOUNTROOT}/etc/systemd/network
+    echo "Reloading the config files."
+    systemctl daemon-reload
     # Make sure we're actually waiting for the network if it's required.
     systemctl --root=${MOUNTROOT} enable systemd-networkd-wait-online.service
+    echo "ENABLing all config files."
     find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f | \
         xargs --no-run-if-empty basename -a | \
         xargs --no-run-if-empty systemctl --root=${MOUNTROOT} enable
-    # .path files need to be started!
+    echo "RESTARTing all .path files."
     find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.path" -type f | \
         xargs --no-run-if-empty basename -a | \
         xargs --no-run-if-empty systemctl restart
