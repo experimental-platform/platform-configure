@@ -49,14 +49,6 @@ function setup_systemd() {
     find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.path" -type f | \
         xargs --no-run-if-empty basename -a | \
         xargs --no-run-if-empty systemctl restart
-    # timers need to be enabled
-    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.timer" -type f | \
-        xargs --no-run-if-empty basename -a | \
-        xargs --no-run-if-empty systemctl --root=${MOUNTROOT} enable
-    # socket units need to be enabled, if any exist
-    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.socket" -type f | \
-        xargs --no-run-if-empty basename -a | \
-        xargs --no-run-if-empty systemctl --root=${MOUNTROOT} enable
 }
 
 
