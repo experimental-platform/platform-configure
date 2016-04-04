@@ -12,26 +12,30 @@ function set_status() {
 
 
 function setup_paths() {
-    # new systems need sometimes dont have systemd/system/
+    echo -n "Creating paths in ${MOUNTROOT}/etc/systemd in case they don't exist yet... "
     mkdir -p ${MOUNTROOT}/etc/systemd/journald.conf.d
     mkdir -p ${MOUNTROOT}/etc/systemd/system/
     mkdir -p ${MOUNTROOT}/etc/systemd/system/docker.service.d
     mkdir -p ${MOUNTROOT}/etc/systemd/system/scripts/
     mkdir -p ${MOUNTROOT}/etc/udev/rules.d
+    echo "DONE."
 }
 
 
 function cleanup_systemd() {
+    echo -n "Cleaning up ${MOUNTROOT}/etc/systemd/system/... "
     # First remove broken links, this should avoid confusing error messages
     find -L ${MOUNTROOT}/etc/systemd/system/ -type l -exec rm -f {} +
     grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/system/ | xargs rm -rf
     # do it again to remove garbage
     find -L ${MOUNTROOT}/etc/systemd/system/ -type l -exec rm -f {} +
     grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/network | xargs rm -rf
+    echo "DONE."
 }
 
 
 function setup_systemd() {
+    echo -n "Setting up systemd services... "
     cp /services/* ${MOUNTROOT}/etc/systemd/system/
     cp /config/50-log-warn.conf ${MOUNTROOT}/etc/systemd/system/docker.service.d/50-log-warn.conf
     cp /config/journald_protonet.conf ${MOUNTROOT}/etc/systemd/journald.conf.d/journald_protonet.conf
@@ -49,27 +53,31 @@ function setup_systemd() {
     find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.path" -type f | \
         xargs --no-run-if-empty basename -a | \
         xargs --no-run-if-empty systemctl restart
+    echo "DONE."
 }
 
 
 function setup_channel_file() {
     # update the channel file in case there's none or if we're changing channels.
     # TODO: Bail if either CHANNEL or CHANNEL_FILE are not set
+    echo -n "Detecting channel... "
     if [[ ! -f ${CHANNEL_FILE} ]] || [[ ! $(cat ${CHANNEL_FILE}) = "${CHANNEL}" ]]; then
-        echo "NEW channel is '${CHANNEL}'."
+        echo -n "using NEW '${CHANNEL}'... "
         systemctl stop trigger-update-protonet.path
         mkdir -p $(dirname ${CHANNEL_FILE})
         echo ${CHANNEL} > ${CHANNEL_FILE}
         systemctl start trigger-update-protonet.path
     else
-        echo "Keeping old channel '${CHANNEL}'."
+        echo -n "using OLD '${CHANNEL}'... "
     fi
+    echo "DONE."
 }
 
 
 function download_and_verify_image() {
     # TODO: DUPLICATED CODE MARK
     # TODO: Bail if IMAGE_STATE_DIR or REGISTRY is not set
+    echo -ne "\t Image ${image}..."
     local image=$1
     ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
     ${DOCKER} pull ${image}
@@ -96,17 +104,19 @@ function download_and_verify_image() {
 
     mkdir -p $(dirname ${IMAGE_STATE_DIR}/${image})
     echo $image_id > ${IMAGE_STATE_DIR}/${image}
+    echo "DONE."
 }
 
 
 function setup_images() {
     # Pre-Fetch all Images
     # When using a feature branch most images come from the development channel:
+    echo -n "Fetching all images..."
     available_channels="development alpha beta stable"
     if [[ ! ${available_channels} =~ ${CHANNEL} ]]; then
-        echo "We're on feature channel '${CHANNEL}'"
         CHANNEL=development
     fi
+    echo " for channel '${CHANNEL}':"
 
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
@@ -147,42 +157,46 @@ function setup_images() {
 
 
 function setup_udev() {
+    echo -n "Setting up UDEV rules..."
     cp /config/sound-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/sound-permissions.rules
     cp /config/video-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/video-permissions.rules
     cp /config/tty-permissions.rules   ${MOUNTROOT}/etc/udev/rules.d/tty-permissions.rules
     cp /config/80-protonet.rules       ${MOUNTROOT}/etc/udev/rules.d/80-protonet.rules
+    echo "DONE."
 }
 
 
 function setup_utility_scripts () {
     # Automates installation of utility scripts and services from scripts/* into
     # $PATH on target systems.
+    echo "Installing scripts:"
     ETC_PATH=${ETC_PATH:=${MOUNTROOT}/etc/}
     BIN_PATH=${BIN_PATH:=${MOUNTROOT}/opt/bin/}
     for f in scripts/*.sh; do
-      name=$(basename ${f} .sh)
-      dest=${ETC_PATH}systemd/system/scripts/${name}.sh
-      echo "Installing ${name} to ${dest}"
-
-      cp /scripts/${name}.sh ${dest}
-      chmod +x ${dest}
-      if [ -d ${BIN_PATH} ]; then
+        name=$(basename ${f} .sh)
+        dest=${ETC_PATH}systemd/system/scripts/${name}.sh
+        echo -ne "\t * '${name}' to ${dest}... "
+        cp /scripts/${name}.sh ${dest}
+        chmod +x ${dest}
+        if [ -d ${BIN_PATH} ]; then
         # this needs to be the full path on host, not in container
         ln -sf /etc/systemd/system/scripts/${name}.sh ${BIN_PATH}${name}
-      fi
+        fi
+        echo "DONE."
     done
     cp /button ${MOUNTROOT}/opt/bin/
+    echo "ALL DONE"
 }
 
 
 function rescue_legacy_script () {
     if [[ -d "/host-bin" ]]; then
+        echo "Legacy script detected... "
         ETC_PATH="/data/"
         BIN_PATH="/host-bin/"
-        MESSAGE="Legacy script detected. RUN UPDATE AGAIN TO FIX THIS."
         setup_utility_scripts
-        set_status "${MESSAGE}"
-        echo "${MESSAGE}" >&2
+        set_status "Legacy script detected... RUN UPDATE AGAIN TO FIX THIS."
+        echo -e "\n\nRUN UPDATE AGAIN TO FIX THIS.\n\n"
         exit 42
     else
         setup_utility_scripts
