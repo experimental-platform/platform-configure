@@ -157,23 +157,39 @@ function setup_udev() {
 function setup_utility_scripts () {
     # Automates installation of utility scripts and services from scripts/* into
     # $PATH on target systems.
+    ETC_PATH=${ETC_PATH:=${MOUNTROOT}/etc/}
+    BIN_PATH=${BIN_PATH:=${MOUNTROOT}/opt/bin/}
     for f in scripts/*.sh; do
       name=$(basename ${f} .sh)
-      dest=${MOUNTROOT}/etc/systemd/system/scripts/${name}.sh
+      dest=${ETC_PATH}systemd/system/scripts/${name}.sh
       echo "Installing ${name} to ${dest}"
 
       cp /scripts/${name}.sh ${dest}
       chmod +x ${dest}
-      if [ -d ${MOUNTROOT}/opt/bin/ ]; then
+      if [ -d ${BIN_PATH} ]; then
         # this needs to be the full path on host, not in container
-        ln -sf /etc/systemd/system/scripts/${name}.sh ${MOUNTROOT}/opt/bin/${name}
+        ln -sf /etc/systemd/system/scripts/${name}.sh ${BIN_PATH}${name}
       fi
     done
     cp /button ${MOUNTROOT}/opt/bin/
 }
 
+
+function rescue_legacy_script () {
+    if [[ -d "/host-bin" ]]; then
+        ETC_PATH="/data/"
+        BIN_PATH="/host-bin/"
+        MESSAGE="Legacy script detected. RUN UPDATE AGAIN TO FIX THIS."
+        setup_utility_scripts
+        set_status "${MESSAGE}"
+        echo "${MESSAGE}" >&2
+        exit 42
+    else
+        setup_utility_scripts
+    fi
+}
 # FIRST: Update the platform-configure.script itself!
-setup_utility_scripts
+rescue_legacy_script
 # Now the stuff that may break...
 setup_paths
 cleanup_systemd
