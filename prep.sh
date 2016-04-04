@@ -2,7 +2,6 @@
 set -e
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
-DOCKER=$(which docker)
 
 
 function set_status() {
@@ -79,6 +78,7 @@ function download_and_verify_image() {
     # TODO: Bail if IMAGE_STATE_DIR or REGISTRY is not set
     echo -ne "\t Image ${image}..."
     local image=$1
+    DOCKER=$(which docker)
     ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
     ${DOCKER} pull ${image}
 
