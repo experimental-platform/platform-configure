@@ -184,7 +184,7 @@ function setup_utility_scripts () {
         fi
         echo "DONE."
     done
-    cp /button ${MOUNTROOT}/opt/bin/
+    cp /button ${BIN_PATH}
     echo "ALL DONE"
 }
 
