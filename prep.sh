@@ -78,7 +78,7 @@ function download_and_verify_image() {
     # TODO: Bail if IMAGE_STATE_DIR or REGISTRY is not set
     echo -ne "\t Image ${image}..."
     local image=$1
-    DOCKER=$(which docker)
+    DOCKER="/docker"
     ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
     ${DOCKER} pull ${image}
 
@@ -86,7 +86,7 @@ function download_and_verify_image() {
     # if using OverlayFS then verify layers
     if [ "${driver}" == "overlay" ]; then
         # TODO: this basically works with ZFS too, it just has slightly different path names
-        for layer in $(docker history --no-trunc ${image} | tail -n +2 | awk '{ print $1 }'); do
+        for layer in $(${DOCKER} history --no-trunc ${image} | tail -n +2 | awk '{ print $1 }'); do
             # This is the most stupid way to check if all layer were downloaded correctly.
             # But it is the fastest one. The docker save command takes about 30 Minutes for all images,
             # even with output piped to /dev/null.
@@ -99,7 +99,7 @@ function download_and_verify_image() {
     fi
 
     # TODO: Might wanna add --type=image for good measure once Docker 1.8 hits the CoreOS stable.
-    local image_id=$(docker inspect --format '{{.Id}}' ${image})
+    local image_id=$(${DOCKER} inspect --format '{{.Id}}' ${image})
     image=${image#$REGISTRY/} # remove Registry prefix
 
     mkdir -p $(dirname ${IMAGE_STATE_DIR}/${image})
@@ -211,3 +211,4 @@ setup_udev
 setup_systemd
 setup_channel_file
 setup_images
+
