@@ -18,6 +18,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --link soul-webdav \
     --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
     --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
+    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     -p 5000:80 \
     experimentalplatform/soul-nginx:development
 ExecStartPost=-/bin/bash -c 'echo "power" > /etc/protonet/system/button'
