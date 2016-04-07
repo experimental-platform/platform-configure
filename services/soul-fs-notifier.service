@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/docker run -d \
   --link redis \
   --link skvs \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
-  experimentalplatform/german-shepherd:development \
+  experimentalplatform/german-shepherd:{{tag}} \
   bundle exec foreman start fs_notifier
 ExecStart=/usr/bin/docker logs -f soul-fs-notifier
 ExecStop=/usr/bin/docker stop soul-fs-notifier

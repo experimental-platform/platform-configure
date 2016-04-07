@@ -29,7 +29,7 @@ ExecStartPre=/usr/bin/docker run -d \
       --volume /data/samba/extrausers:/var/lib/extrausers/ \
       --volume /data/hardware:/tmp/hardware \
       --volume /var/run/soul-backup:/tmp/backup \
-      experimentalplatform/german-shepherd:development \
+      experimentalplatform/german-shepherd:{{tag}} \
       bundle exec foreman start web
 ExecStart=/usr/bin/docker logs -f soul-web
 ExecStop=/usr/bin/docker stop soul-web

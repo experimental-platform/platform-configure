@@ -19,6 +19,6 @@ ExecStart=-/usr/bin/env docker run --rm -i \
     --volume /usr/bin/systemctl:/usr/bin/systemctl:ro \
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --volume /var/run/systemd:/var/run/systemd:ro \
-    experimentalplatform/soul-backup:development protonet-backup stdio
+    experimentalplatform/soul-backup:{{tag}} protonet-backup stdio
 StandardInput=socket
 

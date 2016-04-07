@@ -17,7 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --link rabbitmq \
     --link redis \
     --link skvs \
-    experimentalplatform/german-shepherd:development \
+    experimentalplatform/german-shepherd:{{tag}} \
     bundle exec foreman start push_service
 ExecStart=/usr/bin/docker logs -f soul-push-service
 ExecStop=/usr/bin/docker stop soul-push-service

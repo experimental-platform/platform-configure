@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
-    experimentalplatform/german-shepherd:development \
+    experimentalplatform/german-shepherd:{{tag}} \
     bundle exec foreman start webdav
 ExecStart=/usr/bin/docker logs -f soul-webdav
 ExecStop=/usr/bin/docker stop soul-webdav
