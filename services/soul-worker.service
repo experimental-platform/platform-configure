@@ -29,7 +29,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
     --volume /data/hardware:/tmp/hardware \
-    --volume /data/soul-backup:/tmp/backup \
+    --volume /var/run/soul-backup:/tmp/backup \
     experimentalplatform/german-shepherd:development \
     bundle exec foreman start worker
 ExecStart=/usr/bin/docker logs -f soul-worker
