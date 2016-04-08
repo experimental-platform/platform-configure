@@ -202,10 +202,10 @@ function rescue_legacy_script () {
         setup_utility_scripts
     fi
 }
+setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
 # Now the stuff that may break...
-setup_paths
 cleanup_systemd
 setup_udev
 setup_systemd
