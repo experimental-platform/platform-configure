@@ -15,7 +15,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --name soul-protosync-api \
     --link skvs \
     --volume /data/soul/protosync:/etc/syncthing \
-    experimentalplatform/soul-protosync:{{tag}} start-api
+    quay.io/protonetinc/soul-protosync:{{tag}} start-api
 ExecStart=/usr/bin/docker logs -f soul-protosync-api
 ExecStop=/usr/bin/docker stop soul-protosync-api
 ExecStopPost=/usr/bin/docker stop soul-protosync-api
