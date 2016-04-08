@@ -24,7 +24,7 @@ ExecStartPre=/usr/bin/docker run -d \
                --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
                --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
                --volume /data/hardware:/tmp/hardware \
-               experimentalplatform/german-shepherd:development \
+               experimentalplatform/german-shepherd:{{tag}} \
                bundle exec rake docker:prepare
 ExecStart=/usr/bin/env true
 

@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/docker run -d \
     -p 21025:21025/udp \
     -p 21026:21026/udp \
     -p 21027:21027/udp \
-    experimentalplatform/soul-protosync:development start-syncthing
+    experimentalplatform/soul-protosync:{{tag}} start-syncthing
 ExecStart=/usr/bin/docker logs -f soul-protosync-server
 ExecStop=/usr/bin/docker stop soul-protosync-server
 ExecStopPost=/usr/bin/docker stop soul-protosync-server
