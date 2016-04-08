@@ -127,7 +127,7 @@ function setup_images() {
     for IMAGE in ${IMAGES}; do
         set_status "image $IMG_COUNT/$IMG_NUMBER"
         # download german-shepherd and soul ony if soul is enabled.
-        if [[ "experimentalplatform/german-shepherd experimentalplatform/soul-nginx" =~ ${IMAGE%:*} ]]; then
+        if [[ "quay.io/protonetinc/german-shepherd quay.io/protonetinc/soul-nginx" =~ ${IMAGE%:*} ]]; then
             if [[ -f "${MOUNTROOT}/etc/protonet/soul/enabled" ]]; then
                 download_and_verify_image ${IMAGE}
             fi
