@@ -27,7 +27,7 @@ if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
 fi
 
 # CASE 2: We're building platform-configure itself on a (feature) branch
-available_channels="development alpha beta stable"
+available_channels="development alpha beta stable soul3"
 if [[ -z ${SERVICE_NAME} ]] && [[ -z ${CHANNEL} ]] && [[ ${VERSION} == ${SERVICE_TAG} ]] && [[ ! ${available_channels} =~ ${VERSION} ]]; then
     echo -e "\nplatform-configure feature branch build detected, setting VERSION to 'development'"
     VERSION=development
