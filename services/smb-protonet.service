@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
-    experimentalplatform/soul-smb:{{tag}}
+    quay.io/protonetinc/soul-smb:{{tag}}
 ExecStart=/usr/bin/docker logs -f smb
 ExecStop=/usr/bin/docker stop smb
 ExecStopPost=/usr/bin/docker stop smb
