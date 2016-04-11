@@ -1,0 +1,23 @@
+# ExperimentalPlatform
+[Unit]
+Description=Platform http proxy service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f platform-http-proxy
+ExecStartPre=/usr/bin/docker run -d \
+    --name platform-http-proxy \
+    -p 5100:8080 \
+    experimentalplatform/http-proxy:{{tag}}
+ExecStart=/usr/bin/docker logs -f platform-http-proxy
+ExecStop=/usr/bin/docker stop platform-http-proxy
+ExecStopPost=/usr/bin/docker stop platform-http-proxy
+
+[Install]
+WantedBy=multi-user.target
