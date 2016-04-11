@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Protonet Soul nginx Service
+Description=Experimental Platform HAProxy HTTP frontend reverse proxy
 ConditionPathExists=/etc/protonet/soul/enabled
 After=init-protonet.service
 Requires=init-protonet.service
