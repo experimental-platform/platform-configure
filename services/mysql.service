@@ -14,6 +14,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f mysql
 ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/mysql:/var/lib/mysql \
+    --net=protonet \
     --name=mysql \
     -e "MYSQL_ROOT_PASSWORD=s3kr3t" \
     -e "MYSQL_DATABASE=german-shepherd" \

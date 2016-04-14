@@ -13,7 +13,8 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-protosync-api
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-protosync-api \
-    --link skvs \
+    --net=protonet \
+    #--link skvs \
     --volume /data/soul/protosync:/etc/syncthing \
     quay.io/protonetinc/soul-protosync:{{tag}} start-api
 ExecStart=/usr/bin/docker logs -f soul-protosync-api

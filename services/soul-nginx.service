@@ -13,9 +13,10 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-nginx
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-nginx \
-    --link soul-web \
-    --link soul-socketio \
-    --link soul-webdav \
+    --net=protonet \
+    #--link soul-web \
+    #--link soul-socketio \
+    #--link soul-webdav \
     --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
     --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \

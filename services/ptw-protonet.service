@@ -12,8 +12,9 @@ Restart=always
 RestartSec=0.1s
 ExecStartPre=-/usr/bin/docker rm -f ptw
 ExecStartPre=/usr/bin/docker run -d \
-    --link skvs \
     --name=ptw \
+    #--link skvs \
+    --net=protonet \
   experimentalplatform/ptw:{{tag}}
 ExecStart=/usr/bin/docker logs -f ptw
 ExecStop=/usr/bin/docker stop ptw

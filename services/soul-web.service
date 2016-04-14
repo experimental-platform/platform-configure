@@ -13,12 +13,13 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-web
 ExecStartPre=/usr/bin/docker run -d \
       --name soul-web \
-      --link mysql \
-      --link rabbitmq \
-      --link redis \
-      --link elasticsearch \
-      --link skvs \
-      --link soul-protosync-api \
+      --net=protonet \
+      #--link mysql \
+      #--link rabbitmq \
+      #--link redis \
+      #--link elasticsearch \
+      #--link skvs \
+      #--link soul-protosync-api \
       --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
       --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
       --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \

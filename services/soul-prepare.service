@@ -12,11 +12,12 @@ KillMode=none
 RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/soul
 ExecStartPre=/usr/bin/docker run -d \
-               --link mysql \
-               --link rabbitmq \
-               --link skvs \
-               --link redis \
-               --link elasticsearch \
+               --net=protonet \
+               #--link mysql \
+               #--link rabbitmq \
+               #--link skvs \
+               #--link redis \
+               #--link elasticsearch \
                --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
                --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
                --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \

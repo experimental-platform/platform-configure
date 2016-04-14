@@ -14,6 +14,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f rabbitmq
 ExecStartPre=/usr/bin/docker run -d \
     --name=rabbitmq \
+    --net=protonet \
     -h rabbitmq \
     --volume=/data/rabbitmq:/var/lib/rabbitmq \
   rabbitmq:3.5-management

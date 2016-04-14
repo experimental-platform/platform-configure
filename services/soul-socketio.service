@@ -13,7 +13,8 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-socketio
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-socketio \
-    --link rabbitmq \
+    --net=protonet \
+    #--link rabbitmq \
     quay.io/protonetinc/german-shepherd:{{tag}} \
     bundle exec foreman start socketio
 ExecStart=/usr/bin/docker logs -f soul-socketio
