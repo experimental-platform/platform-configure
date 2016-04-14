@@ -15,7 +15,7 @@ ExecStartPre=-/usr/bin/docker rm -f elasticsearch
 ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/elasticsearch:/usr/share/elasticsearch/data \
     --name=elasticsearch \
-  elasticsearch@1.7
+  elasticsearch:1.7
 ExecStart=/usr/bin/docker logs -f elasticsearch
 ExecStop=/usr/bin/docker stop elasticsearch
 ExecStopPost=/usr/bin/docker stop elasticsearch
