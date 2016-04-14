@@ -14,10 +14,6 @@ ExecStartPre=-/usr/bin/docker rm -f soul-dispatcher
 ExecStartPre=/usr/bin/docker run -d \
   --name soul-dispatcher \
   --net=protonet \
-  #--link mysql \
-  #--link rabbitmq \
-  #--link redis \
-  #--link skvs \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
   --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
   --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
