@@ -15,7 +15,7 @@ ExecStartPre=-/usr/bin/docker rm -f redis
 ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/redis:/data \
     --name=redis \
-  redis redis-server --appendonly yes
+  redis:3.0-alpine redis-server --appendonly yes
 ExecStart=/usr/bin/docker logs -f redis
 ExecStop=/usr/bin/docker stop redis
 ExecStopPost=/usr/bin/docker stop redis

@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'pulseaudio' service
+ConditionPathExists=!/etc/protonet/soul/enabled
 After=init-protonet.service network-online.target
 Requires=init-protonet.service network-online.target
 
