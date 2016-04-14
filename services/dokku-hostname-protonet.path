@@ -1,5 +1,6 @@
 # ExperimentalPlatform
 [Unit]
+ConditionPathExists=!/etc/protonet/soul/enabled
 Description=dokku hostname changer
 
 [Path]

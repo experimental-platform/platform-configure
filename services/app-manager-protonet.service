@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'app manager' service
+ConditionPathExists=!/etc/protonet/soul/enabled
 After=init-protonet.service
 Requires=init-protonet.service
 

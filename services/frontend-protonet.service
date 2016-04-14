@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'frontend' service
+ConditionPathExists=!/etc/protonet/soul/enabled
 After=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service hardware-protonet.service
 Requires=skvs-protonet.service app-manager-protonet.service monitoring-protonet.service hardware-protonet.service
 
