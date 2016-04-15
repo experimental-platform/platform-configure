@@ -185,6 +185,7 @@ function setup_utility_scripts () {
         echo "DONE."
     done
     cp /button ${BIN_PATH}
+    cp /tcpdump "${BIN_PATH}"
     echo "ALL DONE"
 }
 
