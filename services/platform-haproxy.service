@@ -12,6 +12,7 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f platform-haproxy
 ExecStartPre=/usr/bin/docker run -d \
+    --net=protonet \
     --name platform-haproxy \
     -p 80:80 \
     -p 443:443 \
