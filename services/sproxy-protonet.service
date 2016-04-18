@@ -15,7 +15,6 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/var/run/dbus/:/var/run/dbus/ \
     --net=protonet \
     --name=sproxy \
-    # The name used by SKVS
     --net-alias=hook \
   experimentalplatform/systemd-proxy:{{tag}}
 ExecStart=/usr/bin/docker logs -f sproxy
