@@ -2,8 +2,8 @@
 [Unit]
 Description=Protonet Soul nginx Service
 ConditionPathExists=/etc/protonet/soul/enabled
-After=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
-Requires=soul-prepare.service soul-web.service soul-socketio.service soul-webdav.service
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
 TimeoutStartSec=0
