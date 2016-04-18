@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -eu
+
+if ! docker inspect --type=image speedtest:latest &>/dev/null; then
+  CONTEXT="$(mktemp -d)"
+  trap "rm -rf $CONTEXT" SIGINT SIGTERM EXIT
+  echo -e 'FROM alpine:latest\nRUN apk update && apk add python py-pip && rm -rf /var/cache/apk/*\nRUN pip install speedtest-cli' > "$CONTEXT/Dockerfile"
+  docker build -t speedtest:latest "$CONTEXT"
+fi
+exec docker run -it --rm --net host speedtest:latest speedtest-cli $@
+

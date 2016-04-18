@@ -15,5 +15,6 @@ ADD test.sh /test.sh
 ADD scripts /scripts
 ADD button /button
 ADD tcpdump /tcpdump
+ADD speedtest /speedtest
 
 CMD [ "/prep.sh" ]
