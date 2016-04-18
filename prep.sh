@@ -121,7 +121,7 @@ function setup_images() {
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
     # Complex regexp to find all images names in all service files
-    IMAGES=$(gawk '!/^\s*[a-zA-Z0-9]+=|\[|^#|^\s*$|^\s*\-|^\s*bundle/ { gsub("[^a-zA-Z0-9/:@.-]", "", $1); print $1}' ${MOUNTROOT}/etc/systemd/system/*.service | sort | uniq)
+    IMAGES=$(gawk '!/^\s*[a-zA-Z0-9]+=|\[|^\s*#|^\s*$|^\s*\-|^\s*bundle/ { gsub("[^a-zA-Z0-9/:@.-]", "", $1); print $1}' ${MOUNTROOT}/etc/systemd/system/*.service | sort | uniq)
     IMG_NUMBER=$(echo "${IMAGES}" | wc -l)
     IMG_COUNT=0
     for IMAGE in ${IMAGES}; do
@@ -185,6 +185,7 @@ function setup_utility_scripts () {
         echo "DONE."
     done
     cp /button ${BIN_PATH}
+    cp /tcpdump "${BIN_PATH}"
     echo "ALL DONE"
 }
 

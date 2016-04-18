@@ -14,5 +14,6 @@ ADD prep.sh /prep.sh
 ADD test.sh /test.sh
 ADD scripts /scripts
 ADD button /button
+ADD tcpdump /tcpdump
 
 CMD [ "/prep.sh" ]
