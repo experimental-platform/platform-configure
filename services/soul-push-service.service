@@ -13,10 +13,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-push-service
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-push-service \
-    --link mysql \
-    --link rabbitmq \
-    --link redis \
-    --link skvs \
+    --net=protonet \
     quay.io/protonetinc/german-shepherd:{{tag}} \
     bundle exec foreman start push_service
 ExecStart=/usr/bin/docker logs -f soul-push-service

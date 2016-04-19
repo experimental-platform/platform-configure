@@ -13,10 +13,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-fs-notifier
 ExecStartPre=/usr/bin/docker run -d \
   --name soul-fs-notifier \
-  --link mysql \
-  --link rabbitmq \
-  --link redis \
-  --link skvs \
+  --net=protonet \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
   quay.io/protonetinc/german-shepherd:{{tag}} \
   bundle exec foreman start fs_notifier

@@ -13,8 +13,8 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f skvs
 ExecStartPre=/usr/bin/docker run -d \
     --name=skvs \
+    --net=protonet \
     --volume=/etc/protonet:/data \
-    --link=sproxy:hook \
     -p 127.0.0.1:9200:82 \
   experimentalplatform/skvs:{{tag}}
 ExecStart=/usr/bin/docker logs -f skvs

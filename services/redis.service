@@ -15,6 +15,7 @@ ExecStartPre=-/usr/bin/docker rm -f redis
 ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/redis:/data \
     --name=redis \
+    --net=protonet \
   redis:3.0-alpine redis-server --appendonly yes
 ExecStart=/usr/bin/docker logs -f redis
 ExecStop=/usr/bin/docker stop redis

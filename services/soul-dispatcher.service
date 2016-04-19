@@ -13,10 +13,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-dispatcher
 ExecStartPre=/usr/bin/docker run -d \
   --name soul-dispatcher \
-  --link mysql \
-  --link rabbitmq \
-  --link redis \
-  --link skvs \
+  --net=protonet \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
   --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
   --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \

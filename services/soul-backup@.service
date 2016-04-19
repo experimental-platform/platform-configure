@@ -7,7 +7,7 @@ Type=oneshot
 KillMode=none
 ExecStartPre=-/usr/bin/env bash -c '/usr/sbin/lshw &>/dev/null'
 ExecStart=-/usr/bin/env docker run --rm -i \
-    --link mysql \
+    --net=protonet \
     --cap-add=SYS_ADMIN \
     -e MYSQL_USER=root \
     -e MYSQL_PASS=s3kr3t \

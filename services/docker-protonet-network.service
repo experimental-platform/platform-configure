@@ -1,0 +1,13 @@
+[Unit]
+Description=Docker protonet bridge network initialization
+After=docker.service
+
+[Service]
+ExecStart=-/usr/bin/env docker network create --driver bridge protonet
+ExecStartPost=/bin/bash -c "docker network inspect protonet | jq '.[0].IPAM.Config[0].Gateway' --raw-output | cut -d '/' -f1 > /etc/protonet/system/dockerhost"
+KillMode=none
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
