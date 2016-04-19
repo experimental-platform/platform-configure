@@ -2,7 +2,7 @@
 set -e
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
-
+CHANNEL=${CHANNEL:="development"}
 
 function set_status() {
   mkdir -p ${MOUNTROOT}/etc/protonet/system
@@ -111,12 +111,7 @@ function download_and_verify_image() {
 function setup_images() {
     # Pre-Fetch all Images
     # When using a feature branch most images come from the development channel:
-    echo -n "Fetching all images..."
-    available_channels="development alpha beta stable"
-    if [[ ! ${available_channels} =~ ${CHANNEL} ]]; then
-        CHANNEL=development
-    fi
-    echo " for channel '${CHANNEL}':"
+    echo -n "Fetching all images for channel '${CHANNEL}':"
 
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
@@ -205,10 +200,49 @@ function rescue_legacy_script () {
         setup_utility_scripts
     fi
 }
+
+parse_template() {
+  SERVICE_FILE="$1"
+  SERVICE_TAG="$2"
+
+  echo -e "\n\nBuilding '${SERVICE_FILE}' with TAG '${SERVICE_TAG}':"
+  pystache "$(<$SERVICE_FILE)" "{\"tag\":\"${SERVICE_TAG}\"}" > ${SERVICE_FILE}.new
+  mv ${SERVICE_FILE}.new ${SERVICE_FILE}
+}
+
+parse_all_templates() {
+  echo -e "\nParsing templates for SERVICE_TAG '${SERVICE_TAG}', SERVICE_NAME '${SERVICE_NAME}', CHANNEL '${CHANNEL}'.\n\n"
+
+  # SERVICE_TAG is the name of the feature branch the SERVICE_NAME is on
+  SERVICE_TAG=${SERVICE_TAG:="development"}
+  # SERVICE_NAME is the name of a service on a feature branch
+
+  # CASE 1: We build an exciting new (feature) branch. That means:
+  # 1. there is one systemd service file (SERVICE_NAME) that links to the special docker tag SERVICE_TAG (a.k.a. the branch name)
+  # 2. the docker image for platform-configure (this project) will be tagged with SERVICE_TAG
+  if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
+    SERVICE_FILE=/services/${SERVICE_NAME}-protonet.service
+    if [ -e ${SERVICE_FILE} ]; then
+      parse_template "$SERVICE_FILE" "$SERVICE_TAG"
+    fi
+  fi
+
+  for SERVICE_FILE in services/*
+  do
+    parse_template "$SERVICE_FILE" "$CHANNEL"
+  done
+}
+
 setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
 # Now the stuff that may break...
+parse_all_templates
+
+if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
+  exit 0
+fi
+
 cleanup_systemd
 setup_udev
 setup_systemd

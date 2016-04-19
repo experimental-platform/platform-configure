@@ -3,15 +3,14 @@ services:
   - docker
 
 install:
-  - 'npm install -g mustache'
-  - 'SERVICE_TAG=${SERVICE_TAG:-$TRAVIS_BRANCH}'
-  - './ci-build.sh'
-  - 'docker build -t experimentalplatform/configure:${SERVICE_TAG} .'
+  - 'curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh'
+  - 'docker build -t experimentalplatform/configure:${TRAVIS_BRANCH} .'
+  - 'mkdir "$(pwd)/mnt"'
 
 script:
-  - 'docker run --rm experimentalplatform/configure:${SERVICE_TAG} /test.sh'
+  - 'docker run --rm -e TEMPLATES_ONLY=true experimentalplatform/configure:${TRAVIS_BRANCH} bash -c "/prep.sh && /test.sh"'
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "$TRAVIS_BRANCH" != "master" ] && DEPLOY=true || DEPLOY=false'
   - '[ "${DEPLOY}" = "true" ] && docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS'
-  - '[ "${DEPLOY}" = "true" ] && docker push experimentalplatform/configure:${SERVICE_TAG}'
+  - '[ "${DEPLOY}" = "true" ] && docker push experimentalplatform/configure:${TRAVIS_BRANCH}'
