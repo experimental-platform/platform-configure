@@ -186,6 +186,8 @@ function setup_utility_scripts () {
     done
     cp /button ${BIN_PATH}
     cp /tcpdump "${BIN_PATH}"
+    cp /speedtest "${BIN_PATH}"
+    cp /masterpassword "${BIN_PATH}"
     echo "ALL DONE"
 }
 
