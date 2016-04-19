@@ -17,6 +17,7 @@ function setup_paths() {
     mkdir -p ${MOUNTROOT}/etc/systemd/system/docker.service.d
     mkdir -p ${MOUNTROOT}/etc/systemd/system/scripts/
     mkdir -p ${MOUNTROOT}/etc/udev/rules.d
+    mkdir -p ${MOUNTROOT}/opt/bin
     echo "DONE."
 }
 
