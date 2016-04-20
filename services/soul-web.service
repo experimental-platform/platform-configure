@@ -29,6 +29,8 @@ ExecStartPre=/usr/bin/docker run -d \
 ExecStart=/usr/bin/docker logs -f soul-web
 ExecStop=/usr/bin/docker stop soul-web
 ExecStopPost=/usr/bin/docker stop soul-web
+ExecStartPost=-/bin/bash -c 'echo "power" > /etc/protonet/system/button'
+ExecStopPost=-/bin/bash -c 'echo "shutdown" > /etc/protonet/system/button'
 
 [Install]
 WantedBy=multi-user.target

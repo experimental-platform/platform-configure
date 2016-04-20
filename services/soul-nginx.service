@@ -19,7 +19,6 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     quay.io/protonetinc/soul-nginx:{{tag}}
-ExecStartPost=-/bin/bash -c 'echo "power" > /etc/protonet/system/button'
 ExecStart=/usr/bin/docker logs -f soul-nginx
 ExecStop=/usr/bin/docker stop soul-nginx
 ExecStopPost=/usr/bin/docker stop soul-nginx
