@@ -16,7 +16,7 @@ ExecStartPre=/usr/bin/docker run -d \
     -p 548:548 \
     --volume /data/samba/extrausers/:/var/lib/extrausers/:ro \
     --volume /data/soul/files/:/home/protonet/dashboard/shared/files/:rw \
-    experimentalplatform/afpd:{{tag}}
+    quay.io/experimentalplatform/afpd:{{tag}}
 ExecStart=/usr/bin/docker logs -f afpd
 ExecStop=/usr/bin/docker stop afpd
 ExecStopPost=/usr/bin/docker stop afpd

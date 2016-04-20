@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f hostname-smb
 ExecStartPre=/usr/bin/docker run -d \
     --name=hostname-smb \
     --net=host \
-  experimentalplatform/hostname-smb:{{tag}}
+  quay.io/experimentalplatform/hostname-smb:{{tag}}
 ExecStart=/usr/bin/docker logs -f hostname-smb
 ExecStop=/usr/bin/docker stop hostname-smb
 ExecStopPost=/usr/bin/docker stop hostname-smb

@@ -17,7 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/samba/etc:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
-    experimentalplatform/smb:{{tag}} /usr/sbin/nmbd -F -S
+    quay.io/experimentalplatform/smb:{{tag}} /usr/sbin/nmbd -F -S
 ExecStart=/usr/bin/docker logs -f nmbd
 ExecStop=/usr/bin/docker stop nmbd
 ExecStopPost=/usr/bin/docker stop nmbd

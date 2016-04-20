@@ -23,7 +23,7 @@ ExecStartPre=/bin/bash -c '/usr/bin/docker run -d \
     --name=pulseaudio \
     --privileged \
     --net host \
-  experimentalplatform/pulseaudio:{{tag}}'
+  quay.io/experimentalplatform/pulseaudio:{{tag}}'
 ExecStart=/usr/bin/docker logs -f pulseaudio
 ExecStop=/usr/bin/docker stop pulseaudio
 ExecStopPost=/usr/bin/docker stop pulseaudio

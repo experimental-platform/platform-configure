@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f central-gateway
 ExecStartPre=/usr/bin/docker run -d \
     --name=central-gateway \
     --net=host \
-  experimentalplatform/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
+  quay.io/experimentalplatform/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
 ExecStart=/usr/bin/docker logs -f central-gateway
 ExecStop=/usr/bin/docker stop central-gateway
 ExecStopPost=/usr/bin/docker stop central-gateway

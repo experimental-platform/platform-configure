@@ -13,7 +13,7 @@ ExecStartPre=-/usr/bin/docker rm -f hostname-avahi
 ExecStartPre=/usr/bin/docker run -d \
     --name=hostname-avahi \
     --net=host \
-    experimentalplatform/hostname-avahi:{{tag}}
+    quay.io/experimentalplatform/hostname-avahi:{{tag}}
 ExecStart=/usr/bin/docker logs -f hostname-avahi
 ExecStop=/usr/bin/docker stop hostname-avahi
 ExecStopPost=/usr/bin/docker stop hostname-avahi

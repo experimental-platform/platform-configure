@@ -4,13 +4,13 @@ services:
 
 install:
   - 'curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh'
-  - 'docker build -t experimentalplatform/configure:${TRAVIS_BRANCH} .'
+  - 'docker build -t quay.io/experimentalplatform/configure:${TRAVIS_BRANCH} .'
   - 'mkdir "$(pwd)/mnt"'
 
 script:
-  - 'docker run --rm -e TEMPLATES_ONLY=true experimentalplatform/configure:${TRAVIS_BRANCH} bash -c "/prep.sh && /test.sh"'
+  - 'docker run --rm -e TEMPLATES_ONLY=true quay.io/experimentalplatform/configure:${TRAVIS_BRANCH} bash -c "/prep.sh && /test.sh"'
 
 after_success:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "$TRAVIS_BRANCH" != "master" ] && DEPLOY=true || DEPLOY=false'
-  - '[ "${DEPLOY}" = "true" ] && docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS'
-  - '[ "${DEPLOY}" = "true" ] && docker push experimentalplatform/configure:${TRAVIS_BRANCH}'
+  - '[ "${DEPLOY}" = "true" ] && docker login -e none -u "$QUAY_USER" -p "$QUAY_PASS" quay.io'
+  - '[ "${DEPLOY}" = "true" ] && docker push quay.io/experimentalplatform/configure:${TRAVIS_BRANCH}'

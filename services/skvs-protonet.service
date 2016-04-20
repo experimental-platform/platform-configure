@@ -16,7 +16,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --volume=/etc/protonet:/data \
     -p 127.0.0.1:9200:82 \
-  experimentalplatform/skvs:{{tag}}
+  quay.io/experimentalplatform/skvs:{{tag}}
 ExecStart=/usr/bin/docker logs -f skvs
 ExecStop=/usr/bin/docker stop skvs
 ExecStopPost=/usr/bin/docker stop skvs
