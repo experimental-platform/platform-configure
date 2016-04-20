@@ -3,9 +3,13 @@
 set -e
 
 : ${PASSWD_FILE:=/etc/protonet/system/ssh/password}
+: ${PASSWD_LOCK_FILE:=/etc/protonet/system/ssh/lock}
 : ${SUCCESS_FILE:=/etc/protonet/system/ssh/success}
 : ${ERROR_FILE:=/etc/protonet/system/ssh/error}
 : ${SYSTEM_USER:=platform}
+
+[[ -f ${PASSWD_LOCK_FILE} ]] && rm -f ${PASSWD_LOCK_FILE}
+
 
 logger -p INFO -s "Setting password for user '${SYSTEM_USER}'."
 # remove all newlines
