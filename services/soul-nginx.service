@@ -4,7 +4,6 @@ Description=Protonet Soul nginx Service
 ConditionPathExists=/etc/protonet/soul/enabled
 After=init-protonet.service
 Requires=init-protonet.service
-PartOf=soul-web.service
 
 [Service]
 TimeoutStartSec=0
