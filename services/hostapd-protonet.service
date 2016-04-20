@@ -26,7 +26,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --volume /var/run/systemd:/var/run/systemd:ro \
     --volume=/etc/protonet/system/wifi:/etc/protonet/system/wifi \
-    experimentalplatform/hostapd:{{tag}}
+    quay.io/experimentalplatform/hostapd:{{tag}}
 ExecStart=/usr/bin/docker logs -f hostapd
 ExecStop=/usr/bin/docker stop hostapd
 ExecStopPost=/usr/bin/docker stop hostapd

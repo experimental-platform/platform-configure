@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f platform-http-proxy
 ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --name platform-http-proxy \
-    experimentalplatform/http-proxy:{{tag}}
+    quay.io/experimentalplatform/http-proxy:{{tag}}
 ExecStart=/usr/bin/docker logs -f platform-http-proxy
 ExecStop=/usr/bin/docker stop platform-http-proxy
 ExecStopPost=/usr/bin/docker stop platform-http-proxy

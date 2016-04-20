@@ -22,7 +22,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/etc/machine-id:/etc/machine-id:ro \
     --volume=/data/frontend:/data \
     --volume=/data/hardware:/hardware \
-  experimentalplatform/frontend:{{tag}}
+  quay.io/experimentalplatform/frontend:{{tag}}
 ExecStart=/usr/bin/docker logs -f frontend
 ExecStop=/usr/bin/docker stop frontend
 ExecStopPost=/usr/bin/docker stop frontend

@@ -19,7 +19,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /dev/log:/dev/log \
     --volume /data/haproxy/ssl:/data/ssl \
     --volume /data/haproxy/socket:/run/haproxy \
-    experimentalplatform/haproxy:{{tag}}
+    quay.io/experimentalplatform/haproxy:{{tag}}
 ExecStart=/usr/bin/docker logs -f platform-haproxy
 ExecStop=/usr/bin/docker stop platform-haproxy
 ExecStopPost=/usr/bin/docker stop platform-haproxy

@@ -17,7 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/hardware:/socketdir \
     --privileged=true \
     --net=host \
-  experimentalplatform/hardware:{{tag}}
+  quay.io/experimentalplatform/hardware:{{tag}}
 ExecStart=/usr/bin/docker logs -f hardware
 ExecStop=/usr/bin/docker stop hardware
 ExecStopPost=/usr/bin/docker stop hardware

@@ -25,7 +25,7 @@ ExecStartPre=/bin/bash -c 'docker run -d \
     --publish=127.0.0.1:9001:80 \
     --publish=8022:22 \
     --env DOCKER_GID=$(id -g docker) \
-  experimentalplatform/dokku:{{tag}}'
+  quay.io/experimentalplatform/dokku:{{tag}}'
 ExecStart=/usr/bin/docker logs -f dokku
 ExecStop=/usr/bin/docker stop dokku
 ExecStopPost=/usr/bin/docker stop dokku

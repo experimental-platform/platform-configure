@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f monitoring
 ExecStartPre=/usr/bin/docker run -d \
     --name=monitoring \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
-  experimentalplatform/monitoring:{{tag}}
+  quay.io/experimentalplatform/monitoring:{{tag}}
 ExecStart=/usr/bin/docker logs -f monitoring
 ExecStop=/usr/bin/docker stop monitoring
 ExecStopPost=/usr/bin/docker stop monitoring
