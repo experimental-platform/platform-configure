@@ -2,7 +2,8 @@ FROM experimentalplatform/ubuntu:latest
 
 RUN apt-get update && \
     apt-get -y upgrade && \
-    apt-get -y install --no-install-recommends gawk systemd && \
+    apt-get -y install --no-install-recommends gawk systemd \
+      python-pkg-resources python-pystache && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
