@@ -9,6 +9,7 @@ ExecStartPre=-/usr/bin/env bash -c '/usr/sbin/lshw &>/dev/null'
 ExecStart=-/usr/bin/env docker run --rm -i \
     --net=protonet \
     --cap-add=SYS_ADMIN \
+    --privileged \
     -e MYSQL_USER=root \
     -e MYSQL_PASS=s3kr3t \
     -e MYSQL_HOST=mysql \
