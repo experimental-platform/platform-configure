@@ -9,6 +9,7 @@ PathModified=/etc/protonet/system/wifi/channel
 PathModified=/etc/protonet/system/wifi/guest/enabled
 PathModified=/etc/protonet/system/wifi/guest/password
 PathModified=/etc/protonet/hostname
+PathModified=/etc/protonet/box_name
 
 [Install]
 WantedBy=multi-user.target
