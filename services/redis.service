@@ -16,7 +16,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/redis:/data \
     --name=redis \
     --net=protonet \
-  redis:3.0-alpine redis-server --appendonly yes
+  quay.io/experimentalplatform/redis:{{tag}} redis-server --appendonly yes
 ExecStart=/usr/bin/docker logs -f redis
 ExecStop=/usr/bin/docker stop redis
 ExecStopPost=/usr/bin/docker stop redis
