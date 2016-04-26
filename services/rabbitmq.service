@@ -17,7 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     -h rabbitmq \
     --volume=/data/rabbitmq:/var/lib/rabbitmq \
-  rabbitmq:3.5-management
+  quay.io/experimentalplatform/rabbitmq:{{tag}}
 ExecStart=/usr/bin/docker logs -f rabbitmq
 ExecStop=/usr/bin/docker stop rabbitmq
 ExecStopPost=/usr/bin/docker stop rabbitmq
