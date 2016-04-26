@@ -1,10 +1,16 @@
 # ExperimentalPlatform
 [Unit]
 Description=Protonet Soul backup Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
-Type=oneshot
-KillMode=none
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=/bin/mkdir -p /var/run/soul-backup
 ExecStartPre=-/usr/bin/env bash -c '/usr/sbin/lshw &>/dev/null'
 ExecStart=-/usr/bin/env docker run --rm -i \
     --net=protonet \
@@ -14,6 +20,7 @@ ExecStart=-/usr/bin/env docker run --rm -i \
     -e MYSQL_PASS=s3kr3t \
     -e MYSQL_HOST=mysql \
     --volume /dev:/dev:rw \
+    --volume /var/run/soul-backup:/var/run/soul-backup:rw \
     --volume /data/soul:/protonet/data:rw \
     --volume /etc/protonet:/protonet/config:rw \
     --volume /var/run/dbus:/var/run/dbus:rw \
@@ -22,3 +29,6 @@ ExecStart=-/usr/bin/env docker run --rm -i \
     --volume /var/run/systemd:/var/run/systemd:ro \
     quay.io/protonetinc/soul-backup:{{tag}} protonet-backup stdio
 StandardInput=socket
+
+[Install]
+WantedBy=multi-user.target
