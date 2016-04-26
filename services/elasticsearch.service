@@ -16,7 +16,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/data/elasticsearch:/usr/share/elasticsearch/data \
     --name=elasticsearch \
     --net=protonet \
-  elasticsearch:1.7
+  quay.io/experimentalplatform/elasticsearch:{{tag}}
 ExecStart=/usr/bin/docker logs -f elasticsearch
 ExecStop=/usr/bin/docker stop elasticsearch
 ExecStopPost=/usr/bin/docker stop elasticsearch
