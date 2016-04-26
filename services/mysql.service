@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --name=mysql \
     -e "MYSQL_ROOT_PASSWORD=s3kr3t" \
     -e "MYSQL_DATABASE=german-shepherd" \
-  mysql:5.7
+  quay.io/experimentalplatform/mysql:{{tag}}
 ExecStart=/usr/bin/docker logs -f mysql
 ExecStop=/usr/bin/docker stop mysql
 ExecStopPost=/usr/bin/docker stop mysql
