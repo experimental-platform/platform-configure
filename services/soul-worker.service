@@ -25,7 +25,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/hardware:/tmp/hardware \
     --volume /var/run/soul-backup:/tmp/backup \
     quay.io/protonetinc/german-shepherd:{{tag}} \
-    bundle exec foreman start worker
+    bundle exec foreman start -m worker=3
 ExecStart=/usr/bin/docker logs -f soul-worker
 ExecStop=/usr/bin/docker stop soul-worker
 ExecStopPost=/usr/bin/docker stop soul-worker
