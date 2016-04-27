@@ -10,6 +10,7 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/usr/bin/cp -r /data/samba/etc /data/samba/etc-mounted
 ExecStartPre=-/usr/bin/docker rm -f smb
 ExecStartPre=/usr/bin/docker run -d \
     --name=smb \
@@ -18,7 +19,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
-    --volume /data/samba/etc:/etc/samba/ \
+    --volume /data/samba/etc-mounted:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
     quay.io/protonetinc/soul-smb:{{tag}}
 ExecStart=/usr/bin/docker logs -f smb
