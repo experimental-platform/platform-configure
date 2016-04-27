@@ -12,7 +12,9 @@ Restart=always
 RestartSec=5s
 ExecStartPre=/bin/mkdir -p /var/run/soul-backup
 ExecStartPre=-/usr/bin/env bash -c '/usr/sbin/lshw &>/dev/null'
-ExecStart=-/usr/bin/env docker run --rm -i \
+ExecStartPre=-/usr/bin/docker rm -f soul-backup
+ExecStartPre=-/usr/bin/env docker run -d \
+    --name soul-backup \
     --net=protonet \
     --cap-add=SYS_ADMIN \
     --privileged \
@@ -27,8 +29,10 @@ ExecStart=-/usr/bin/env docker run --rm -i \
     --volume /usr/bin/systemctl:/usr/bin/systemctl:ro \
     --volume /sys/fs/cgroup:/sys/fs/cgroup:ro \
     --volume /var/run/systemd:/var/run/systemd:ro \
-    quay.io/protonetinc/soul-backup:{{tag}} protonet-backup stdio
-StandardInput=socket
+    quay.io/protonetinc/soul-backup:{{tag}}
+ExecStart=/usr/bin/docker logs -f soul-backup
+ExecStop=-/usr/bin/docker stop soul-backup
+ExecStopPost=-/usr/bin/docker stop soul-backup
 
 [Install]
 WantedBy=multi-user.target
