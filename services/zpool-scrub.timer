@@ -5,7 +5,7 @@ After=zfs.service
 Requires=zfs.service
 
 [Timer]
-OnStartupSec=30min
+OnStartupSec=4h
 OnUnitActiveSec=1month
 Unit=zpool-scrub.service
 
