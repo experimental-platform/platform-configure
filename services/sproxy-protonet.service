@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run systemd-proxy (sproxy) service
+ConditionPathExists=!/etc/protonet/soul/enabled
 After=init-protonet.service
 Requires=init-protonet.service
 
@@ -16,7 +17,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --name=sproxy \
     --net-alias=hook \
-  quay.io/experimentalplatform/systemd-proxy:{{tag}}
+  quay.io/experimentalplatform/systemd-proxy:development
 ExecStart=/usr/bin/docker logs -f sproxy
 ExecStop=/usr/bin/docker stop sproxy
 ExecStopPost=/usr/bin/docker stop sproxy

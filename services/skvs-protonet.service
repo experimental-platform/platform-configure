@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'simple key value storage' service
-After=sproxy-protonet.service
-Requires=sproxy-protonet.service
+After=docker.service
+Requires=docker.service
 
 [Service]
 TimeoutStartSec=0
@@ -16,7 +16,8 @@ ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --volume=/etc/protonet:/data \
     -p 127.0.0.1:9200:82 \
-  quay.io/experimentalplatform/skvs:{{tag}} --exempt-from-cache system/channel
+    --entrypoint /dumb-init \
+  quay.io/experimentalplatform/skvs:development /skvs --port 80 --exempt-from-cache system/channel
 ExecStart=/usr/bin/docker logs -f skvs
 ExecStop=/usr/bin/docker stop skvs
 ExecStopPost=/usr/bin/docker stop skvs
