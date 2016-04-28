@@ -4,8 +4,7 @@ Description=Protonet SMB
 
 [Path]
 PathModified=/etc/protonet/hostname
-PathModified=/data/samba/etc/smb.conf
-PathModified=/data/samba/etc/user_volumes.conf
+PathModified=/data/samba/etc/
 
 [Install]
 WantedBy=multi-user.target
