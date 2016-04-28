@@ -32,18 +32,22 @@ ExecStart=/usr/bin/docker logs -f hostapd
 ExecStop=/usr/bin/docker stop hostapd
 ExecStopPost=/usr/bin/docker stop hostapd
 
-ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i wl_private -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
-ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_private -j ACCEPT'
-ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i wl_public -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
-ExecStartPost=/bin/bash -c '/sbin/iptables -A FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_public -j ACCEPT'
-ExecStartPost=/bin/bash -c '/sbin/iptables -t nat -A POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.42.0.0/16 -j MASQUERADE'
-ExecStartPost=/bin/bash -c '/sbin/iptables -t nat -A POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.43.0.0/16 -j MASQUERADE'
-ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i wl_private -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
-ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_private -j ACCEPT'
-ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i wl_public -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -m state --state ESTABLISHED,RELATED -j ACCEPT'
-ExecStop=-/bin/bash -c '/sbin/iptables -D FORWARD -i $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -o wl_public -j ACCEPT'
-ExecStop=-/bin/bash -c '/sbin/iptables -t nat -D POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.42.0.0/16 -j MASQUERADE'
-ExecStop=-/bin/bash -c '/sbin/iptables -t nat -D POSTROUTING -o $(ip route get 8.8.8.8 | grep -Po "(?<=dev )en[0-9a-z_]+") -s 10.43.0.0/16 -j MASQUERADE'
+ExecStartPost=-/usr/bin/docker rm -f hostapd-iptables-start
+ExecStartPost=/usr/bin/docker run -t \
+    --name=hostapd-iptables-start \
+    --net=host \
+    --privileged=true \
+    quay.io/experimentalplatform/hostapd:{{tag}} \
+    /src/exe/iptables.sh start
+
+ExecStop=-/usr/bin/docker rm -f hostapd-iptables-stop
+ExecStop=/usr/bin/docker run -t \
+    --name=hostapd-iptables-stop \
+    --net=host \
+    --privileged=true \
+    quay.io/experimentalplatform/hostapd:{{tag}} \
+    /src/exe/iptables.sh stop
+
 
 [Install]
 WantedBy=multi-user.target
