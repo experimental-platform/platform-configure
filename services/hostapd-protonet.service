@@ -37,16 +37,14 @@ ExecStartPost=/usr/bin/docker run -t \
     --name=hostapd-iptables-start \
     --net=host \
     --privileged=true \
-    quay.io/experimentalplatform/hostapd:{{tag}} \
-    /src/exe/iptables.sh start
+    quay.io/experimentalplatform/hostapd:{{tag}} /src/exe/iptables.sh start
 
 ExecStop=-/usr/bin/docker rm -f hostapd-iptables-stop
 ExecStop=/usr/bin/docker run -t \
     --name=hostapd-iptables-stop \
     --net=host \
     --privileged=true \
-    quay.io/experimentalplatform/hostapd:{{tag}} \
-    /src/exe/iptables.sh stop
+    quay.io/experimentalplatform/hostapd:{{tag}} /src/exe/iptables.sh stop
 
 
 [Install]
