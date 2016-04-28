@@ -11,6 +11,8 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-dispatcher
+ExecStartPre=-/usr/bin/chown 1000:1000 -R /data/samba/
+ExecStartPre=-/usr/bin/chmod 644 /data/samba/etc/smbpasswd
 ExecStartPre=/usr/bin/docker run -d \
   --name soul-dispatcher \
   --net=protonet \
