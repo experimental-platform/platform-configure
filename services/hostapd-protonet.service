@@ -31,7 +31,11 @@ ExecStartPre=/usr/bin/docker run -d \
     quay.io/experimentalplatform/hostapd:{{tag}}
 ExecStart=/usr/bin/docker logs -f hostapd
 ExecStop=/usr/bin/docker stop hostapd
+ExecStop=-/usr/bin/ifconfig wl_private down
+ExecStop=-/usr/bin/ifconfig wl_public down
 ExecStopPost=/usr/bin/docker stop hostapd
+ExecStopPost=-/usr/bin/ifconfig wl_private down
+ExecStopPost=-/usr/bin/ifconfig wl_public down
 
 ExecStartPost=-/usr/bin/docker rm -f hostapd-iptables-start
 ExecStartPost=/usr/bin/docker run -t \
