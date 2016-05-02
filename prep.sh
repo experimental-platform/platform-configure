@@ -222,7 +222,7 @@ parse_all_templates() {
   # 1. there is one systemd service file (SERVICE_NAME) that links to the special docker tag SERVICE_TAG (a.k.a. the branch name)
   # 2. the docker image for platform-configure (this project) will be tagged with SERVICE_TAG
   if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
-    SERVICE_FILE=/services/${SERVICE_NAME}-protonet.service
+    SERVICE_FILE=/services/${SERVICE_NAME}.service
     if [ -e ${SERVICE_FILE} ]; then
       parse_template "$SERVICE_FILE" "$SERVICE_TAG"
     fi
