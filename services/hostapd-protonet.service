@@ -30,10 +30,10 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume=/etc/protonet/box_name:/etc/protonet/box_name:ro \
     quay.io/experimentalplatform/hostapd:{{tag}}
 ExecStart=/usr/bin/docker logs -f hostapd
-ExecStop=/usr/bin/docker stop hostapd
+ExecStop=-/usr/bin/docker stop hostapd
 ExecStop=-/usr/bin/ifconfig wl_private down
 ExecStop=-/usr/bin/ifconfig wl_public down
-ExecStopPost=/usr/bin/docker stop hostapd
+ExecStopPost=-/usr/bin/docker stop hostapd
 ExecStopPost=-/usr/bin/ifconfig wl_private down
 ExecStopPost=-/usr/bin/ifconfig wl_public down
 
