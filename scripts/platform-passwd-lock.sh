@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
 : ${PASSWD_LOCK_FILE:=/etc/protonet/system/ssh/lock}
 : ${SUCCESS_FILE:=/etc/protonet/system/ssh/success}
@@ -10,7 +10,7 @@ set -e
 logger -p INFO -s "Locking account '${SYSTEM_USER}'."
 
 if [[ -f ${PASSWD_LOCK_FILE} ]]; then
-    passwd -l ${SYSTEM_USER} | true
+    passwd -l ${SYSTEM_USER} | cat
     status=${PIPESTATUS[0]}
     rm -f ${PASSWD_LOCK_FILE}
 fi
