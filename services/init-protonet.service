@@ -39,6 +39,7 @@ ExecStartPre=/bin/chown 1000:1000 /data/soul/protosync
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
 ExecStartPre=/bin/mkdir -p /etc/protonet/system/ssh/
 ExecStartPre=/bin/mkdir -p /etc/protonet/system/wifi/guest/
+ExecStartPre=-/bin/bash -c '[[ -f /etc/protonet/ptw/enabled ]] && mkdir -p /etc/protonet/ptw/control/ && touch /etc/protonet/ptw/control/enabled'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/box_name ]] && echo "Protonet" > /etc/protonet/box_name'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/password'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/guest/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/guest/password'
