@@ -81,7 +81,18 @@ function download_and_verify_image() {
     local image=$1
     DOCKER="/docker"
     ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
-    ${DOCKER} pull ${image}
+    RETRIES=0
+    MAXRETRIES=10
+    while ( ! $DOCKER pull $image ) && [ $RETRIES -ne $MAXRETRIES ]; do
+        sleep 1
+        echo " Pull failed, retrying."
+        RETRIES=$(($RETRIES+1))
+    done
+
+    if [ $RETRIES -eq $MAXRETRIES ]; then
+      echo " Failed to retrieve $image"
+      exit 1
+    fi
 
     local driver=$(${DOCKER} info | grep '^Storage Driver: ' | sed -r 's/^Storage Driver: (.*)/\1/')
     # if using OverlayFS then verify layers
