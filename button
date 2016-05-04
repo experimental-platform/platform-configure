@@ -38,9 +38,9 @@ if ! [[ " ${!animations[@]} " =~ " $1 " ]]; then
   exit 1
 fi
 
-devices=($(ls -d /dev/protobutton* 2>/dev/null || true))
+devices=( $(ls -d /dev/protobutton* 2>/dev/null || true) )
 
-if [ -z ${devices[0]+x} ]; then
+if [ ${#devices[@]} -eq 0 ]; then
   echo "no button found"
   exit 1
 fi

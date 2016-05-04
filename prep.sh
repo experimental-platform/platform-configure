@@ -168,7 +168,6 @@ function setup_udev() {
     cp /config/sound-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/sound-permissions.rules
     cp /config/video-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/video-permissions.rules
     cp /config/tty-permissions.rules   ${MOUNTROOT}/etc/udev/rules.d/tty-permissions.rules
-    cp /config/80-protonet.rules       ${MOUNTROOT}/etc/udev/rules.d/80-protonet.rules
     echo "DONE."
 }
 
@@ -245,6 +244,10 @@ parse_all_templates() {
   done
 }
 
+
+trap "/button error >/dev/null 2>&1 || true" SIGINT SIGTERM EXIT
+
+/button "rainbow" >/dev/null 2>&1 || true
 setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
@@ -252,7 +255,8 @@ rescue_legacy_script
 parse_all_templates
 
 if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
-  exit 0
+    /button "hdd" >/dev/null 2>&1 || true
+    exit 0
 fi
 
 cleanup_systemd
@@ -260,4 +264,5 @@ setup_udev
 setup_systemd
 setup_channel_file
 setup_images
+/button "shimmer" >/dev/null 2>&1 || true
 
