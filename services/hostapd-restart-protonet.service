@@ -1,6 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Restart Service hostapd-protonet
+ConditionPathExists=!/etc/protonet/system/wifi/hostname
 After=init-protonet.service
 Requires=init-protonet.service
 
