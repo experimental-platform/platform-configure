@@ -1,0 +1,1 @@
+SUBSYSTEM=="tty", ATTRS{product}=="Arduino Leonardo", SYMLINK+="protobutton%n", MODE="0660", GROUP="platform"
