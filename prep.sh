@@ -168,6 +168,8 @@ function setup_udev() {
     cp /config/sound-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/sound-permissions.rules
     cp /config/video-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/video-permissions.rules
     cp /config/tty-permissions.rules   ${MOUNTROOT}/etc/udev/rules.d/tty-permissions.rules
+    cp /config/80-protonet.rules   ${MOUNTROOT}/etc/udev/rules.d/80-protonet.rules
+    udevadm control --reload-rules
     echo "DONE."
 }
 
@@ -261,6 +263,7 @@ fi
 
 cleanup_systemd
 setup_udev
+/button "rainbow" >/dev/null 2>&1 || true
 setup_systemd
 setup_channel_file
 setup_images
