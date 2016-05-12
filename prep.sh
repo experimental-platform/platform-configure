@@ -169,7 +169,7 @@ function setup_udev() {
     cp /config/video-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/video-permissions.rules
     cp /config/tty-permissions.rules   ${MOUNTROOT}/etc/udev/rules.d/tty-permissions.rules
     cp /config/80-protonet.rules   ${MOUNTROOT}/etc/udev/rules.d/80-protonet.rules
-    udevadm control --reload-rules
+    udevadm control --reload-rules || true
     echo "DONE."
 }
 
