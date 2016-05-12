@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Restart Service ptw-protonet
-After=network-online.target
-Requires=network-online.target
+After=ptw-protonet.service
+Requires=ptw-protonet.service
 ConditionFileNotEmpty=/etc/protonet/ptw/node_name
 
 [Service]
