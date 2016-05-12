@@ -261,6 +261,12 @@ if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
     exit 0
 fi
 
+if grep -qE '^#?DefaultTimeoutStopSec=.*' /mnt/etc/systemd/system.conf; then
+  sed -E 's/^#?DefaultTimeoutStopSec=.*/DefaultTimeoutStopSec=150s/' -i /mnt/etc/systemd/system.conf
+else
+  echo 'DefaultTimeoutStopSec=150s' >> /mnt/etc/systemd/system.conf
+fi
+
 cleanup_systemd
 setup_udev
 /button "rainbow" >/dev/null 2>&1 || true
