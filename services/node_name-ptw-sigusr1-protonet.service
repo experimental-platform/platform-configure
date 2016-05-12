@@ -6,6 +6,6 @@ Requires=network-online.target
 ConditionFileNotEmpty=/etc/protonet/ptw/node_name
 
 [Service]
-ExecStart=/usr/bin/env systemctl restart ptw-protonet.service
+ExecStart=/usr/bin/docker kill -s USR1 ptw
 KillMode=none
 Type=oneshot

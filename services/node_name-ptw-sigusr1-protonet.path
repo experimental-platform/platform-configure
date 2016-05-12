@@ -3,6 +3,7 @@
 Description=Protonet Publish To Web Restarter
 
 [Path]
+PathModified=/etc/protonet/ptw/node_name
 PathModified=/etc/protonet/ptw/control/
 
 [Install]
