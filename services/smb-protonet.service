@@ -10,6 +10,7 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/usr/bin/rm -rf /data/samba/etc-mounted
 ExecStartPre=/usr/bin/cp -r /data/samba/etc /data/samba/etc-mounted
 ExecStartPre=-/usr/bin/docker rm -f smb
 ExecStartPre=/usr/bin/docker run -d \
