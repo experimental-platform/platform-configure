@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Restart Service ptw-protonet
+Description=ptw-protonet node name update
 After=ptw-protonet.service
 Requires=ptw-protonet.service
 ConditionFileNotEmpty=/etc/protonet/ptw/node_name
