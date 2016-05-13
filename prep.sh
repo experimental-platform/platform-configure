@@ -273,5 +273,6 @@ setup_udev
 setup_systemd
 setup_channel_file
 setup_images
+trap - SIGINT SIGTERM EXIT
 /button "shimmer" >/dev/null 2>&1 || true
 
