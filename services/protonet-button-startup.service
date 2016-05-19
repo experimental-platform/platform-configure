@@ -1,0 +1,12 @@
+[Unit]
+Description=Prepare Button for Startup
+ConditionPathExists=/opt/bin/button
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/bin/true
+ExecStop=/opt/bin/button busy
+
+[Install]
+WantedBy=multi-user.target
