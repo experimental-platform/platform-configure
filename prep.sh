@@ -3,6 +3,83 @@ set -e
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
 CHANNEL=${CHANNEL:="development"}
+TEMPLATES_ONLY=${TEMPLATES_ONLY:-"false"}
+declare -A MODULES JSONIMGLISTS IMGTAGLIST
+
+
+print_usage() {
+	echo "Usage: $0 [-m module:channel] [-m module:channel] ..."
+}
+
+
+function parse_params() {
+  while [[ $# > 0 ]]; do
+    key="$1"
+    case $key in
+      -m|--module)
+        MODULES[$1]="$2"
+        shift
+        shift
+        ;;
+      -h|--help)
+        print_usage
+        exit 0
+        ;;
+      *)
+        print_usage
+        exit 1
+        ;;
+    esac
+    shift # past argument or value
+  done
+}
+
+
+function read_modules() {
+  for i in /mnt/etc/protonet/system/channels/*; do
+    local MOD CHAN
+    MOD="$(basename "$i" | sed 's/^[0-9]*_//')"
+    CHAN=$(<$i)
+    MODULES[$MOD]="$CHAN"
+  done
+}
+
+
+function fetch_module_images() {
+  local MOD CHANNEL JSON
+  MOD="$1"
+  CHANNEL="$2"
+  JSON="$(curl --fail --silent "https://raw.githubusercontent.com/protonet/builds/test/$MOD/$CHANNEL.json")"
+  echo "$JSON" | jq 'keys[] as $k | $k + ":" + .[$k]' --raw-output
+}
+
+
+function fetch_all_module_image_data() {
+  declare -A IMGLISTS
+
+  for m in ${!MODULES[@]}; do
+    local MODULE TAG
+    echo "Fetching image list for module '$m', channel '${MODULES[$m]}'"
+    JSONIMGLISTS[$m]="$(fetch_module_images $m ${MODULES[$m]})"
+  done
+
+  for m in ${!JSONIMGLISTS[@]}; do
+    for img in ${JSONIMGLISTS[$m]}; do
+      IFS=':' read -ra I <<< "$img"
+      IMGTAGLIST[${I[0]}]=${I[1]}
+    done
+  done
+}
+
+
+function pull_all_images() {
+  for m in ${!JSONIMGLISTS[@]}; do
+    for img in ${JSONIMGLISTS[$m]}; do
+      download_and_verify_image $img
+    done
+  done
+}
+
 
 function set_status() {
   mkdir -p ${MOUNTROOT}/etc/protonet/system
@@ -57,33 +134,13 @@ function setup_systemd() {
 }
 
 
-function setup_channel_file() {
-    # update the channel file in case there's none or if we're changing channels.
-    # TODO: Bail if either CHANNEL or CHANNEL_FILE are not set
-    echo -n "Detecting channel... "
-    if [[ ! -f ${CHANNEL_FILE} ]] || [[ ! $(cat ${CHANNEL_FILE}) = "${CHANNEL}" ]]; then
-        echo -n "using NEW '${CHANNEL}'... "
-        systemctl stop trigger-update-protonet.path
-        mkdir -p $(dirname ${CHANNEL_FILE})
-        echo ${CHANNEL} > ${CHANNEL_FILE}
-        systemctl start trigger-update-protonet.path
-    else
-        echo -n "using OLD '${CHANNEL}'... "
-    fi
-    echo "DONE."
-}
-
-
 function download_and_verify_image() {
-    # TODO: DUPLICATED CODE MARK
-    # TODO: Bail if IMAGE_STATE_DIR or REGISTRY is not set
-    echo -ne "\t Image ${image}..."
     local image=$1
+    echo -ne "\t Image ${image}..."
     DOCKER="/docker"
-    ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
     RETRIES=0
     MAXRETRIES=10
-    while ( ! $DOCKER pull $image ) && [ $RETRIES -ne $MAXRETRIES ]; do
+    while ( ! $DOCKER pull $image &>/dev/null ) && [ $RETRIES -ne $MAXRETRIES ]; do
         sleep 1
         echo " Pull failed, retrying."
         RETRIES=$(($RETRIES+1))
@@ -109,40 +166,15 @@ function download_and_verify_image() {
             fi
         done
     fi
-
-    # TODO: Might wanna add --type=image for good measure once Docker 1.8 hits the CoreOS stable.
-    local image_id=$(${DOCKER} inspect --format '{{.Id}}' ${image})
-    image=${image#$REGISTRY/} # remove Registry prefix
-
-    mkdir -p $(dirname ${IMAGE_STATE_DIR}/${image})
-    echo $image_id > ${IMAGE_STATE_DIR}/${image}
     echo "DONE."
 }
 
 
-function setup_images() {
-    # Pre-Fetch all Images
-    # When using a feature branch most images come from the development channel:
-    echo -n "Fetching all images for channel '${CHANNEL}':"
-
+function finalize() {
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
     # Complex regexp to find all images names in all service files
-    IMAGES=$(gawk '!/^\s*[a-zA-Z0-9]+=|\[|^\s*#|^\s*$|^\s*\-|^\s*bundle/ { gsub("[^a-zA-Z0-9/:@.-]", "", $1); print $1}' ${MOUNTROOT}/etc/systemd/system/*.service | sort | uniq)
-    IMG_NUMBER=$(echo "${IMAGES}" | wc -l)
-    IMG_COUNT=0
-    for IMAGE in ${IMAGES}; do
-        set_status "image $IMG_COUNT/$IMG_NUMBER"
-        # download german-shepherd and soul ony if soul is enabled.
-        if [[ "quay.io/protonetinc/german-shepherd quay.io/protonetinc/soul-nginx" =~ ${IMAGE%:*} ]]; then
-            if [[ -f "${MOUNTROOT}/etc/protonet/soul/enabled" ]]; then
-                download_and_verify_image ${IMAGE}
-            fi
-        else
-            download_and_verify_image ${IMAGE}
-        fi
-        IMG_COUNT=$((IMG_COUNT+1))
-    done
+
     set_status "finalizing"
     if [ "$PLATFORM_INSTALL_RELOAD" = true ]; then
         echo "Reloading systemctl after update."
@@ -215,34 +247,21 @@ function rescue_legacy_script () {
 }
 
 parse_template() {
+  local SERVICE_FILE IMAGE TAG
   SERVICE_FILE="$1"
-  SERVICE_TAG="$2"
 
-  echo -e "\n\nBuilding '${SERVICE_FILE}' with TAG '${SERVICE_TAG}':"
-  pystache "$(<$SERVICE_FILE)" "{\"tag\":\"${SERVICE_TAG}\"}" > ${SERVICE_FILE}.new
+  IMAGE=$((grep -oe 'quay.io/[a-z]*/[a-z0-9\-]*' "$SERVICE_FILE" || true) | head -n1)
+  if [ -z "$IMAGE" ]; then return; fi
+  TAG="${IMGTAGLIST[$IMAGE]}"
+  echo -e "Building '${SERVICE_FILE}' with IMAGE '$IMAGE' and TAG '$TAG':"
+  pystache "$(<$SERVICE_FILE)" "{\"tag\":\"$TAG\"}" > ${SERVICE_FILE}.new
   mv ${SERVICE_FILE}.new ${SERVICE_FILE}
 }
 
 parse_all_templates() {
-  echo -e "\nParsing templates for SERVICE_TAG '${SERVICE_TAG}', SERVICE_NAME '${SERVICE_NAME}', CHANNEL '${CHANNEL}'.\n\n"
-
-  # SERVICE_TAG is the name of the feature branch the SERVICE_NAME is on
-  SERVICE_TAG=${SERVICE_TAG:="development"}
-  # SERVICE_NAME is the name of a service on a feature branch
-
-  # CASE 1: We build an exciting new (feature) branch. That means:
-  # 1. there is one systemd service file (SERVICE_NAME) that links to the special docker tag SERVICE_TAG (a.k.a. the branch name)
-  # 2. the docker image for platform-configure (this project) will be tagged with SERVICE_TAG
-  if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
-    SERVICE_FILE=/services/${SERVICE_NAME}.service
-    if [ -e ${SERVICE_FILE} ]; then
-      parse_template "$SERVICE_FILE" "$SERVICE_TAG"
-    fi
-  fi
-
   for SERVICE_FILE in services/*
   do
-    parse_template "$SERVICE_FILE" "$CHANNEL"
+    parse_template "$SERVICE_FILE"
   done
 }
 
@@ -253,13 +272,23 @@ trap "/button error >/dev/null 2>&1 || true" SIGINT SIGTERM EXIT
 setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
+
+parse_params
+if [ ${#MODULES[@]} -eq 0 ]; then
+  read_modules
+fi
+
+fetch_all_module_image_data
+
+if [ "$TEMPLATES_ONLY" == "true" ]; then
+  /button "hdd" >/dev/null 2>&1 || true
+  parse_all_templates
+  exit 0
+fi
+
+pull_all_images
 # Now the stuff that may break...
 parse_all_templates
-
-if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
-    /button "hdd" >/dev/null 2>&1 || true
-    exit 0
-fi
 
 if grep -qE '^#?DefaultTimeoutStopSec=.*' /mnt/etc/systemd/system.conf; then
   sed -E 's/^#?DefaultTimeoutStopSec=.*/DefaultTimeoutStopSec=150s/' -i /mnt/etc/systemd/system.conf
@@ -271,8 +300,6 @@ cleanup_systemd
 setup_udev
 /button "rainbow" >/dev/null 2>&1 || true
 setup_systemd
-setup_channel_file
-setup_images
+finalize
 trap - SIGINT SIGTERM EXIT
 /button "shimmer" >/dev/null 2>&1 || true
-
