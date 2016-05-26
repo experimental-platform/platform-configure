@@ -10,6 +10,7 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/usr/sbin/sysctl fs.inotify.max_user_watches=3000000
 ExecStartPre=-/usr/bin/docker rm -f soul-fs-notifier
 ExecStartPre=/usr/bin/docker run -d \
   --name soul-fs-notifier \
