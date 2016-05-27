@@ -3,6 +3,35 @@ set -e
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
 CHANNEL=${CHANNEL:="development"}
+PLATFORM_REMOVE_OLD_IMAGES=${PLATFORM_REMOVE_OLD_IMAGES:="true"}
+MANIFEST_URL=${MANIFEST_URL:='https://raw.githubusercontent.com/protonet/builds/master/$CHANNEL.json'}
+DOCKER="/docker"
+declare -A IMGTAGLIST
+
+function fetch_module_images() {
+  local CHANNEL JSON JQSCRIPT
+  CHANNEL="$1"
+  JQSCRIPT='max_by(.build) | .images | keys[] as $k | $k + ":" + .[$k]'
+  curl --fail --silent "$(eval echo "$MANIFEST_URL")" | jq "$JQSCRIPT" --raw-output
+}
+
+function fetch_module_image_data() {
+  local JSONIMGLIST
+
+  JSONIMGLIST="$(fetch_module_images "$CHANNEL")"
+
+  for img in ${JSONIMGLIST}; do
+    # this splits a line in the format 'A:B' and assigns IMGTAGLIST[A]=B
+    IFS=':' read -ra I <<< "$img"
+    IMGTAGLIST[${I[0]}]=${I[1]}
+  done
+}
+
+function pull_all_images() {
+  for i in ${!IMGTAGLIST[@]}; do
+    download_and_verify_image "$i:${IMGTAGLIST[$i]}"
+  done
+}
 
 function set_status() {
   mkdir -p ${MOUNTROOT}/etc/protonet/system
@@ -77,13 +106,12 @@ function setup_channel_file() {
 function download_and_verify_image() {
     # TODO: DUPLICATED CODE MARK
     # TODO: Bail if IMAGE_STATE_DIR or REGISTRY is not set
+    local image
+    image=$1
     echo -ne "\t Image ${image}..."
-    local image=$1
-    DOCKER="/docker"
-    ${DOCKER} tag -f ${image} "${image}-previous" 2>/dev/null || true # do not fail, this is just for backup reason
     RETRIES=0
     MAXRETRIES=10
-    while ( ! $DOCKER pull $image ) && [ $RETRIES -ne $MAXRETRIES ]; do
+    while ( ! $DOCKER pull $image &>/dev/null ) && [ $RETRIES -ne $MAXRETRIES ]; do
         sleep 1
         echo " Pull failed, retrying."
         RETRIES=$(($RETRIES+1))
@@ -103,8 +131,7 @@ function download_and_verify_image() {
             # But it is the fastest one. The docker save command takes about 30 Minutes for all images,
             # even with output piped to /dev/null.
             if [[ ! -e ${MOUNTROOT}/var/lib/docker/overlay/${layer} || ! -e ${MOUNTROOT}/var/lib/docker/graph/${layer} ]]; then
-                ${DOCKER} tag -f "${image}-previous" ${image} 2>/dev/null
-                # TODO: return instead?
+                echo "Image '${image}' arrived broken"
                 exit 1
             fi
         done
@@ -120,29 +147,9 @@ function download_and_verify_image() {
 }
 
 
-function setup_images() {
-    # Pre-Fetch all Images
-    # When using a feature branch most images come from the development channel:
-    echo -n "Fetching all images for channel '${CHANNEL}':"
-
+function finalize() {
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
-    # Complex regexp to find all images names in all service files
-    IMAGES=$(gawk '!/^\s*[a-zA-Z0-9]+=|\[|^\s*#|^\s*$|^\s*\-|^\s*bundle/ { gsub("[^a-zA-Z0-9/:@.-]", "", $1); print $1}' ${MOUNTROOT}/etc/systemd/system/*.service | sort | uniq)
-    IMG_NUMBER=$(echo "${IMAGES}" | wc -l)
-    IMG_COUNT=0
-    for IMAGE in ${IMAGES}; do
-        set_status "image $IMG_COUNT/$IMG_NUMBER"
-        # download german-shepherd and soul ony if soul is enabled.
-        if [[ "quay.io/protonetinc/german-shepherd quay.io/protonetinc/soul-nginx" =~ ${IMAGE%:*} ]]; then
-            if [[ -f "${MOUNTROOT}/etc/protonet/soul/enabled" ]]; then
-                download_and_verify_image ${IMAGE}
-            fi
-        else
-            download_and_verify_image ${IMAGE}
-        fi
-        IMG_COUNT=$((IMG_COUNT+1))
-    done
     set_status "finalizing"
     if [ "$PLATFORM_INSTALL_RELOAD" = true ]; then
         echo "Reloading systemctl after update."
@@ -154,12 +161,29 @@ function setup_images() {
         update_os_image || true
     fi
 
+    if [ "$PLATFORM_REMOVE_OLD_IMAGES" == "true" ]; then
+      remove_old_images
+    fi
+
     echo "===================================================================="
     echo "After the reboot your experimental platform will be reachable via:"
     echo "http://$(cat $HOSTNAME_FILE).local"
     echo "(don't worry, you can change this later)"
     echo "===================================================================="
 
+}
+
+function remove_old_images() {
+  local ALL_PLATFORM_IMAGES SORTED_NEW_IMAGES
+
+  ALL_PLATFORM_IMAGES=$($DOCKER images | awk '{print $1 ":" $2 }' | grep -e '^quay.io/experimentalplatform/.*' -e '^quay.io/protonetinc/.*' | sort)
+  SORTED_NEW_IMAGES="$(
+    for i in ${!IMGTAGLIST[@]}; do
+      echo ""$i:${IMGTAGLIST[$i]}""
+    done | sort
+  )"
+
+  comm -23 <(echo "$ALL_PLATFORM_IMAGES") <(echo "$SORTED_NEW_IMAGES") | xargs --no-run-if-empty ${DOCKER} rmi || true
 }
 
 
@@ -215,37 +239,23 @@ function rescue_legacy_script () {
 }
 
 parse_template() {
+  local SERVICE_FILE IMAGE TAG
   SERVICE_FILE="$1"
-  SERVICE_TAG="$2"
 
-  echo -e "\n\nBuilding '${SERVICE_FILE}' with TAG '${SERVICE_TAG}':"
-  pystache "$(<$SERVICE_FILE)" "{\"tag\":\"${SERVICE_TAG}\"}" > ${SERVICE_FILE}.new
+  IMAGE=$((grep -oe 'quay.io/[a-z]*/[a-z0-9\-]*' "$SERVICE_FILE" || true) | head -n1)
+  if [ -z "$IMAGE" ]; then return; fi
+  TAG="${IMGTAGLIST[$IMAGE]}"
+  echo -e "Building '${SERVICE_FILE}' with IMAGE '$IMAGE' and TAG '$TAG':"
+  pystache "$(<$SERVICE_FILE)" "{\"tag\":\"$TAG\"}" > ${SERVICE_FILE}.new
   mv ${SERVICE_FILE}.new ${SERVICE_FILE}
 }
 
 parse_all_templates() {
-  echo -e "\nParsing templates for SERVICE_TAG '${SERVICE_TAG}', SERVICE_NAME '${SERVICE_NAME}', CHANNEL '${CHANNEL}'.\n\n"
-
-  # SERVICE_TAG is the name of the feature branch the SERVICE_NAME is on
-  SERVICE_TAG=${SERVICE_TAG:="development"}
-  # SERVICE_NAME is the name of a service on a feature branch
-
-  # CASE 1: We build an exciting new (feature) branch. That means:
-  # 1. there is one systemd service file (SERVICE_NAME) that links to the special docker tag SERVICE_TAG (a.k.a. the branch name)
-  # 2. the docker image for platform-configure (this project) will be tagged with SERVICE_TAG
-  if [ ! -z "$SERVICE_NAME" ] && [ ! -z "$SERVICE_TAG" ]; then
-    SERVICE_FILE=/services/${SERVICE_NAME}.service
-    if [ -e ${SERVICE_FILE} ]; then
-      parse_template "$SERVICE_FILE" "$SERVICE_TAG"
-    fi
-  fi
-
   for SERVICE_FILE in services/*
   do
-    parse_template "$SERVICE_FILE" "$CHANNEL"
+    parse_template "$SERVICE_FILE"
   done
 }
-
 
 trap "/button error >/dev/null 2>&1 || true" SIGINT SIGTERM EXIT
 
@@ -254,12 +264,16 @@ setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
 # Now the stuff that may break...
-parse_all_templates
+fetch_module_image_data
 
 if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
-    /button "hdd" >/dev/null 2>&1 || true
-    exit 0
+  /button "hdd" >/dev/null 2>&1 || true
+  parse_all_templates
+  exit 0
 fi
+
+pull_all_images
+parse_all_templates
 
 if grep -qE '^#?DefaultTimeoutStopSec=.*' /mnt/etc/systemd/system.conf; then
   sed -E 's/^#?DefaultTimeoutStopSec=.*/DefaultTimeoutStopSec=150s/' -i /mnt/etc/systemd/system.conf
@@ -272,7 +286,6 @@ setup_udev
 /button "rainbow" >/dev/null 2>&1 || true
 setup_systemd
 setup_channel_file
-setup_images
+finalize
 trap - SIGINT SIGTERM EXIT
 /button "shimmer" >/dev/null 2>&1 || true
-
