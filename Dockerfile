@@ -3,7 +3,7 @@ FROM quay.io/experimentalplatform/ubuntu:latest
 RUN apt-get update && \
     apt-get -y upgrade && \
     apt-get -y install --no-install-recommends gawk systemd \
-      python-pkg-resources python-pystache udev && \
+      python-pkg-resources python-pystache udev jq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
