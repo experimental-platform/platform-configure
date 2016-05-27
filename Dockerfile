@@ -1,4 +1,4 @@
-FROM experimentalplatform/ubuntu:latest
+FROM quay.io/experimentalplatform/ubuntu:latest
 
 RUN apt-get update && \
     apt-get -y upgrade && \
