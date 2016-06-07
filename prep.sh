@@ -220,6 +220,7 @@ function setup_utility_scripts () {
     cp /tcpdump "${BIN_PATH}"
     cp /speedtest "${BIN_PATH}"
     cp /masterpassword "${BIN_PATH}"
+    cp /ipmitool "${BIN_PATH}"
     echo "ALL DONE"
 }
 

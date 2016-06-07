@@ -18,5 +18,6 @@ ADD button /button
 ADD tcpdump /tcpdump
 ADD speedtest /speedtest
 ADD masterpassword /masterpassword
+ADD ipmitool /ipmitool
 
 CMD [ "/prep.sh" ]
