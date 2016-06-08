@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Lock IPMI external access
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/sbin/modprobe ipmi_devintf
+ExecStart=/opt/bin/ipmitool user disable 2
+KillMode=none
+Type=oneshot
