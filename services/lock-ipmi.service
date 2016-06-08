@@ -9,3 +9,6 @@ ExecStartPre=/usr/sbin/modprobe ipmi_devintf
 ExecStart=/opt/bin/ipmitool user disable 2
 KillMode=none
 Type=oneshot
+
+[Install]
+WantedBy=multi-user.target
