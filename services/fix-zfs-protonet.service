@@ -7,7 +7,7 @@ Type=oneshot
 RemainAfterExit=true
 ExecStart=/bin/true
 ExecStopPost=/usr/sbin/sysctl kernel.hung_task_panic=1
-ExecStopPost=/usr/sbin/sysctl sysctl kernel.hung_task_timeout_secs=1800
+ExecStopPost=/usr/sbin/sysctl kernel.hung_task_timeout_secs=1800
 
 
 [Install]
