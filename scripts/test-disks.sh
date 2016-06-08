@@ -14,7 +14,7 @@ fi
 
 for filesystem in /home /data /var/lib/docker /var/log/journal; do
     echo -n "Checking if ${filesystem} is on ZFS... "
-    if ! (mount | grep -P "on ${filesystem}.*type zfs" > /dev/null); then
+    if ! (mount | grep -qP "on ${filesystem}.*type zfs"); then
         echo "ERROR: ${filesystem} is fucked"
         exit 23
     else
