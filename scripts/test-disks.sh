@@ -41,3 +41,15 @@ else
     echo "ERROR: ${ZPOOL_HEALTH}"
     exit 23
 fi
+
+
+echo -n "Checking if all disks are in use... "
+ZPOOL_COUNT=$(sudo zpool status -P protonet_storage | grep '/dev/' | wc -l)
+# one is the boot stick, which we substract
+DEVICES_COUNT=$(($(lsblk -l -p -n -d | wc -l) - 1))
+if [[ "${ZPOOL_COUNT}" -eq "${DEVICES_COUNT}" ]]; then
+    echo "OKAY"
+else
+    echo "ERROR: ${ZPOOL_COUNT} of ${DEVICES_COUNT} in use."
+    exit 23
+fi
