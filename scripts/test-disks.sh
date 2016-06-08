@@ -12,7 +12,7 @@ else
 fi
 
 
-for filesystem in /home /data /var/lib/docker; do
+for filesystem in /home /data /var/lib/docker /var/log/journal; do
     echo -n "Checking if ${filesystem} is on ZFS... "
     if ! (mount | grep -P "on ${filesystem}.*type zfs" > /dev/null); then
         echo "ERROR: ${filesystem} is fucked"
