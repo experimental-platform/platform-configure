@@ -14,7 +14,7 @@ if [ $# > 0 ] && [ "$1" == "lockall" ]; then
 for i in $(seq 1 63); do
   ipmitool user disable $i
 done'
-  exec docker run -it --rm --privileged -v /dev/:/dev/:rw ipmitool:latest sh -c "$SCRIPT"
+  exec docker run -i --rm --privileged -v /dev/:/dev/:rw ipmitool:latest sh -c "$SCRIPT"
 fi
 
-exec docker run -it --rm --privileged -v /dev/:/dev/:rw ipmitool:latest ipmitool $@
+exec docker run -i --rm --privileged -v /dev/:/dev/:rw ipmitool:latest ipmitool $@
