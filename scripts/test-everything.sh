@@ -16,8 +16,26 @@ for testname in test-disks test-ipmi-disabled test-software-overview; do
     fi
 done
 
-# TODO: GET HARDWARE OVERVIEW
-# TODO: RUN INTEGRATION TESTS
+
+SOUL_USERNAME=${SOUL_USERNAME:="admin.admin"}
+SOUL_PASSWORD=${SOUL_PASSWORD:="Changeme!123"}
+SOUL_URL=${SOUL_URL:="http://10.42.0.1"}
+if [[ -z ${SOUL_SSH_PASSWORD} ]]; then
+    if [[ -f "/etc/protonet/system/ssh/password" ]]; then
+        # if masterpassword was used
+        SOUL_SSH_PASSWORD=$(cat "/etc/protonet/system/ssh/password")
+    else
+        # default installation password - gets disabled on setup
+        SOUL_SSH_PASSWORD="1nsta!lMe"
+    fi
+fi
+
+if docker pull quay.io/experimentalplatform/soul-integration &>/dev/null; then
+    docker run -ti --env-file=envfile --rm quay.io/experimentalplatform/soul-integration bundle exec rspec --tag readonly
+else
+    echo "ERROR DOWNLOADING THE SOUL INTEGRATION TESTS."
+fi
+
 
 trap - SIGINT SIGTERM EXIT
 button hdd
