@@ -10,6 +10,7 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/usr/sbin/sysctl net.ipv4.ip_no_pmtu_disc=1
 ExecStartPre=-/usr/bin/docker rm -f soul-web
 ExecStartPre=/usr/bin/docker run -d \
       --name soul-web \
