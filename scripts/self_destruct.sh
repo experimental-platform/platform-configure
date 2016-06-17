@@ -73,6 +73,8 @@ unlabel_drives() {
 	done
 }
 
+ZFS_MOUNTPOINTS=$(mount | awk '/zfs/ {print $3}')
+
 rm -f /etc/zfs/zpool.cache
 systemctl stop docker.service
 systemctl stop systemd-journald-audit.socket
@@ -92,5 +94,16 @@ remove_config
 
 # ignition useradd is not idempotent, so let's wait until after the user has been deleted
 enable_ignition
+
+echo "REMOVING ZFS MOINTPOINTS..."
+CURRENT_MOUNTPOINTS=$(mount)
+for MOUNTPOINT in ${ZFS_MOUNTPOINTS}; do
+    # only remove it if it's not mounted any more
+    if  [[ ! "${CURRENT_MOUNTPOINTS}" =~ "${MOUNTPOINT}" ]] && rm -rf $MOUNTPOINT; then
+        echo -e "\tOKAY, ${MOUNTPOINT} removed"
+    else
+        echo -e "ERROR: PLEASE FIX ${MOUNTPOINT} MANUALLY"
+    fi
+done
 
 echo "Destruction successful"
