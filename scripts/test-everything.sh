@@ -32,3 +32,7 @@ echo -e "\nRAM:"
 jq ' .ram | map("Vendor: \(.vendor)    Slot: \(.slot)    Size: \(.size)    Product: \(.product)    Serial: \(.serial)")' <<< ${HWINFO}
 echo -e "\nHARD DISKS (and USB Sticks):"
 jq ' .drives | map("Vendor: \(.vendor)    Model: \(.model)    Size: \(.size)    Serial: \(.serial)")' <<< ${HWINFO}
+
+echo -e "\nSOFTWARE CHANNEL AND BOOT STICK BUILD:"
+jq ' "Channel: \(.channel)"' <<< ${HWINFO}
+jq ' "BOOTSTICK BUILD: \(.bootstick.BUILD)"' <<< ${HWINFO}
