@@ -156,10 +156,6 @@ function finalize() {
         systemctl restart init-protonet.service
         exit 0
     fi
-    if [ "$PLATFORM_INSTALL_OSUPDATE" = true ]; then
-        echo "Updating CoreOS system image."
-        update_os_image || true
-    fi
 
     if [ "$PLATFORM_REMOVE_OLD_IMAGES" == "true" ]; then
       remove_old_images
