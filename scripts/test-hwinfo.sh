@@ -45,4 +45,13 @@ done
 # Get drive info
 JSON="$(jq --argjson val "$(lsblk -J -o NAME,RM,HOTPLUG,ROTA,SIZE,TYPE,MOUNTPOINT,MODEL,VENDOR,SERIAL,FSTYPE,LABEL,PARTLABEL,UUID,PARTUUID)" '.drives |= $val.blockdevices' <<< "$JSON")"
 
+# get bootstick info
+if [[ -f /etc/protonet-bootstick ]] && jq '.' /etc/protonet-bootstick &>/dev/null; then
+   JSON="$(jq --argjson val "$(cat /etc/protonet-bootstick)" '.bootstick |= $val' <<< "$JSON")"
+fi
+
+if [[ -f /etc/protonet/system/channel ]]; then
+    JSON="$(jq --arg val "$(cat /etc/protonet/system/channel)" '.channel |= $val' <<< "$JSON")"
+fi
+
 echo "$JSON"
