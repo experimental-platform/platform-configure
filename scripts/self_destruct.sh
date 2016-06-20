@@ -135,7 +135,7 @@ echo -n "ENABLING IGNITION... "
 enable_ignition && echo "OKAY"
 
 
-if [[ "${ERROR}"==true ]]; then
+if [[ "${ERROR}" == true ]]; then
     echo "ERRORS detected, please fix manually!"
     exit 23
 else
