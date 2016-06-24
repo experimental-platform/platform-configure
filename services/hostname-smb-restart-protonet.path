@@ -1,9 +1,0 @@
-# ExperimentalPlatform
-[Unit]
-Description=Protonet hostname SMB
-
-[Path]
-PathModified=/etc/protonet/hostname
-
-[Install]
-WantedBy=multi-user.target
