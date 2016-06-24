@@ -2,6 +2,10 @@
 
 set -eu
 
+ERROR_CODE=0
+ERROR="\x1b[93;41mERROR\x1b[0m"
+
+
 echo -n "Test the number of running services... "
 
 EP="# ExperimentalPlatform"
@@ -13,9 +17,22 @@ SHOULD=$(grep -Hlr "${EP}" "${WHERE}" | xargs grep -Hlr "${DR}" "${WHERE}" | xar
 ACTUALLY=$(docker ps | grep -P "quay.io/(experimentalplatform|protonetinc)" | wc -l)
 
 if [[ "${SHOULD}" -eq "${ACTUALLY}" ]]; then
-    echo "SUCCESS, (${SHOULD}) running."
-    exit 0
+    echo "OKAY, (${SHOULD}) running."
+else
+    echo -e "${ERROR}: Expected ${SHOULD} services but ${ACTUALLY} are running."
+    ERROR_CODE=23
 fi
 
-echo "ERROR: Expected ${SHOULD} services but ${ACTUALLY} are running."
-exit 23
+
+echo -n "Test for identical version... "
+TAGS=$(docker ps | awk '/^[0-9a-z]+/ { split($2, a, ":"); print a[2]}' | uniq)
+NUM_TAGS=$(wc -l <<< ${TAGS})
+if [[ "${NUM_TAGS}" -eq "1" ]]; then
+    echo "OKAY"
+else
+    echo -e "${ERROR}: Mix up found: $TAGS."
+    ERROR_CODE=23
+fi
+
+
+exit ${ERROR_CODE}
