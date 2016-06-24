@@ -2,6 +2,9 @@
 
 set -eu
 
+EXIT_CODE=0
+ERROR="\x1b[93;41mERROR\x1b[0m"
+
 test_soul() {
     # SOUL_URL=http://172.17.0.1 # Note: We should set this automatically to DOCKERHOST ip
     SOUL_USERNAME=${SOUL_USERNAME:="admin.admin"}
@@ -36,15 +39,16 @@ test_soul() {
 
 
 run_tests() {
-    # TODO: Reenable test-software-overview
-    for testname in test-disks test-ipmi-disabled; do
+    # TODO: add test_soul
+    for testname in test-disks test-ipmi-disabled test-software-overview; do
         if [[ -x "/etc/systemd/system/scripts/${testname}.sh" ]]; then
-            # this will exit on error because of set -e
-            /etc/systemd/system/scripts/${testname}.sh
-            echo -e "\n\n"
+            if ! /etc/systemd/system/scripts/${testname}.sh; then
+                EXIT_CODE=42
+                echo -e "\n\n"
+            fi
         else
-            echo "ERROR: Test \"${testname}\" not found!"
-            exit 23
+            echo -e "${ERROR}: Test \"${testname}\" not found!"
+            EXIT_CODE=23
         fi
     done
 }
@@ -52,14 +56,8 @@ run_tests() {
 
 trap "button error >/dev/null 2>&1 || true" SIGINT SIGTERM EXIT
 button rainbow
-
 run_tests
-# test_soul
-
 trap - SIGINT SIGTERM EXIT
-button hdd
-
-echo -e "\n\nOKAY -- OKAY -- OKAY\nALL TESTS SUCCESSFUL\n\n"
 
 echo -e "HARDWARE INFO\n"
 HWINFO=$(sudo /etc/systemd/system/scripts/test-hwinfo.sh)
@@ -73,3 +71,12 @@ jq ' .drives | map("Vendor: \(.vendor)    Model: \(.model)    Size: \(.size)    
 echo -e "\nSOFTWARE CHANNEL AND BOOT STICK BUILD:"
 jq ' "Channel: \(.channel)"' <<< ${HWINFO}
 jq ' "BOOTSTICK BUILD: \(.bootstick.BUILD)"' <<< ${HWINFO}
+
+
+if [[ "${EXIT_CODE}" -eq "0" ]]; then
+    button hdd
+    echo -e "\n\nOKAY -- OKAY -- OKAY\nALL TESTS SUCCESSFUL\n"
+else
+    button error
+    echo -e "\n\n${ERROR}: A TEST WENT WRONG, PLEASE INVESTIGATE"
+fi
