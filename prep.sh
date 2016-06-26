@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
 MOUNTROOT=${MOUNTROOT:="/mnt"}
 CHANNEL=${CHANNEL:="development"}
