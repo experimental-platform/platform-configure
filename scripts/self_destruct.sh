@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
+IFS=$'\n\t'
 
 if [ "$(id -u)" != "0" ]; then
 	echo "You must run this as root"
@@ -24,6 +25,7 @@ done
 echo -e "\nFIRE"
 
 ERROR=false
+STAGE=1
 
 list_subsystems() {
 	local DEVPATH
@@ -65,8 +67,10 @@ enable_ignition() {
 
 
 remove_config() {
-    grep -Hlr '# ExperimentalPlatform' /etc/systemd/system/ | xargs --no-run-if-empty rm -rf
-    find -L /etc/systemd/system/ -type l -exec rm -f {} +
+    rm -rf /etc/systemd/system/*
+    rm -rf /etc/systemd/network/*
+    rm -rf /etc/systemd/system-preset/*
+    rm -f /etc/machine-id
     rm -rf /etc/protonet
     rm -f /etc/ssh/ssh_host_*
     userdel -f -r platform &> /dev/null || true
@@ -108,11 +112,6 @@ unlabel_drives() {
 
 remove_zfs() {
     rm -f /etc/zfs/zpool.cache
-    systemctl stop docker.service
-    systemctl stop systemd-journald-audit.socket
-    systemctl stop systemd-journald-dev-log.socket
-    systemctl stop systemd-journald.socket
-    systemctl stop systemd-journald.service && zfs umount -f protonet_storage/journal || true
 
     # try to destroy the zpool only if it actually exists
     if zpool list -H | grep -qE ^protonet_storage; then
@@ -120,47 +119,78 @@ remove_zfs() {
     fi
 }
 
+while [[ $# > 0 ]]; do
+	key="$1"
+	case "$key" in
+		--stage)
+			STAGE="$2"
+			shift
+		;;
+		*)
+			echo "Unknown parameter '$key'"
+			exit 1
+		;;
+	esac
+	shift
+done
 
-remove_mountpoints() {
-    local CURRENT_MOUNTPOINTS=$(mount)
-    local MOUNTPOINT
-    for MOUNTPOINT in  /home /data /var/lib/docker /var/log/journal; do
-        # only remove it if it's not mounted any more
-        echo -ne "\t* REMOVING '${MOUNTPOINT}'... "
-        if  [[ ! "${CURRENT_MOUNTPOINTS}" =~ "${MOUNTPOINT}" ]] && rm -rf $MOUNTPOINT; then
-            echo "OKAY"
-        else
-            echo "ERROR: PLEASE FIX ${MOUNTPOINT} MANUALLY"
-            ERROR=true
-        fi
-    done
-}
+case "$STAGE" in
+	1)
+		echo "Removing all systemd units"
+		rm -rf /etc/systemd/system/*
+		echo "Disabling ZFS init"
+		mkdir -p /etc/systemd/system/zfs.service.d
+		echo -e "[Service]\nExecStart=/bin/true" > /etc/systemd/system/zfs.service.d/skip.conf
+		echo "Arming self-destruct"
+		cat >> /etc/systemd/system/self-destruct-stage-2.service <<- EOM
+[Unit]
+Description=Self-desctruct stage 2
 
+[Service]
+ExecStart=/usr/bin/env bash /self_destruct.sh --stage 2
 
-echo -n "REMOVING ZFS POOL... "
-remove_zfs && echo "OKAY."
+[Install]
+WantedBy=multi-user.target
+EOM
+		systemctl enable self-destruct-stage-2.service
+		sync
+		echo "SELF DESTRUCT ARMED"
+		# hard reboot
+		echo 1 > /proc/sys/kernel/sysrq
+		echo b > /proc/sysrq-trigger
+		exit 0
+	;;
+	2)
+		echo -n "REMOVING ZFS POOL... "
+		remove_zfs && echo "OKAY."
 
-echo "UNLABELING DRIVES... "
-unlabel_drives && echo "OKAY"
-sync; sync; sync
+		echo "UNLABELING DRIVES... "
+		modprobe zfs
+		unlabel_drives && echo "OKAY"
+		sync; sync; sync
 
-# remove the config only after the ZFS pool was destroyed successfully.
-echo -n "REMOVING CUSTOM SYSTEM CONFIG... "
-remove_config && echo "OKAY"
+		# remove the config only after the ZFS pool was destroyed successfully.
+		echo -n "REMOVING CUSTOM SYSTEM CONFIG... "
+		remove_config && echo "OKAY"
 
-echo "REMOVING ZFS MOINTPOINTS..."
-remove_mountpoints && echo "OKAY"
+		# ignition useradd is not idempotent, so let's wait until after the user has been deleted
+		echo -n "ENABLING IGNITION... "
+		enable_ignition && echo "OKAY"
 
-# ignition useradd is not idempotent, so let's wait until after the user has been deleted
-echo -n "ENABLING IGNITION... "
-enable_ignition && echo "OKAY"
+		echo -n "REMOVING SCRIPTS..."
+		rm -rf /opt/bin/*
 
-
-if [[ "${ERROR}" == true ]]; then
-    echo "ERRORS detected, please fix manually!"
-    exit 23
-else
-    echo "Destruction successful"
-fi
-
+		if [[ "${ERROR}" == true ]]; then
+			echo "ERRORS detected, please fix manually!"
+			exit 23
+		else
+			echo "Destruction successful"
+			reboot
+		fi
+	;;
+	*)
+		echo "Unknown stage '$STAGE'"
+		exit 1
+	;;
+esac
 
