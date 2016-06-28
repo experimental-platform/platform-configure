@@ -9,7 +9,7 @@ get_field() {
 	echo "$BODY" | grep --extended-regexp --only-matching "$PARAM: .*" | sed -r "s#$PARAM: ##"
 }
 
-JSON="{}"
+JSON='{"network": {}}'
 
 # Get motherboard info
 JSON="$(jq --arg val "$(</sys/devices/virtual/dmi/id/product_uuid)" '.motherboard.uuid |= $val' <<< "$JSON")"
@@ -53,5 +53,31 @@ fi
 if [[ -f /etc/protonet/system/channel ]]; then
     JSON="$(jq --arg val "$(cat /etc/protonet/system/channel)" '.channel |= $val' <<< "$JSON")"
 fi
+
+for i in /sys/class/net/*; do
+	NAME="$(basename "$i")"
+	SPEED="$(cat $i/speed 2>/dev/null || echo null)"
+	LABEL="$(cat $i/device/label 2>/dev/null || echo null)"
+	IPV4="$(ifconfig "$NAME" | grep -E --only-matching 'inet [0-9\.]+' | sed 's/^inet //')"
+	IPV6="$(ifconfig "$NAME" | grep -E --only-matching 'inet6 [0-9a-f\:]+' | sed 's/^inet6 //')"
+	if [ -z "$IPV4" ]; then IPV4='null'; fi
+	if [ -z "$IPV6" ]; then IPV6='null'; fi
+	NIC="$(jq \
+		--arg mac "$(<$i/address)" \
+		--argjson carrier "$(<$i/carrier)" \
+		--argjson mtu "$(<$i/mtu)" \
+		--argjson speed "$SPEED" \
+		--arg devlabel "$LABEL" \
+		--arg ipv4 "$IPV4" \
+		--arg ipv6 "$IPV6" \
+		'.mac = $mac |
+		.carrier = if $carrier == 1 then true else false end |
+		.mtu = $mtu |
+		.speed = $speed |
+		.label = if $devlabel == "null" then null else $devlabel end |
+		.ipv4 = if $ipv4 == "null" then null else $ipv4 end |
+		.ipv6 = if $ipv6 == "null" then null else $ipv6 end' <<< "{}")"
+	JSON="$(jq --arg name "$NAME" --argjson nic "$NIC" '.network += {($name): $nic}' <<< "$JSON")"
+done
 
 echo "$JSON"
