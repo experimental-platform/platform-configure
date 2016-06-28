@@ -95,8 +95,8 @@ unlabel_drives() {
 		fi
 
 		echo -ne "\t* Clearing ZFS labels and GPT on drive '$DEVNAME'... "
-		zpool labelclear -f "$DEVNAME" &>/dev/null || true
-		if dd if=/dev/zero "of=$DEVNAME" bs=512 count=20 &>/dev/null; then
+		zpool labelclear -f "/dev/$DEVNAME" &>/dev/null || true
+		if dd if=/dev/zero "of=/dev/$DEVNAME" bs=512 count=20 &>/dev/null; then
 		    echo "OKAY"
 		else
 		    echo "ERROR!"
