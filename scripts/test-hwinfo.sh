@@ -9,7 +9,7 @@ get_field() {
 	echo "$BODY" | grep --extended-regexp --only-matching "$PARAM: .*" | sed -r "s#$PARAM: ##"
 }
 
-JSON='{"network": {}}'
+JSON='{"network": []}'
 
 # Get motherboard info
 JSON="$(jq --arg val "$(</sys/devices/virtual/dmi/id/product_uuid)" '.motherboard.uuid |= $val' <<< "$JSON")"
@@ -63,6 +63,7 @@ for i in /sys/class/net/*; do
 	if [ -z "$IPV4" ]; then IPV4='null'; fi
 	if [ -z "$IPV6" ]; then IPV6='null'; fi
 	NIC="$(jq \
+		--arg name "$NAME" \
 		--arg mac "$(<$i/address)" \
 		--argjson carrier "$(<$i/carrier)" \
 		--argjson mtu "$(<$i/mtu)" \
@@ -70,14 +71,15 @@ for i in /sys/class/net/*; do
 		--arg devlabel "$LABEL" \
 		--arg ipv4 "$IPV4" \
 		--arg ipv6 "$IPV6" \
-		'.mac = $mac |
+		'.name = $name |
+		.mac = $mac |
 		.carrier = if $carrier == 1 then true else false end |
 		.mtu = $mtu |
 		.speed = $speed |
 		.label = if $devlabel == "null" then null else $devlabel end |
 		.ipv4 = if $ipv4 == "null" then null else $ipv4 end |
 		.ipv6 = if $ipv6 == "null" then null else $ipv6 end' <<< "{}")"
-	JSON="$(jq --arg name "$NAME" --argjson nic "$NIC" '.network += {($name): $nic}' <<< "$JSON")"
+	JSON="$(jq --argjson nic "$NIC" '.network += [$nic]' <<< "$JSON")"
 done
 
 echo "$JSON"
