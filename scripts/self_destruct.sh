@@ -2,6 +2,11 @@
 
 set -eu
 
+if [ "$(id -u)" != "0" ]; then
+	echo "You must run this as root"
+	exit 1
+fi
+
 read -p "Are you sure you want to trigger the armageddon? [Y/N] " -n 1 -r
 echo
 if ! [[ $REPLY =~ ^[Yy]$ ]]; then
