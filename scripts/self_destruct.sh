@@ -2,6 +2,22 @@
 
 set -eu
 
+read -p "Are you sure you want to trigger the armageddon? [Y/N] " -n 1 -r
+echo
+if ! [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo Cancelling
+        exit 1
+fi
+
+COUNTDOWN=20
+while [ $COUNTDOWN -ne 0 ]; do
+  echo -en "\rDetonation in $COUNTDOWN... CTRL+C to abort     "
+  COUNTDOWN=$(($COUNTDOWN-1))
+  sleep 1
+done
+
+echo -e "\nFIRE"
+
 ERROR=false
 
 list_subsystems() {
