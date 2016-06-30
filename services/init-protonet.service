@@ -43,7 +43,6 @@ ExecStartPre=/bin/mkdir -p /etc/protonet/system/wifi/guest/
 ExecStartPre=-/bin/bash -c '[[ -f /etc/protonet/ptw/enabled ]] && mkdir -p /etc/protonet/ptw/control/ && touch /etc/protonet/ptw/control/enabled && rm /etc/protonet/ptw/enabled'
 ExecStartPre=-/bin/bash -c 'cp /etc/protonet/hostname /etc/protonet/ptw/node_name'
 ExecStartPre=-/etc/systemd/system/scripts/platform-identifier.sh
-ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/box_name ]] && echo "Protonet-$(cat /etc/protonet/support_identifier)" > /etc/protonet/box_name'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/password'
 ExecStartPre=-/bin/bash -c '[[ ! -f /etc/protonet/system/wifi/guest/password ]] && echo "Changeme!123" > /etc/protonet/system/wifi/guest/password'
 ExecStartPre=-/bin/bash -c 'echo "busy" > /etc/protonet/system/button'
