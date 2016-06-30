@@ -218,6 +218,7 @@ function setup_utility_scripts () {
     cp /speedtest "${BIN_PATH}"
     cp /masterpassword "${BIN_PATH}"
     cp /ipmitool "${BIN_PATH}"
+    cp /self_destruct "${MOUNTROOT}/opt/"
     echo "ALL DONE"
 }
 

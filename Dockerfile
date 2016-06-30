@@ -19,5 +19,6 @@ ADD tcpdump /tcpdump
 ADD speedtest /speedtest
 ADD masterpassword /masterpassword
 ADD ipmitool /ipmitool
+ADD self_destruct /self_destruct
 
 CMD [ "/prep.sh" ]
