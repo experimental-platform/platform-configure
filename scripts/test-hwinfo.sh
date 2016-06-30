@@ -50,9 +50,16 @@ if [[ -f /etc/protonet-bootstick ]] && jq '.' /etc/protonet-bootstick &>/dev/nul
    JSON="$(jq --argjson val "$(cat /etc/protonet-bootstick)" '.bootstick |= $val' <<< "$JSON")"
 fi
 
+# get system channel
 if [[ -f /etc/protonet/system/channel ]]; then
     JSON="$(jq --arg val "$(cat /etc/protonet/system/channel)" '.channel |= $val' <<< "$JSON")"
 fi
+
+# get support identifier
+if [[ -f /etc/protonet/support_identifier ]]; then
+    JSON="$(jq --arg val "$(cat /etc/protonet/support_identifier)" '.support_identifier |= $val' <<< "$JSON")"
+fi
+
 
 for i in /sys/class/net/*; do
 	NAME="$(basename "$i")"

@@ -70,9 +70,10 @@ jq ' .drives | map("Vendor: \(.vendor)    Model: \(.model)    Size: \(.size)    
 echo -e "\nMAC ADDRESSES:"
 jq '.network | map(select(.name | startswith("veth") | not) | select(.name != "docker0") | select(.name != "lo") | select(.name | startswith("br-") | not) | "\(.name): \(.mac)")[]' --raw-output <<< ${HWINFO}
 
-echo -e "\nSOFTWARE CHANNEL AND BOOT STICK BUILD:"
+echo -e "\nSOFTWARE CHANNEL, BOOT STICK BUILD AND SUPPORT IDENTIFIER:"
 jq ' "Channel: \(.channel)"' <<< ${HWINFO}
 jq ' "BOOTSTICK BUILD: \(.bootstick.BUILD)"' <<< ${HWINFO}
+jq ' "SUPPORT IDENTIFIER: \(.support_identifier)"' <<< ${HWINFO}
 
 
 if [[ "${EXIT_CODE}" -eq "0" ]]; then
