@@ -56,10 +56,10 @@ function cleanup_systemd() {
     echo -n "Cleaning up ${MOUNTROOT}/etc/systemd/system/... "
     # First remove broken links, this should avoid confusing error messages
     find -L ${MOUNTROOT}/etc/systemd/system/ -type l -exec rm -f {} +
-    grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/system/ | xargs --no-run-if-empty rm -rf
+    ( grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/system/ || true ) | xargs --no-run-if-empty rm -rf
     # do it again to remove garbage
     find -L ${MOUNTROOT}/etc/systemd/system/ -type l -exec rm -f {} +
-    grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/network | xargs --no-run-if-empty rm -rf
+    ( grep -Hlr '# ExperimentalPlatform' ${MOUNTROOT}/etc/systemd/network || true ) | xargs --no-run-if-empty rm -rf
     echo "DONE."
 }
 
