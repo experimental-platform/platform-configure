@@ -62,18 +62,19 @@ trap - SIGINT SIGTERM EXIT
 echo -e "HARDWARE INFO\n"
 HWINFO=$(sudo /etc/systemd/system/scripts/test-hwinfo.sh)
 echo -e "MAINBOARD:"
-jq ' .motherboard | "Vendor: \(.vendor)    Name: \(.name)    Version: \(.version)    Serial: \(.serial)"' <<< ${HWINFO}
+jq ' .motherboard | "Vendor: \(.vendor)    Name: \(.name)    Version: \(.version)    Serial: \(.serial)"' --raw-output <<< ${HWINFO}
 echo -e "\nRAM:"
-jq ' .ram | map("Vendor: \(.vendor)    Slot: \(.slot)    Size: \(.size)    Product: \(.product)    Serial: \(.serial)")' <<< ${HWINFO}
+jq ' .ram | map("Vendor: \(.vendor)    Slot: \(.slot)    Size: \(.size)    Product: \(.product)    Serial: \(.serial)")' --raw-output <<< ${HWINFO}
 echo -e "\nHARD DISKS (and USB Sticks):"
-jq ' .drives | map("Vendor: \(.vendor)    Model: \(.model)    Size: \(.size)    Serial: \(.serial)")' <<< ${HWINFO}
+jq ' .drives | map("Vendor: \(.vendor)    Model: \(.model)    Size: \(.size)    Serial: \(.serial)")' --raw-output <<< ${HWINFO}
 echo -e "\nMAC ADDRESSES:"
 jq '.network | map(select(.name | startswith("veth") | not) | select(.name != "docker0") | select(.name != "lo") | select(.name | startswith("br-") | not) | "\(.name): \(.mac)")[]' --raw-output <<< ${HWINFO}
 
 echo -e "\nSOFTWARE CHANNEL, BOOT STICK BUILD AND SUPPORT IDENTIFIER:"
-jq ' "Channel: \(.channel)"' <<< ${HWINFO}
-jq ' "BOOTSTICK BUILD: \(.bootstick.BUILD)"' <<< ${HWINFO}
-jq ' "SUPPORT IDENTIFIER: \(.support_identifier)"' <<< ${HWINFO}
+jq ' "SYSTEM CHANNEL: \(.channel)"' --raw-output <<< ${HWINFO}
+jq ' "BOOTSTICK CHANNEL: \(.bootstick.BRANCH)"' --raw-output <<< ${HWINFO}
+jq ' "BOOTSTICK BUILD: \(.bootstick.BUILD)"' --raw-output <<< ${HWINFO}
+jq ' "SUPPORT IDENTIFIER: \(.support_identifier)"' --raw-output <<< ${HWINFO}
 
 
 if [[ "${EXIT_CODE}" -eq "0" ]]; then
