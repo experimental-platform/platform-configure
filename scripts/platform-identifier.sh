@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SUPPORT_FILE="/etc/protonet/support_identifier"
+SUPPORT_FILE="/etc/protonet/system/support_identifier"
 BOX_NAME_FILE="/etc/protonet/box_name"
 
 
