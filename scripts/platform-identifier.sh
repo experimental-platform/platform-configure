@@ -4,7 +4,6 @@ IFS=$'\n\t'
 
 SUPPORT_FILE="/etc/protonet/support_identifier"
 BOX_NAME_FILE="/etc/protonet/box_name"
-WIFI_TEMP_SSID="/etc/protonet/system/wifi/"
 
 
 get_default_mac() {
@@ -61,15 +60,6 @@ main () {
     else
         echo "Box name file ${BOX_NAME_FILE} already exists."
     fi
-
-    if [[ ! -f "${WIFI_TEMP_SSID}" ]]; then
-        echo -n "Writing individual box name to ${WIFI_TEMP_SSID}... "
-        echo "Protonet-$(get_default_mac)" > ${WIFI_TEMP_SSID}
-        echo "DONE"
-    else
-        echo "Box name file ${WIFI_TEMP_SSID} already exists."
-    fi
-
 }
 
 main
