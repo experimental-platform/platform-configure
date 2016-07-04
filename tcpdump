@@ -8,5 +8,6 @@ if ! docker inspect --type=image tcpdump:latest &>/dev/null; then
   echo -e 'FROM alpine\nRUN apk update && apk add tcpdump && rm -rf /var/cache/apk/*' > "$CONTEXT/Dockerfile"
   docker build -t tcpdump:latest "$CONTEXT"
 fi
-exec docker run -it --rm --net host tcpdump:latest tcpdump $@
+
+exec docker run -it --rm --net host --workdir=/mnt --volume=$PWD:/mnt tcpdump:latest tcpdump $@
 
