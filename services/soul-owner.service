@@ -1,0 +1,29 @@
+# ExperimentalPlatform
+[Unit]
+Description=Protonet Soul Owner Service
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service
+Requires=soul-prepare.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f soul-owner
+ExecStartPre=/usr/bin/docker run -d \
+      --name soul-owner \
+      --net=protonet \
+      --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+      --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
+      --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
+      --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
+      --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
+      --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
+      quay.io/protonetinc/soul-owner:{{tag}}
+ExecStart=/usr/bin/docker logs -f soul-owner
+ExecStop=/usr/bin/docker stop soul-owner
+ExecStopPost=/usr/bin/docker stop soul-owner
+
+[Install]
+WantedBy=multi-user.target
