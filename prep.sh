@@ -68,7 +68,7 @@ function setup_systemd() {
     echo -n "Setting up systemd services... "
     cp /services/* ${MOUNTROOT}/etc/systemd/system/
     cp /config/50-log-warn.conf ${MOUNTROOT}/etc/systemd/system/docker.service.d/50-log-warn.conf
-    cp /config/journald_protonet.conf ${MOUNTROOT}/etc/systemd/journald.conf.d/journald_protonet.conf
+    cp /config/sysctl-klog.conf ${MOUNTROOT}/etc/sysctl.d/sysctl-klog.conf
     # Network configuration
     cp /config/*.network  ${MOUNTROOT}/etc/systemd/network
     echo "Reloading the config files."
