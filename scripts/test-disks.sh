@@ -21,7 +21,7 @@ fi
 for filesystem in /home /data /var/lib/docker /var/log/journal; do
     echo -ne "\tChecking if ${filesystem} is on ZFS... "
     if ! (mount | grep -qP "on ${filesystem}.*type zfs"); then
-        echo -e "${ERROR}: ${filesystem} is fucked"
+        echo -e "${ERROR}: ${filesystem} is damaged"
         EXITCODE=23
     else
         echo "OKAY."
