@@ -1,6 +1,12 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
 
-OUTPUT=/tmp/`date +%Y-%m-%d_%H:%m:%S`-platform-feedback
+TEMPDIR=$(mktemp -d)
+trap "rm -rf '$TEMPDIR'" SIGINT SIGTERM EXIT
+
+OUTPUT=${TEMPDIR}/$(date +%Y-%m-%d_%H:%m:%S)-$(hostname)-platform-feedback
+
 echo -n "Writing system status to \"${OUTPUT}\"... "
 mkdir -p ${OUTPUT}
 
@@ -13,8 +19,8 @@ ssh-keygen -l -f /data/dokku/.ssh/authorized_keys > ${OUTPUT}/dokku-ssh-keys.log
 fi
 
 if [[ -x $(which systemctl) ]]; then
-    sudo systemctl > ${OUTPUT}/systemd-service-list.txt
-    sudo systemctl | awk '/fail/ {print $1}' | xargs -n 1 -i sudo systemctl status {} > ${OUTPUT}/systemd-service-status-failed.txt
+    sudo systemctl -a > ${OUTPUT}/systemd-service-list.txt
+    sudo systemctl -a | awk '/fail/ {print $1}' | xargs -n 1 -i sudo systemctl status {} > ${OUTPUT}/systemd-service-status-failed.txt
 fi
 
 if [[ -x $(which journalctl) ]]; then
