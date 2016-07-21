@@ -3,14 +3,23 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-# TODO: create random mac address
-MAC="00:11:22:33:44:55"
-# TODO: fetch the correct interface name
-INTERFACE="eno1"
 NEW_INTERFACE="engitlab0"
 
 
+get_interface() {
+    ip route get 8.8.8.8 | grep -Po "(?<=dev )e[nt]+[0-9a-z_]+"
+}
+
+
+create_mac() {
+    echo "00:11:22:"$(((RANDOM % 10)))$(((RANDOM % 10)))":"$(((RANDOM % 10)))$(((RANDOM % 10)))":"$(((RANDOM % 10)))$(((RANDOM % 10)))
+}
+
+
 create_interface() {
+    local INTERFACE MAC
+    MAC=$(create_mac)
+    INTERFACE=$(get_interface)
     if ! ip link show ${NEW_INTERFACE} &>/dev/null; then
         # ip link set ${INTERFACE} up
         awk " BEGIN { printf \"Creating interface ${NEW_INTERFACE}... \" > \"/dev/fd/2\" }"
