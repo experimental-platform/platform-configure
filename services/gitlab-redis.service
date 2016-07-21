@@ -1,0 +1,25 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run Gitlab 'redis' service
+ConditionPathExists=/etc/protonet/gitlab/enabled
+After=init-protonet.service
+Requires=init-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=/usr/bin/mkdir -p /data/gitlab/redis
+ExecStartPre=-/usr/bin/docker rm -f gitlab-redis
+ExecStartPre=/usr/bin/docker run -d \
+    --volume=/data/gitlab/redis:/data \
+    --name=gitlab-redis \
+    --net=protonet \
+  quay.io/experimentalplatform/redis:{{tag}} redis-server --appendonly yes
+ExecStart=/usr/bin/docker logs -f gitlab-redis
+ExecStop=/usr/bin/docker stop gitlab-redis
+ExecStopPost=/usr/bin/docker stop gitlab-redis
+
+[Install]
+WantedBy=multi-user.target
