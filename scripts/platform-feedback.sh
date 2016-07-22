@@ -5,9 +5,10 @@ IFS=$'\n\t'
 TEMPDIR=$(mktemp -d)
 trap "rm -rf '$TEMPDIR'" SIGINT SIGTERM EXIT
 
-OUTPUT=${TEMPDIR}/$(date +%Y-%m-%d_%H:%m:%S)-$(hostname)-platform-feedback
+OUTPUT_NAME=$(date +%Y-%m-%d_%H:%m:%S)-$(hostname)-platform-feedback
+OUTPUT=${TEMPDIR}/${OUTPUT_NAME}
 
-echo -n "Writing system status to \"${OUTPUT}\"... "
+echo -n "Writing system status to \"${OUTPUT_NAME}\"... "
 mkdir -p ${OUTPUT}
 
 df -h > ${OUTPUT}/disk-free-space.txt
@@ -43,7 +44,7 @@ if [[ -x $(which zfs) ]]; then
     sudo zfs get all  > ${OUTPUT}/zfs-get-all.txt
 fi
 
-tar cfz ${OUTPUT}.tgz ${OUTPUT} && rm -rf ${OUTPUT}
-echo -e "\n\n\nPLEASE SEND '${OUTPUT}.tgz' TO YOUR FRIENDLY SUPPORT TEAM. THANK YOU\n"
+tar cfz "./${OUTPUT_NAME}.tgz" "${OUTPUT}"
+echo -e "\n\n\nPLEASE SEND '${OUTPUT_NAME}.tgz' TO YOUR FRIENDLY SUPPORT TEAM. THANK YOU\n"
 
 # TODO: send it and then clean up
