@@ -11,6 +11,19 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f platform-haproxy
+# HAProxy refuses to start when a configured DNS name does not resolve upon start, but we need to be able to
+# dynamically resolve potentially disabled apps. HAProxy is due to resolve this major painpoint in August 2016:
+# See http://discourse.haproxy.org/t/haproxy-fails-to-start-if-backend-server-names-dont-resolve/322/6
+# See http://www.serverphorums.com/read.php?10,1248602
+# See https://bugzilla.redhat.com/show_bug.cgi?id=1184447
+#
+# Make sure we have no container name clashes, kill it with fire
+ExecStartPre=-/usr/bin/docker rm -f fakedns
+# Launch a temporary docker container that brings in the expected dns hosts into haproxy on start via dockerdns
+ExecStartPre=/usr/bin/docker run -d --name fakedns --net protonet --net-alias soul-nginx --net-alias gitlab --entrypoint="/bin/sleep" quay.io/experimentalplatform/haproxy:{{tag}} 90
+# Once haproxy is up, we need to get rid of the fakedns image because we want to actually resolve
+# to the actual apps once (and if they) become available
+ExecStartPost=-/usr/bin/docker rm -f fakedns
 ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --name platform-haproxy \
