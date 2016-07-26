@@ -16,6 +16,7 @@ ExecStartPre=-/usr/bin/docker rm -f platform-haproxy
 # See http://discourse.haproxy.org/t/haproxy-fails-to-start-if-backend-server-names-dont-resolve/322/6
 # See http://www.serverphorums.com/read.php?10,1248602
 # See https://bugzilla.redhat.com/show_bug.cgi?id=1184447
+# TODO: Get rid of it as soon as HAProxy is capable of doing it itself (with `init-addr dns` or similar)
 #
 # Make sure we have no container name clashes, kill it with fire
 ExecStartPre=-/usr/bin/docker rm -f fakedns
