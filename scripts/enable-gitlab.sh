@@ -24,10 +24,8 @@ enable_gitlab() {
 	CREATE USER IF NOT EXISTS 'gitlab'@'%';
 	SET PASSWORD FOR 'gitlab'@'%' = PASSWORD('$MYSQL_PASSWORD');
 	GRANT ALL PRIVILEGES ON gitlab.* TO 'gitlab'@'%';"
-	echo "$MYSQL_QUERY"
 	docker exec -i mysql mysql --password=s3kr3t --batch <<< "$MYSQL_QUERY"
 
-	sed -r "s/DB_PASS=[a-zA-Z0-9]+/DB_PASS=$MYSQL_PASSWORD/" -i /etc/systemd/system/gitlab.service
 	systemctl daemon-reload
 	systemctl start gitlab
 	systemctl enable gitlab

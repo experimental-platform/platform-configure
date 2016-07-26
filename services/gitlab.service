@@ -10,7 +10,7 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f gitlab
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name gitlab \
     --net protonet \
     --env 'GITLAB_HTTPS=false' \
@@ -19,7 +19,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --env 'DB_HOST=mysql' \
     --env 'DB_NAME=gitlab' \
     --env 'DB_USER=gitlab' \
-    --env "DB_PASS=foobar" \
+    --env \"DB_PASS=$(</etc/protonet/gitlab/mysql_passwd)\" \
     --env 'REDIS_HOST=gitlab-redis' \
     --env 'GITLAB_SECRETS_DB_KEY_BASE=60331407208862634583313575929901' \
     --env 'LDAP_ENABLED=true' \
@@ -28,7 +28,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --env 'LDAP_BIND_DN=uid=gitlab,ou=Apps,dc=protonet,dc=com' \
     --env 'LDAP_PASS=demo' \
     --env 'LDAP_UID=uid' \
-    sameersbn/gitlab:8.9.3
+    sameersbn/gitlab:8.9.3"
 ExecStart=/usr/bin/docker logs -f gitlab
 ExecStop=/usr/bin/docker stop gitlab
 ExecStopPost=/usr/bin/docker stop gitlab
