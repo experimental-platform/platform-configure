@@ -9,6 +9,7 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/opt/bin/gitlab-network start
 ExecStartPre=-/usr/bin/docker rm -f gitlab
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name gitlab \

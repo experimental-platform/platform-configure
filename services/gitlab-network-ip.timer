@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run gitlab-network-ip.service periodically
+Requires=gitlab.service
+After=gitlab.service
+
+[Timer]
+OnUnitActiveSec=5
+
+[Install]
+WantedBy=multi-user.target
