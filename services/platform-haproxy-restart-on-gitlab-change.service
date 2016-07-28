@@ -1,0 +1,10 @@
+# ExperimentalPlatform
+[Unit]
+Description=Restart HAProxy when Gitlab IP address changed
+After=platform-haproxy.service
+Requires=platform-haproxy.service
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart platform-haproxy.service
+KillMode=none
+Type=oneshot
