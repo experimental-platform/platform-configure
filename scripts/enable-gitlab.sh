@@ -16,9 +16,13 @@ enable_gitlab() {
 	if [ -f /etc/protonet/gitlab/mysql_passwd ]; then
 		MYSQL_PASSWORD=$(</etc/protonet/gitlab/mysql_passwd)
 	else
-		MYSQL_PASSWORD=$(generate_random)
+		MYSQL_PASSWORD="$(generate_random)"
 		echo -n $MYSQL_PASSWORD > /etc/protonet/gitlab/mysql_passwd
 	fi
+
+	if [ ! -f /etc/protonet/gitlab/secrets_db_key_base ]; then
+		generate_random > /etc/protonet/gitlab/secrets_db_key_base
+        fi
 
 	MYSQL_QUERY="CREATE DATABASE IF NOT EXISTS gitlab;
 	CREATE USER IF NOT EXISTS 'gitlab'@'%';
