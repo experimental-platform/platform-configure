@@ -25,6 +25,7 @@ ExecStartPre=/usr/bin/docker run -d --name fakedns --net protonet --net-alias so
 # Once haproxy is up, we need to get rid of the fakedns image because we want to actually resolve
 # to the actual apps once (and if they) become available
 ExecStartPost=-/usr/bin/docker rm -f fakedns
+# if GITLAB_PUBLIC_IP is an empty string, this is still fine. 
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --net=protonet \
     --name platform-haproxy \
