@@ -1,10 +1,10 @@
 # ExperimentalPlatform
 [Unit]
-Description=Write out current gitlab virtual network IP address to SKVS/FS
+Description=Write out current gitlab virtual network IP address to SKVS/FS if it has changed
 Requires=gitlab.service
 After=gitlab.service
 
 [Service]
 KillMode=none
 Type=oneshot
-ExecStart=/usr/bin/env bash -c '/opt/bin/gitlab-network show > /etc/protonet/gitlab/ip'
+ExecStart=/opt/bin/gitlab-network-ip
