@@ -46,6 +46,7 @@ get_ip_adress() {
         ip addr show ${NEW_INTERFACE} | awk '/inet\s+/ { gsub("\\/[0-9]+", "", $2); print $2 }'
     else
         awk " BEGIN { print \"Interface not found ${NEW_INTERFACE}\" > \"/dev/fd/2\" }"
+        exit 1
     fi
 }
 
