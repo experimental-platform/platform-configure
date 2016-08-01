@@ -1,7 +1,6 @@
 # ExperimentalPlatform
 [Unit]
 Description=OpenDJ service
-ConditionPathExists=/etc/protonet/ldap/enabled
 After=init-protonet.service skvs-protonet.service
 Requires=init-protonet.service skvs-protonet.service
 
@@ -10,14 +9,10 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
-ExecStartPre=/usr/bin/mkdir -p /data/ldap/db /data/ldap/logg /data/ldap/config
 ExecStartPre=-/usr/bin/docker rm -f ldap
 ExecStartPre=/usr/bin/docker run -d \
     --name=ldap \
     --net=protonet \
-    --volume=/data/ldap/db:/opt/opendj/db \
-    --volume=/data/ldap/config:/opt/opendj/config \
-    --volume=/data/ldap/logs:/opt/opendj/logs \
   quay.io/experimentalplatform/ldap:{{tag}}
 ExecStart=/usr/bin/docker logs -f ldap
 ExecStop=/usr/bin/docker stop ldap
