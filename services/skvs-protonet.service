@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run 'simple key value storage' service
-After=docker.service
-Requires=docker.service
+After=init-protonet.service
+Requires=init-protonet.service
 
 [Service]
 TimeoutStartSec=0
