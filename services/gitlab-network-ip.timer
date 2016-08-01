@@ -5,7 +5,10 @@ Requires=gitlab.service
 After=gitlab.service
 
 [Timer]
-OnUnitActiveSec=5
+# This case is not covered by the systemd docs, but this will run the timer every
+# 5 seconds.
+# http://dcycleproject.org/blog/112/systemd-replacement-cron-every-10-seconds
+OnCalendar=*:*:0/5
 
 [Install]
 WantedBy=multi-user.target
