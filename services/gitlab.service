@@ -27,10 +27,12 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env \"GITLAB_SECRETS_DB_KEY_BASE=$(</etc/protonet/gitlab/secrets_db_key_base)\" \
     --env 'LDAP_ENABLED=true' \
     --env 'LDAP_HOST=ldap' \
-    --env 'LDAP_PORT=1389' \
+    --env 'LDAP_PORT=389' \
     --env 'LDAP_BIND_DN=uid=gitlab,ou=Apps,dc=protonet,dc=com' \
     --env 'LDAP_PASS=demo' \
     --env 'LDAP_UID=uid' \
+    --env 'LDAP_ACTIVE_DIRECTORY=false' \
+    --env 'LDAP_BASE=ou=People,dc=protonet,dc=com' \
     sameersbn/gitlab:8.9.3"
 ExecStart=/usr/bin/docker logs -f gitlab
 ExecStop=/usr/bin/docker stop gitlab
