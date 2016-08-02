@@ -15,10 +15,20 @@ create_mac() {
     echo "00:11:22:"$(((RANDOM % 10)))$(((RANDOM % 10)))":"$(((RANDOM % 10)))$(((RANDOM % 10)))":"$(((RANDOM % 10)))$(((RANDOM % 10)))
 }
 
+get_mac() {
+    if [ -f /etc/protonet/gitlab/mac ]; then
+        cat /etc/protonet/gitlab/mac
+    else
+        mkdir -p /etc/protonet/gitlab
+        local MAC=$(create_mac)
+        echo -n "$MAC" > /etc/protonet/gitlab/mac
+        echo -n "$MAC"
+    fi
+}
 
 create_interface() {
     local INTERFACE MAC
-    MAC=$(create_mac)
+    MAC=$(get_mac)
     INTERFACE=$(get_interface)
     if ! ip link show ${NEW_INTERFACE} &>/dev/null; then
         # ip link set ${INTERFACE} up
