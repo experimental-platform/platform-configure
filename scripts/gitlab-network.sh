@@ -53,7 +53,7 @@ destroy_interface() {
 
 get_ip_adress() {
     if ip link show ${NEW_INTERFACE} &>/dev/null; then
-        ip addr show ${NEW_INTERFACE} | awk '/inet\s+/ { gsub("\\/[0-9]+", "", $2); print $2 }'
+        ip addr show ${NEW_INTERFACE} | awk '/inet\s+/ { gsub("\\/[0-9]+", "", $2); printf $2 }'
     else
         awk " BEGIN { print \"Interface not found ${NEW_INTERFACE}\" > \"/dev/fd/2\" }"
         exit 1
