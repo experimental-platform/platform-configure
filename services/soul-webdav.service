@@ -15,6 +15,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --name soul-webdav \
     --net=protonet \
     --user webdav \
+    --hostname soul-webdav \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
