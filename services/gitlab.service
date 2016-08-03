@@ -1,8 +1,9 @@
 # ExperimentalPlatform
 [Unit]
 Description=Gitlab
-After=gitlab-redis.service
+After=gitlab-redis.service platform-ldap.service
 Requires=gitlab-redis.service
+Wants=platform-ldap.service
 
 [Service]
 TimeoutStartSec=0
