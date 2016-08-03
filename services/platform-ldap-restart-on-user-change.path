@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Trigger a Restart of LDAP if the users collection changes
+
+[Path]
+PathChanged=/etc/protonet/ldap/users
+
+[Install]
+WantedBy=multi-user.target
