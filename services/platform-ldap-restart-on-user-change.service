@@ -1,0 +1,10 @@
+# ExperimentalPlatform
+[Unit]
+Description=Trigger a Restart of LDAP if the users collection changes
+After=platform-ldap.service
+Requires=platform-ldap.service
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart platform-ldap.service
+KillMode=none
+Type=oneshot
