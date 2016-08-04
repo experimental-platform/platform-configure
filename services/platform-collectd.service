@@ -1,0 +1,26 @@
+# ExperimentalPlatform
+[Unit]
+Description=CollectD
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=/usr/bin/mkdir -p /data/collectd/rrd
+ExecStartPre=-/usr/bin/docker rm -f collectd
+ExecStartPre=/usr/bin/docker run -d \
+    --name collectd \
+    --net host \
+    --volume /data/collectd/rrd:/rrd:rw \
+    --volume /dev:/dev:ro \
+    --volume /var/run/docker.sock:/var/run/docker.sock \
+    quay.io/experimentalplatform/collectd:{{tag}}
+ExecStart=/usr/bin/docker logs -f collectd
+ExecStop=/usr/bin/docker stop collectd
+ExecStopPost=/usr/bin/docker stop collectd
+
+[Install]
+WantedBy=multi-user.target
