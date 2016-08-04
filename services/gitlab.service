@@ -21,6 +21,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env \"GITLAB_HOST=$(/opt/bin/gitlab-network show)\" \
     --env 'GITLAB_HTTPS=false' \
     --env 'GITLAB_SSH_PORT=2222' \
+    --env 'GITLAB_SIGNUP_ENABLED=false' \
     --env 'SSL_SELF_SIGNED=true' \
     --env 'DB_ADAPTER=mysql2' \
     --env 'DB_HOST=mysql' \
