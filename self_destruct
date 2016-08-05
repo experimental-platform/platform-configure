@@ -75,6 +75,7 @@ remove_config() {
     rm -f /etc/machine-id
     rm -rf /etc/protonet
     rm -f /etc/ssh/ssh_host_*
+    hostname localhost
     userdel -f -r platform &> /dev/null || true
 }
 
