@@ -59,7 +59,7 @@ run_tests() {
     for testname in test-disks test-ipmi-disabled test-software-overview; do
         if [[ -x "/etc/systemd/system/scripts/${testname}.sh" ]]; then
             OUTFILE=$(mktemp)
-            /etc/systemd/system/scripts/${testname}.sh > "$OUTFILE" || true
+            /etc/systemd/system/scripts/${testname}.sh > "$OUTFILE" | true
             STATUS=${PIPESTATUS[0]}
             OUTPUT="$(<$OUTFILE)"
             [ "$JSON_OUTPUT" != "true" ] && echo "$OUTPUT"
