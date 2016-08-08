@@ -21,7 +21,7 @@ fi
 
 if [[ -x $(which systemctl) ]]; then
     sudo systemctl -a > ${OUTPUT}/systemd-service-list.txt
-    sudo systemctl -a | awk '/fail/ {print $1}' | xargs -n 1 -i sudo systemctl status {} > ${OUTPUT}/systemd-service-status-failed.txt
+    sudo systemctl -a --no-legend | awk '/fail/ {print $1}' | xargs -n 1 -i sudo systemctl status {} > ${OUTPUT}/systemd-service-status-failed.txt
 fi
 
 if [[ -x $(which journalctl) ]]; then
