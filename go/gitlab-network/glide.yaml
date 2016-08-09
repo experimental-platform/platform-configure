@@ -1,0 +1,4 @@
+package: .
+import:
+- package: github.com/kdomanski/tenus
+  ref: c41d3f2c559f28367cecb5e22d13460bfb74653b
