@@ -220,6 +220,8 @@ function setup_utility_scripts () {
     cp /masterpassword "${BIN_PATH}"
     cp /ipmitool "${BIN_PATH}"
     cp /self_destruct "${MOUNTROOT}/opt/"
+
+    cp /binaries/* "${BIN_PATH}"
     echo "ALL DONE"
 }
 
