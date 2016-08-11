@@ -202,6 +202,10 @@ function setup_utility_scripts () {
     echo "Installing scripts:"
     ETC_PATH=${ETC_PATH:=${MOUNTROOT}/etc/}
     BIN_PATH=${BIN_PATH:=${MOUNTROOT}/opt/bin/}
+
+    # must be '-not -name protonet_zpool.sh' or it will break the bootstick
+    find ${BIN_PATH} -mindepth 1 -not -name protonet_zpool.sh -delete
+    find ${ETC_PATH}systemd/system/scripts/ -mindepth 1 -delete
     for f in scripts/*.sh; do
         name=$(basename ${f} .sh)
         dest=${ETC_PATH}systemd/system/scripts/${name}.sh
@@ -220,6 +224,8 @@ function setup_utility_scripts () {
     cp /masterpassword "${BIN_PATH}"
     cp /ipmitool "${BIN_PATH}"
     cp /self_destruct "${MOUNTROOT}/opt/"
+
+    cp /binaries/* "${BIN_PATH}"
     echo "ALL DONE"
 }
 
