@@ -50,4 +50,5 @@ if [ $# -gt 0 ] && [ "$1" == '--disable' ]; then
 else
 #	generate_random
 	enable_gitlab
+	echo "The address is: http://$(gitlab-network show)/"
 fi
