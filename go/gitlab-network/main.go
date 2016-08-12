@@ -7,39 +7,11 @@ import (
 	"log"
 	"net"
 	"os"
-	"os/exec"
-	"regexp"
-	"strings"
-
 	"github.com/kdomanski/tenus"
+	"github.com/experimental-platform/platform-utils/netutil"
 )
 
 const constInterfaceName string = "engitlab0"
-
-func getDefaultInterface() (string, error) {
-	cmd := exec.Command("ip", "route", "get", "8.8.8.8")
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", err
-	}
-
-	reg, err := regexp.Compile("dev e[nt]+[0-9a-z_]+")
-	if err != nil {
-		return "", err
-	}
-
-	found := reg.Find(out)
-	if found == nil {
-		return "", fmt.Errorf("getDefaultInterface(): error parsing the output of `ip`")
-	}
-
-	split := strings.Split(string(found), " ")
-	if len(split) != 2 {
-		return "", fmt.Errorf("getDefaultInterface(): error parsing the output of `ip`")
-	}
-
-	return split[1], nil
-}
 
 func createMac() string {
 	r := make([]byte, 3)
@@ -95,7 +67,7 @@ func createInterface(ifName string) error {
 
 	mac := getMac()
 
-	defaultInterface, err := getDefaultInterface()
+	defaultInterface, err := netutil.GetDefaultInterface(netutil.RealCmdExec{})
 	if err != nil {
 		return err
 	}
