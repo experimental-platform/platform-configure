@@ -14,7 +14,7 @@ for tooldir in go/*; do
   echo "Building $tool_name"
 
   echo " * Gliding up"
-  docker run -v "$HOME/bin/glide:/usr/bin/glide:ro" -v "$(readlink -f $tooldir):/go/src/$tool_name" -w "/go/src/$tool_name" -e GO15VENDOREXPERIMENT=1 golang:1.5 glide up
+  docker run -v "$HOME/bin/glide:/usr/bin/glide:ro" -v "$(readlink -f $tooldir):/go/src/$tool_name" -w "/go/src/$tool_name" -e GO15VENDOREXPERIMENT=1 golang:1.5 glide install
   echo " * Building"
   docker run -v "$HOME/bin/glide:/usr/bin/glide:ro" -v "$(readlink -f $tooldir):/go/src/$tool_name" -w "/go/src/$tool_name" -e GO15VENDOREXPERIMENT=1 golang:1.5 go build
   echo " * Testing"
