@@ -18,7 +18,8 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --net protonet \
     --volume /data/gitlab/data:/home/git/data \
     -p \"$(/opt/bin/gitlab-network show):2222:22\" \
-    --env \"GITLAB_HOST=$(/opt/bin/gitlab-network show)\" \
+    --env \"GITLAB_HOST=gitlab.$(</etc/protonet/hostname).protonet.info\" \
+    --env \"GITLAB_SSH_HOST=$(/opt/bin/gitlab-network show)\" \
     --env 'GITLAB_HTTPS=false' \
     --env 'GITLAB_SSH_PORT=2222' \
     --env 'GITLAB_SIGNUP_ENABLED=false' \
@@ -30,6 +31,11 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env \"DB_PASS=$(</etc/protonet/gitlab/mysql_passwd)\" \
     --env 'REDIS_HOST=gitlab-redis' \
     --env \"GITLAB_SECRETS_DB_KEY_BASE=$(</etc/protonet/gitlab/secrets_db_key_base)\" \
+    --env \"GITLAB_EMAIL=$(</etc/protonet/smtp/sender)\" \
+    --env 'SMTP_ENABLED=true' \
+    --env \"SMTP_HOST=$(</etc/protonet/smtp/host)\" \
+    --env \"SMTP_USER=$(</etc/protonet/smtp/username)\" \
+    --env \"SMTP_PASS=$(</etc/protonet/smtp/password)\" \
     --env 'LDAP_ENABLED=true' \
     --env 'LDAP_HOST=ldap' \
     --env 'LDAP_PORT=389' \
