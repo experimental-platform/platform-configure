@@ -7,19 +7,24 @@ CHANNEL=${CHANNEL:="development"}
 PLATFORM_REMOVE_OLD_IMAGES=${PLATFORM_REMOVE_OLD_IMAGES:="true"}
 MANIFEST_URL=${MANIFEST_URL:='https://raw.githubusercontent.com/protonet/builds/master/$CHANNEL.json'}
 DOCKER="/docker"
+NEWBUILDNUMBER=
 declare -A IMGTAGLIST
 
-function fetch_module_images() {
+function fetch_release_json() {
   local CHANNEL JSON JQSCRIPT
   CHANNEL="$1"
-  JQSCRIPT='max_by(.build) | .images | keys[] as $k | $k + ":" + .[$k]'
-  curl --fail --silent "$(eval echo "$MANIFEST_URL")" | jq "$JQSCRIPT" --raw-output
+  curl --fail --silent "$(eval echo "$MANIFEST_URL")"
 }
 
-function fetch_module_image_data() {
-  local JSONIMGLIST
+function fetch_release_data() {
+  local JSONIMGLIST JSONDATA
 
-  JSONIMGLIST="$(fetch_module_images "$CHANNEL")"
+  JSONDATA="$(fetch_release_json "$CHANNEL")"
+
+  JQSCRIPT_IMAGES='max_by(.build) | .images | keys[] as $k | $k + ":" + .[$k]'
+  JQSCRIPT_BUILDNO='max_by(.build) | .build'
+  JSONIMGLIST="$(jq "$JQSCRIPT_IMAGES" --raw-output <<< "$JSONDATA")"
+  NEWBUILDNUMBER="$(jq "$JQSCRIPT_BUILDNO" --raw-output <<< "$JSONDATA")"
 
   for img in ${JSONIMGLIST}; do
     # this splits a line in the format 'A:B' and assigns IMGTAGLIST[A]=B
@@ -150,6 +155,10 @@ function download_and_verify_image() {
 
 
 function finalize() {
+    # save the current release number to SKVS
+    mkdir -p ${MOUNTROOT}/etc/protonet/system
+    echo -n "$NEWBUILDNUMBER" > ${MOUNTROOT}/etc/protonet/system/release_number
+    sync
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
     set_status "finalizing"
@@ -270,7 +279,7 @@ setup_paths
 # FIRST: Update the platform-configure.script itself!
 rescue_legacy_script
 # Now the stuff that may break...
-fetch_module_image_data
+fetch_release_data
 
 if [ "${TEMPLATES_ONLY:-"false"}" == "true" ]; then
   /button "hdd" >/dev/null 2>&1 || true
