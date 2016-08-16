@@ -1,0 +1,11 @@
+hash: 764f63d765f629f99bf785203145f713c11e0ed5c8b5c246ffbd2cc3254d20c9
+updated: 2016-08-16T15:04:15.984508534+02:00
+imports:
+- name: github.com/docker/libcontainer
+  version: 83a102cc68a09d890cce3b6c2e5c14c49e6373a0
+  subpackages:
+  - netlink
+  - system
+- name: github.com/kdomanski/tenus
+  version: c41d3f2c559f28367cecb5e22d13460bfb74653b
+testImports: []
