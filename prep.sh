@@ -155,6 +155,10 @@ function download_and_verify_image() {
 
 
 function finalize() {
+    # save the current release number to SKVS
+    mkdir -p ${MOUNTROOT}/etc/protonet/system
+    echo -n "$NEWBUILDNUMBER" > ${MOUNTROOT}/etc/protonet/system/release_number
+    sync
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
     set_status "finalizing"
