@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -79,66 +80,77 @@ func getHostname() string {
 	return hostname
 }
 
-func tarFeedbackFile(dir string, fileinfo os.FileInfo, tarWriter *tar.Writer) error {
-	fullPath := fmt.Sprintf("%s/%s", dir, fileinfo.Name())
-	file, err := os.Open(fullPath)
+func tarFeedbackFile(path, relativePath string, info os.FileInfo, tarWriter *tar.Writer) error {
+	isDir := info.IsDir()
+
+	header, err := tar.FileInfoHeader(info, relativePath)
 	if err != nil {
 		return err
 	}
 
-	header := tar.Header{
-		Gid:  os.Getgid(),
-		Uid:  os.Getuid(),
-		Name: fileinfo.Name(),
-		Size: fileinfo.Size(),
-		Mode: 0644,
-	}
+	header.Name = relativePath
 
-	err = tarWriter.WriteHeader(&header)
+	err = tarWriter.WriteHeader(header)
 	if err != nil {
 		return err
 	}
 
-	_, err = io.Copy(tarWriter, file)
-	if err != nil {
-		return err
+	if !isDir {
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+
+		_, err = io.Copy(tarWriter, file)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
-func tarTheData(dir string) (string, error) {
+func tarTheData(dir, prefix string, tarWriter *tar.Writer) error {
+	walkFn := func(path string, info os.FileInfo, err error) error {
+		relativePath, err := filepath.Rel(dir, path)
+		if err != nil {
+			return err
+		}
+
+		if relativePath == "." {
+			return nil
+		}
+
+		if len(prefix) > 0 {
+			relativePath = fmt.Sprintf("%s/%s", prefix, relativePath)
+		}
+
+		err = tarFeedbackFile(path, relativePath, info, tarWriter)
+		if err != nil {
+			return fmt.Errorf("Error archiving the feedback data: %s", err.Error())
+		}
+
+		return nil
+	}
+
+	err := filepath.Walk(dir, walkFn)
+
+	return err
+}
+
+func createOutputArchive() (string, *os.File, *gzip.Writer, *tar.Writer, error) {
 	timestamp := time.Now().UTC().Format("2006-01-02_15:04:05")
 	filename := fmt.Sprintf("%s-%s-platform-feedback.tar.gz", timestamp, getHostname())
 
 	archiveFile, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		return "", err
+		return "", nil, nil, nil, err
 	}
-	defer archiveFile.Close()
-	defer archiveFile.Sync()
 
 	compressor := gzip.NewWriter(archiveFile)
-	defer compressor.Close()
-	defer compressor.Flush()
-
 	tarWriter := tar.NewWriter(compressor)
-	defer tarWriter.Close()
-	defer tarWriter.Flush()
 
-	list, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return "", err
-	}
-
-	for _, file := range list {
-		err = tarFeedbackFile(dir, file, tarWriter)
-		if err != nil {
-			return "", fmt.Errorf("Error archiving the feedback data: %s", err.Error())
-		}
-	}
-
-	return filename, nil
+	return filename, archiveFile, compressor, tarWriter, nil
 }
 
 func main() {
@@ -148,6 +160,18 @@ func main() {
 	}
 
 	log.Printf("Work directory: %s", dir)
+
+	archiveName, archiveFile, compressor, tarWriter, err := createOutputArchive()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer archiveFile.Close()
+	defer archiveFile.Sync()
+	defer compressor.Close()
+	defer compressor.Flush()
+	defer tarWriter.Close()
+	defer tarWriter.Flush()
 
 	getCommandsOutput(false, dir, "disk-free-space", "df", "-h")
 	getCommandsOutput(false, dir, "disk-free-inodes", "df", "-i")
@@ -177,7 +201,12 @@ func main() {
 	getCommandsOutput(false, dir, "zfs-list", "zfs", "list")
 	getCommandsOutput(false, dir, "zfs-get-all", "zfs", "get", "all")
 
-	archiveName, err := tarTheData(dir)
+	err = tarTheData(dir, "", tarWriter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = tarTheData("/data/collectd", "collectd", tarWriter)
 	if err != nil {
 		log.Fatal(err)
 	}
