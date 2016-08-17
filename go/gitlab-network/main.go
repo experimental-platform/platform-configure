@@ -56,14 +56,14 @@ func getMac() string {
 	if _, err := os.Stat("/etc/protonet/gitlab/mac"); os.IsNotExist(err) {
 
 		// create the parent folder, if they are missing
-		if os.Stat("/etc/protonet"); os.IsNotExist(err) {
+		if _, err = os.Stat("/etc/protonet"); os.IsNotExist(err) {
 			err = os.Mkdir("/etc/protonet/gitlab", 0755)
 			if err != nil {
 				panic(err)
 			}
 		}
 
-		if os.Stat("/etc/protonet/gitlab"); os.IsNotExist(err) {
+		if _, err = os.Stat("/etc/protonet/gitlab"); os.IsNotExist(err) {
 			err := os.Mkdir("/etc/protonet/gitlab", 0755)
 			if err != nil {
 				panic(err)
