@@ -1,0 +1,11 @@
+package: .
+import:
+- package: github.com/docker/engine-api
+  version: ~0.4.0
+  subpackages:
+  - client
+  - types
+  - types/filters
+- package: golang.org/x/net
+  subpackages:
+  - context
