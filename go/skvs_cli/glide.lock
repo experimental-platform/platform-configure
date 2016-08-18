@@ -1,0 +1,53 @@
+hash: 61c850c1147f8a8aecdac41baccd13dd078e9292d17c8b7673b27d8c595731eb
+updated: 2016-08-18T11:28:03.987461276+02:00
+imports:
+- name: github.com/docker/distribution
+  version: 010e063270be37cfa8547ccfb9717e5d874c88a8
+  subpackages:
+  - reference
+  - digest
+- name: github.com/docker/engine-api
+  version: 3d1601b9d2436a70b0dfc045a23f6503d19195df
+  subpackages:
+  - client
+  - types
+  - types/filters
+  - client/transport
+  - client/transport/cancellable
+  - types/container
+  - types/network
+  - types/reference
+  - types/registry
+  - types/swarm
+  - types/time
+  - types/versions
+  - types/blkiodev
+  - types/strslice
+- name: github.com/docker/go-connections
+  version: 0bad1a3951398f88ef4dd75fdb42af374430be89
+  subpackages:
+  - sockets
+  - tlsconfig
+  - nat
+- name: github.com/docker/go-units
+  version: eb879ae3e2b84e2a142af415b679ddeda47ec71c
+- name: github.com/Microsoft/go-winio
+  version: ce2922f643c8fd76b46cadc7f404a06282678b34
+- name: github.com/opencontainers/runc
+  version: 6df383c2f881fbdeb85060fd27d8bf61afedacd9
+  subpackages:
+  - libcontainer/user
+- name: github.com/Sirupsen/logrus
+  version: 55eb11d21d2a31a3cc93838241d04800f52e823d
+  subpackages:
+  - formatters/logstash
+- name: golang.org/x/net
+  version: 4876518f9e71663000c348837735820161a42df7
+  subpackages:
+  - context
+  - proxy
+- name: golang.org/x/sys
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
+  subpackages:
+  - windows
+testImports: []
