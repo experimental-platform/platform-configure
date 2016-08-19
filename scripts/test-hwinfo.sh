@@ -51,13 +51,13 @@ if [[ -f /etc/protonet-bootstick ]] && jq '.' /etc/protonet-bootstick &>/dev/nul
 fi
 
 # get system channel
-if [[ -f /etc/protonet/system/channel ]]; then
-    JSON="$(jq --arg val "$(cat /etc/protonet/system/channel)" '.channel |= $val' <<< "$JSON")"
+if skvs_cli get system/channel; then
+    JSON="$(jq --arg val "$(skvs_cli get system/channel)" '.channel |= $val' <<< "$JSON")"
 fi
 
 # get support identifier
-if [[ -f /etc/protonet/support_identifier ]]; then
-    JSON="$(jq --arg val "$(cat /etc/protonet/support_identifier)" '.support_identifier |= $val' <<< "$JSON")"
+if skvs_cli get support_identifier; then
+    JSON="$(jq --arg val "$(skvs_cli get support_identifier)" '.support_identifier |= $val' <<< "$JSON")"
 fi
 
 

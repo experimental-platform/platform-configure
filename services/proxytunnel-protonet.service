@@ -5,6 +5,6 @@ After=init-protonet.service
 Requires=init-protonet.service
 
 [Service]
-ExecStart=/usr/bin/bash -c 'cp /etc/protonet/proxytunnel/keys /home/proxytunnel/.ssh/authorized_keys && chmod 600 /home/proxytunnel/.ssh/authorized_keys && chown proxytunnel:proxytunnel /home/proxytunnel/.ssh/authorized_keys'
+ExecStart=/usr/bin/bash -c 'skvs_cli get proxytunnel/keys > /home/proxytunnel/.ssh/authorized_keys && chmod 600 /home/proxytunnel/.ssh/authorized_keys && chown proxytunnel:proxytunnel /home/proxytunnel/.ssh/authorized_keys'
 KillMode=none
 Type=oneshot

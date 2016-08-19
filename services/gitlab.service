@@ -18,7 +18,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --net protonet \
     --volume /data/gitlab/data:/home/git/data \
     -p \"$(/opt/bin/gitlab-network show):2222:22\" \
-    --env \"GITLAB_HOST=gitlab.$(</etc/protonet/hostname).protonet.info\" \
+    --env \"GITLAB_HOST=gitlab.$(skvs_cli get hostname).protonet.info\" \
     --env \"GITLAB_SSH_HOST=$(/opt/bin/gitlab-network show)\" \
     --env 'GITLAB_HTTPS=false' \
     --env 'GITLAB_SSH_PORT=2222' \
@@ -28,14 +28,14 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env 'DB_HOST=mysql' \
     --env 'DB_NAME=gitlab' \
     --env 'DB_USER=gitlab' \
-    --env \"DB_PASS=$(</etc/protonet/gitlab/mysql_passwd)\" \
+    --env \"DB_PASS=$(skvs_cli get gitlab/mysql_passwd)\" \
     --env 'REDIS_HOST=gitlab-redis' \
-    --env \"GITLAB_SECRETS_DB_KEY_BASE=$(</etc/protonet/gitlab/secrets_db_key_base)\" \
-    --env \"GITLAB_EMAIL=$(</etc/protonet/smtp/sender)\" \
+    --env \"GITLAB_SECRETS_DB_KEY_BASE=$(skvs_cli get gitlab/secrets_db_key_base)\" \
+    --env \"GITLAB_EMAIL=$(skvs_cli get smtp/sender)\" \
     --env 'SMTP_ENABLED=true' \
-    --env \"SMTP_HOST=$(</etc/protonet/smtp/host)\" \
-    --env \"SMTP_USER=$(</etc/protonet/smtp/username)\" \
-    --env \"SMTP_PASS=$(</etc/protonet/smtp/password)\" \
+    --env \"SMTP_HOST=$(skvs_cli get smtp/host)\" \
+    --env \"SMTP_USER=$(skvs_cli get smtp/username)\" \
+    --env \"SMTP_PASS=$(skvs_cli get smtp/password)\" \
     --env 'LDAP_ENABLED=true' \
     --env 'LDAP_HOST=ldap' \
     --env 'LDAP_PORT=389' \

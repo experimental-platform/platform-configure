@@ -6,6 +6,6 @@ Description=Update system hostname whenever it changes.
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
-ExecStart=/bin/bash -c 'hostnamectl set-hostname $(cat /etc/protonet/hostname)'
+ExecStart=/bin/bash -c 'hostnamectl set-hostname $(skvs_cli get hostname)'
 KillMode=none
 Type=oneshot

@@ -29,8 +29,8 @@ ExecStartPre=/usr/bin/docker run -d \
 ExecStart=/usr/bin/docker logs -f soul-web
 ExecStop=/usr/bin/docker stop soul-web
 ExecStopPost=/usr/bin/docker stop soul-web
-ExecStartPost=-/bin/bash -c 'echo "power" > /etc/protonet/system/button'
-ExecStopPost=-/bin/bash -c 'echo "busy" > /etc/protonet/system/button'
+ExecStartPost=-/opt/bin/skvs_cli set system/button power
+ExecStopPost=-/opt/bin/skvs_cli set system/button busy
 
 [Install]
 WantedBy=multi-user.target

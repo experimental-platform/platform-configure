@@ -4,7 +4,7 @@ After=docker.service
 
 [Service]
 ExecStart=-/usr/bin/env docker network create --driver bridge protonet
-ExecStartPost=/bin/bash -c "docker network inspect protonet | jq '.[0].IPAM.Config[0].Gateway' --raw-output | cut -d '/' -f1 > /etc/protonet/system/dockerhost"
+ExecStartPost=/bin/bash -c "skvs_cli set 'system/dockerhost' \"$(docker network inspect protonet | jq '.[0].IPAM.Config[0].Gateway' --raw-output | cut -d '/' -f1)\""
 KillMode=none
 Type=oneshot
 RemainAfterExit=yes

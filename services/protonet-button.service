@@ -1,4 +1,6 @@
 # Soul
+# This unit needs to work early, earlier than Docker and SKVS,
+# thus we're not using skvs_cli here
 [Unit]
 Description=Protonet Button switcher
 After=systemd-udev-settle.service

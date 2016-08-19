@@ -6,7 +6,7 @@
 zpool list $1 | tail -n +2 | grep ONLINE
 
 if [ $? -eq 0 ]; then
-   echo 'online' > /etc/protonet/system/zfs-status
+	skvs_cli set system/zfs-status online
 else
-   echo 'failed' > /etc/protonet/system/zfs-status
+	skvs_cli set system/zfs-status failed
 fi

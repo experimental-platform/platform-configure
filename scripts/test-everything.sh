@@ -30,9 +30,9 @@ test_soul() {
     SOUL_URL=${SOUL_URL:="http://10.42.0.1"}
     SOUL_SSH_PASSWORD=${SOUL_SSH_PASSWORD:-}
     if [[ -z ${SOUL_SSH_PASSWORD} ]]; then
-        if [[ -f "/etc/protonet/system/ssh/password" ]]; then
+        if skvs_cli get system/ssh/password; then
             # if masterpassword was used
-            SOUL_SSH_PASSWORD=$(cat "/etc/protonet/system/ssh/password")
+            SOUL_SSH_PASSWORD=$(skvs_cli get system/ssh/password)
         else
             # default installation password - gets disabled on setup
             SOUL_SSH_PASSWORD="1nsta!lMe"
@@ -119,4 +119,3 @@ fi
 if [ "$JSON_OUTPUT" == "true" ]; then
   echo "$JSON"
 fi
-
