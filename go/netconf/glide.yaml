@@ -1,0 +1,10 @@
+package: .
+import:
+- package: github.com/coreos/go-systemd
+  version: ^11.0.0
+  subpackages:
+  - dbus
+- package: github.com/experimental-platform/platform-utils
+  subpackages:
+  - netutil
+- package: github.com/vishvananda/netlink

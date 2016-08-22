@@ -4,7 +4,7 @@ services:
 
 install:
   - 'curl -f https://raw.githubusercontent.com/experimental-platform/platform-configure-script/master/platform-configure.sh > scripts/platform-configure.sh'
-  - './build-go-tools.sh'
+  - 'curl -L https://raw.githubusercontent.com/experimental-platform/build-scripts/master/build-go-tools.sh | bash'
   - 'docker build -t quay.io/experimentalplatform/configure:${TRAVIS_BRANCH} .'
   - 'mkdir "$(pwd)/mnt"'
 
