@@ -10,19 +10,18 @@ generate_random () {
 enable_gitlab() {
 	local MYSQL_PASSWORD
 
-	mkdir -p /etc/protonet/gitlab
-	touch /etc/protonet/gitlab/enabled
+	skvs_cli set gitlab/enabled ' '
 
-	if [ -f /etc/protonet/gitlab/mysql_passwd ]; then
-		MYSQL_PASSWORD=$(</etc/protonet/gitlab/mysql_passwd)
-	else
+	if ! skvs_cli get gitlab/mysql_passwd 2>/dev/null; then
 		MYSQL_PASSWORD="$(generate_random)"
-		echo -n $MYSQL_PASSWORD > /etc/protonet/gitlab/mysql_passwd
+		skvs_cli set gitlab/mysql_passwd "$MYSQL_PASSWORD"
+	else
+		MYSQL_PASSWORD="$(skvs_cli get gitlab/mysql_passwd)"
 	fi
 
-	if [ ! -f /etc/protonet/gitlab/secrets_db_key_base ]; then
-		generate_random > /etc/protonet/gitlab/secrets_db_key_base
-        fi
+	if ! skvs_cli get gitlab/secrets_db_key_base 2>/dev/null; then
+		skvs_cli set gitlab/secrets_db_key_base "$(generate_random)"
+	fi
 
 	MYSQL_QUERY="CREATE DATABASE IF NOT EXISTS gitlab;
 	CREATE USER IF NOT EXISTS 'gitlab'@'%';
@@ -39,7 +38,7 @@ disable_gitlab() {
 	systemctl disable gitlab
 	systemctl stop gitlab
 	systemctl stop gitlab-redis
-	rm -rf /etc/protonet/gitlab
+	skvs_cli delete gitlab
 	systemctl daemon-reload
 #	Let's not drop the data
 #	echo "DROP DATABASE IF EXISTS gitlab; DROP USER IF EXISTS 'gitlab'@'%';" | docker exec -i mysql mysql --password=s3kr3t --batch
