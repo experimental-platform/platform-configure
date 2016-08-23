@@ -1,12 +1,12 @@
 package main
 
 import (
-	"testing"
-	"os"
 	"github.com/experimental-platform/platform-utils/netutil"
 	"github.com/vishvananda/netlink"
-	"strings"
 	"net"
+	"os"
+	"strings"
+	"testing"
 )
 
 type mocNL struct {
@@ -67,7 +67,7 @@ var _ NetUtil = (*mocNU)(nil)
 
 /*
 	Test static configuration
- */
+*/
 
 // TODO: test static with gateway outside netmask
 // TODO: test static with invalid values for ip, gateway, netmask, dns
@@ -82,10 +82,9 @@ var _ NetUtil = (*mocNU)(nil)
 // TODO: test static with initial different static
 // TODO: test static with initial identical static (noop)
 
-
 /*
 	Test SHOW function
- */
+*/
 
 // TODO: test show with additional settings (=>failure)
 // TODO: test show with initial dhcp settings
@@ -100,17 +99,17 @@ func TestShowConfig(t *testing.T) {
 	os.Args = []string{"foobar", "-show"}
 	nuMoc := mocNU{
 		stats: netutil.InterfaceData{
-			ADMIN_STATE:"configured",
-			OPER_STATE:"routable",
-			NETWORK_FILE:"/usr/lib64/systemd/network/zz-default.network",
-			DNS:[]string{"8.8.8.8", "10.11.0.2", "62.220.18.8"},
-			NTP:"",
-			DOMAINS:[]string{"office.protorz.net"},
-			WILDCARD_DOMAIN:false, LLMNR:true,
-			DHCP_LEASE:"/run/systemd/netif/leases/4",
+			ADMIN_STATE:     "configured",
+			OPER_STATE:      "routable",
+			NETWORK_FILE:    "/usr/lib64/systemd/network/zz-default.network",
+			DNS:             []string{"8.8.8.8", "10.11.0.2", "62.220.18.8"},
+			NTP:             "",
+			DOMAINS:         []string{"office.protorz.net"},
+			WILDCARD_DOMAIN: false, LLMNR: true,
+			DHCP_LEASE: "/run/systemd/netif/leases/4",
 		},
 		statsErr: nil,
-		iface: "fabooo",
+		iface:    "fabooo",
 		ifaceErr: nil,
 	}
 	nlMoc := mocNL{
@@ -119,25 +118,25 @@ func TestShowConfig(t *testing.T) {
 				_, net, _ := net.ParseCIDR("172.16.0.123/16")
 				return net
 			}(),
-			Label:"eno1", Flags:0, Scope:0},
+			Label: "eno1", Flags: 0, Scope: 0},
 		},
 		addrError: nil,
 		link: &netlink.Device{
-			LinkAttrs:netlink.LinkAttrs{
-				Index:4, MTU:1500, TxQLen:1000, Name:"eno1",
+			LinkAttrs: netlink.LinkAttrs{
+				Index: 4, MTU: 1500, TxQLen: 1000, Name: "eno1",
 				HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
-				Flags: 0x13, ParentIndex: 0, MasterIndex: 0,
-				Namespace:interface{}(nil),
-				Alias:"",
-				Promisc:0},
+				Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
+				Namespace: interface{}(nil),
+				Alias:     "",
+				Promisc:   0},
 		},
 		linkErr: nil,
 		routeList: []netlink.Route{
 			{
-				Dst: nil,
-				Src: net.ParseIP("172.16.10.239"),
-				Gw: net.ParseIP("172.16.0.1"),
-				Table: 254,
+				Dst:        nil,
+				Src:        net.ParseIP("172.16.10.239"),
+				Gw:         net.ParseIP("172.16.0.1"),
+				Table:      254,
 				ILinkIndex: 4,
 			},
 			{
@@ -146,8 +145,8 @@ func TestShowConfig(t *testing.T) {
 					_, net, _ := net.ParseCIDR("172.16.0.0/16")
 					return net
 				}(),
-				Src: net.ParseIP("172.16.10.239"),
-				Gw: nil,
+				Src:   net.ParseIP("172.16.10.239"),
+				Gw:    nil,
 				Table: 254,
 			},
 		},
@@ -158,21 +157,19 @@ func TestShowConfig(t *testing.T) {
 		t.Errorf("Static mode failure: %v", err)
 	}
 	t.Log("RESULT: \n" + result)
-	if ! strings.Contains("gagaga", result) {
+	if !strings.Contains("gagaga", result) {
 		t.Errorf("Expected 'gagaga', got '%v'.", result)
 	}
 }
 
-
 /*
 	Test REPAIR function
- */
+*/
 // TODO: test repair with additional settings (=> failure)
 // TODO: test -repair with multiple defects.
 
-
 /*
 	TEST MENU
- */
+*/
 
 // TODO: make sure every menu item starts the correct functions.
