@@ -1,0 +1,48 @@
+{
+  "short_name": "gitlab",
+  "full_name": "GitLab",
+  "required_services": [
+    "ldap",
+    "mysql",
+    "smtp",
+    "redis"
+  ],
+  "docker_image_name": "sameersbn/gitlab",
+  "docker_image_tag": "8.11.2",
+  "data_volumes": {
+    "data": "/home/git/data"
+  },
+  "port_mappings": {
+    "2222": "22"
+  },
+  "env": {
+    "GITLAB_HOST": "gitlab.{{.Hostname}}.protonet.info",
+    "GITLAB_SSH_HOST": "{{.MyIP}}",
+    "GITLAB_HTTPS": "false",
+    "GITLAB_SSH_PORT": "2222",
+    "GITLAB_SIGNUP_ENABLED": "false",
+    "SSL_SELF_SIGNED": "true",
+    "DB_ADAPTER": "mysql2",
+    "DB_HOST": "mysql",
+    "DB_NAME": "{{.MySQL.Database}}",
+    "DB_USER": "{{.MySQL.User}}",
+    "DB_PASS": "{{.MySQL.Password}}",
+    "REDIS_HOST": "{{.RedisHost}}",
+    "GITLAB_SECRETS_DB_KEY_BASE": "ed8afffb0fb0104620084b195e4c5651528ce19f377af23da07c2210845ed47f",
+    "GITLAB_SECRETS_SECRET_KEY_BASE": "6c2e622525690c959366d18bdd42dfe08ecc75145b3bcf1fb8e98fbec2a159e9",
+    "GITLAB_SECRETS_OTP_KEY_BASE": "d7c8915185e469ade5bd5130738f1e20142acceecc3e4ae982d0b3fdbd87337b",
+    "GITLAB_EMAIL": "{{.SMTP.Password}}",
+    "SMTP_ENABLED": "true",
+    "SMTP_HOST": "{{.SMTP.Host}}",
+    "SMTP_USER": "{{.SMTP.User}}",
+    "SMTP_PASS": "{{.SMTP.Password}}",
+    "LDAP_ENABLED": "true",
+    "LDAP_HOST": "ldap",
+    "LDAP_PORT": "389",
+    "LDAP_BIND_DN": "{{.LDAP.DN}}",
+    "LDAP_PASS": "{{.LDAP.Password}}",
+    "LDAP_UID": "uid",
+    "LDAP_ACTIVE_DIRECTORY": "false",
+    "LDAP_BASE": "{{.LDAP.Base}}"
+  }
+}

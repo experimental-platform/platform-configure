@@ -1,0 +1,5 @@
+package: .
+import:
+- package: github.com/experimental-platform/platform-skvs
+  subpackages:
+  - client

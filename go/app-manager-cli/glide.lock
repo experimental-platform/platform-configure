@@ -1,0 +1,71 @@
+hash: d0b0106c8fa478c54078adc9f171cba9aa203604f46fe23a18c7c532947e1c41
+updated: 2016-09-21T13:40:46.434933821+02:00
+imports:
+- name: github.com/coreos/go-systemd
+  version: a63dfec412dc3675ec36888f359f8a1e5c3f740d
+  subpackages:
+  - dbus
+  - unit
+- name: github.com/coreos/go.dbus
+  version: f6a3a2366cc39b8479cadc499d3c735fb10fbdda
+- name: github.com/docker/distribution
+  version: 431cfa3179d9b3766e39f6a74283db8bb5a13209
+  subpackages:
+  - reference
+  - digest
+- name: github.com/docker/engine-api
+  version: 4290f40c056686fcaa5c9caf02eac1dde9315adf
+  subpackages:
+  - client
+  - types
+  - types/filters
+  - types/container
+  - types/mount
+  - types/network
+  - types/registry
+  - types/swarm
+  - types/versions
+  - client/transport
+  - client/transport/cancellable
+  - types/reference
+  - types/time
+  - types/blkiodev
+  - types/strslice
+- name: github.com/docker/go-connections
+  version: 988efe982fdecb46f01d53465878ff1f2ff411ce
+  subpackages:
+  - nat
+  - sockets
+  - tlsconfig
+- name: github.com/docker/go-units
+  version: f2145db703495b2e525c59662db69a7344b00bb8
+- name: github.com/experimental-platform/platform-skvs
+  version: c3e76669572d9ac71984ad28768b1d9d11234efb
+  subpackages:
+  - client
+- name: github.com/experimental-platform/platform-utils
+  version: 7e2b609a94b703d0710d2ed461856536daf0ff34
+  subpackages:
+  - dockerutil
+- name: github.com/godbus/dbus
+  version: 9998ce8520caaa4a287fa5122ecb5d1ca1aeaede
+- name: github.com/Microsoft/go-winio
+  version: ce2922f643c8fd76b46cadc7f404a06282678b34
+- name: github.com/opencontainers/runc
+  version: ce5d8cf94124a683af6a874f343375d3ec9230b4
+  subpackages:
+  - libcontainer/user
+- name: github.com/Sirupsen/logrus
+  version: 55eb11d21d2a31a3cc93838241d04800f52e823d
+  subpackages:
+  - formatters/logstash
+- name: golang.org/x/net
+  version: 4876518f9e71663000c348837735820161a42df7
+  subpackages:
+  - context
+  - proxy
+- name: golang.org/x/sys
+  version: 8f0908ab3b2457e2e15403d3697c9ef5cb4b57a9
+  subpackages:
+  - windows
+testImports: []
