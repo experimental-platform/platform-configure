@@ -10,48 +10,41 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
-ExecStartPre=/usr/bin/mkdir -p /data/gitlab/config /data/gitlab/logs /data/gitlab/data
+ExecStartPre=/usr/bin/mkdir -p /data/gitlab/data
 ExecStartPre=/opt/bin/gitlab-network start
 ExecStartPre=-/usr/bin/docker rm -f gitlab
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name gitlab \
     --net protonet \
-    --volume /data/gitlab/config:/etc/gitlab \
-    --volume /data/gitlab/logs:/var/log/gitlab \
-    --volume /data/gitlab/data:/var/opt/gitlab \
+    --volume /data/gitlab/data:/home/git/data \
     -p \"$(/opt/bin/gitlab-network show):2222:22\" \
-    --env GITLAB_OMNIBUS_CONFIG=\" \
-      external_url \'http://$(/opt/bin/gitlab-network show)/\'; \
-      gitlab_rails['gitlab_ssh_host'] = \'$(/opt/bin/gitlab-network show)\'; \
-      gitlab_rails['gitlab_shell_ssh_port'] = 2222; \
-      postgresql['enable'] = false; \
-      gitlab_rails['db_adapter'] = 'mysql2'; \
-      gitlab_rails['db_encoding'] = 'utf8'; \
-      gitlab_rails['db_host'] = 'mysql'; \
-      gitlab_rails['db_database'] = 'gitlab'; \
-      gitlab_rails['db_port'] = '3306'; \
-      gitlab_rails['db_username'] = 'gitlab'; \
-      gitlab_rails['db_password'] = \'$(</etc/protonet/gitlab/mysql_passwd)\'; \
-      gitlab_rails['ldap_enabled'] = true; \
-      gitlab_rails['ldap_servers'] = { \
-      \\\"main\\\" => { \
-        \\\"label\\\" => 'LDAP', \
-        \\\"host\\\" => 'ldap', \
-        \\\"port\\\" => '389', \
-        \\\"method\\\" => 'plain', \
-        \\\"bind_dn\\\" => 'uid=gitlab,ou=Apps,dc=protonet,dc=com', \
-        \\\"password\\\" => 'demo', \
-        \\\"uid\\\" => 'uid', \
-        \\\"active_directory\\\" => false, \
-        \\\"allow_username_or_email_login\\\" => true, \
-        \\\"block_auto_created_users\\\" => false, \
-        \\\"base\\\" => 'ou=People,dc=protonet,dc=com', \
-        \\\"user_filter\\\" => '', \
-        \\\"group_base\\\" => '', \
-        \\\"admin_group\\\" => '', \
-        \\\"sync_ssh_keys\\\" => false, \
-      }}\" \
-    gitlab/gitlab-ee:8.10.4-ee.0"
+    --env \"GITLAB_HOST=gitlab.$(</etc/protonet/hostname).protonet.info\" \
+    --env \"GITLAB_SSH_HOST=$(/opt/bin/gitlab-network show)\" \
+    --env 'GITLAB_HTTPS=false' \
+    --env 'GITLAB_SSH_PORT=2222' \
+    --env 'GITLAB_SIGNUP_ENABLED=false' \
+    --env 'SSL_SELF_SIGNED=true' \
+    --env 'DB_ADAPTER=mysql2' \
+    --env 'DB_HOST=mysql' \
+    --env 'DB_NAME=gitlab' \
+    --env 'DB_USER=gitlab' \
+    --env \"DB_PASS=$(</etc/protonet/gitlab/mysql_passwd)\" \
+    --env 'REDIS_HOST=gitlab-redis' \
+    --env \"GITLAB_SECRETS_DB_KEY_BASE=$(</etc/protonet/gitlab/secrets_db_key_base)\" \
+    --env \"GITLAB_EMAIL=$(</etc/protonet/smtp/sender)\" \
+    --env 'SMTP_ENABLED=true' \
+    --env \"SMTP_HOST=$(</etc/protonet/smtp/host)\" \
+    --env \"SMTP_USER=$(</etc/protonet/smtp/username)\" \
+    --env \"SMTP_PASS=$(</etc/protonet/smtp/password)\" \
+    --env 'LDAP_ENABLED=true' \
+    --env 'LDAP_HOST=ldap' \
+    --env 'LDAP_PORT=389' \
+    --env 'LDAP_BIND_DN=uid=gitlab,ou=Apps,dc=protonet,dc=com' \
+    --env 'LDAP_PASS=demo' \
+    --env 'LDAP_UID=uid' \
+    --env 'LDAP_ACTIVE_DIRECTORY=false' \
+    --env 'LDAP_BASE=ou=People,dc=protonet,dc=com' \
+    sameersbn/gitlab:8.9.3"
 ExecStart=/usr/bin/docker logs -f gitlab
 ExecStop=/usr/bin/docker stop gitlab
 ExecStopPost=/usr/bin/docker stop gitlab
