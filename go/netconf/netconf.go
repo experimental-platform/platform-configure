@@ -3,21 +3,21 @@
 package main
 
 import (
-	"flag"
-	"os"
-	"log"
+	"bytes"
 	"errors"
+	"flag"
 	"fmt"
+	"github.com/coreos/go-systemd/dbus"
 	"github.com/experimental-platform/platform-utils/netutil"
 	"github.com/vishvananda/netlink"
-	"bytes"
-	"text/template"
-	"strings"
-	"github.com/coreos/go-systemd/dbus"
-	"net"
-	"strconv"
 	"io/ioutil"
+	"log"
+	"net"
+	"os"
 	"path"
+	"strconv"
+	"strings"
+	"text/template"
 )
 
 const reportTemplate = `
@@ -72,7 +72,6 @@ func (n realNL) AddrList(l netlink.Link, f int) ([]netlink.Addr, error) {
 func (n realNL) LinkList() ([]netlink.Link, error) {
 	return netlink.LinkList()
 }
-
 
 // make sure realNL satisfies the NetLink interface
 var _ NetLink = (*realNL)(nil)
@@ -174,7 +173,7 @@ func ShowConfig(nu NetUtil, nl NetLink) (string, error) {
 	for _, entry := range linkList {
 		attrs := entry.Attrs()
 		// all hardware interfaces (NOT their aliases) have a TxQLen > 1
-		if attrs.TxQLen > 1 && ! strings.HasPrefix(attrs.Name, "wl") {
+		if attrs.TxQLen > 1 && !strings.HasPrefix(attrs.Name, "wl") {
 			report, err := reportOnInterface(nu, nl, attrs.Name)
 			if err != nil {
 				return "", err
@@ -299,10 +298,10 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink, n
 	if ipAddress == nil {
 		return "", fmt.Errorf("'%s' (address) is not a valid IP address.", address)
 	}
-	ipNet := net.IPNet{IP:ipAddress, Mask: *mask}
+	ipNet := net.IPNet{IP: ipAddress, Mask: *mask}
 	templateData.Address = ipNet.String()
 	gatewayIP := net.ParseIP(gateway)
-	if ! ipNet.Contains(gatewayIP) {
+	if !ipNet.Contains(gatewayIP) {
 		return "", fmt.Errorf("🖕\tGateway address '%s' is not within the network '%s'.", gatewayIP, ipNet.String())
 	}
 	if gatewayIP == nil {
@@ -340,7 +339,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink, n
 			return "", fmt.Errorf("No idea what to do with '%s', sorry!", iData.NETWORK_FILE)
 		}
 	}
-	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface + ".network"), buff.Bytes(), 0644)
+	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface+".network"), buff.Bytes(), 0644)
 	if err != nil {
 		return "", err
 	}
@@ -400,4 +399,3 @@ func main() {
 		fmt.Println(message)
 	}
 }
-

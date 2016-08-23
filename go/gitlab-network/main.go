@@ -3,12 +3,12 @@ package main
 import (
 	"crypto/rand"
 	"fmt"
+	"github.com/experimental-platform/platform-utils/netutil"
+	"github.com/kdomanski/tenus"
 	"io/ioutil"
 	"log"
 	"net"
 	"os"
-	"github.com/kdomanski/tenus"
-	"github.com/experimental-platform/platform-utils/netutil"
 )
 
 const constInterfaceName string = "engitlab0"
