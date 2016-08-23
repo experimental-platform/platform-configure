@@ -187,7 +187,8 @@ func ShowConfig(nu NetUtil, nl NetLink) (string, error) {
 
 func RepairConfig() (string, error) {
 	// TODO: figure out what this should do and implement it.
-	return "", errors.New("TODO: implement this")
+	flag.Usage()
+	return "", nil
 }
 
 func restartNetworkD() error {
