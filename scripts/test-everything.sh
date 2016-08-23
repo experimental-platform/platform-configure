@@ -82,7 +82,7 @@ run_tests() {
 
 
 trap "button error >/dev/null 2>&1 || true" SIGINT SIGTERM EXIT
-button rainbow
+button rainbow || true
 run_tests
 trap - SIGINT SIGTERM EXIT
 
@@ -109,10 +109,10 @@ fi
 JSON="$(jq --argjson hwinfo "$HWINFO" '.hwinfo = $hwinfo' <<< "$JSON")"
 
 if [[ "${EXIT_CODE}" -eq "0" ]]; then
-    button hdd
+    button hdd || true
     [ "$JSON_OUTPUT" != "true" ] && echo -e "\n\nOKAY -- OKAY -- OKAY\nALL TESTS SUCCESSFUL\n"
 else
-    button error
+    button error || true
     [ "$JSON_OUTPUT" != "true" ] && echo -e "\n\n${ERROR}: A TEST WENT WRONG, PLEASE INVESTIGATE"
 fi
 
