@@ -23,8 +23,10 @@ function fetch_release_data() {
 
   JQSCRIPT_IMAGES='max_by(.build) | .images | keys[] as $k | $k + ":" + .[$k]'
   JQSCRIPT_BUILDNO='max_by(.build) | .build'
+  JQSCRIPT_RELEASENOTES='max_by(.build) | .url'
   JSONIMGLIST="$(jq "$JQSCRIPT_IMAGES" --raw-output <<< "$JSONDATA")"
   NEWBUILDNUMBER="$(jq "$JQSCRIPT_BUILDNO" --raw-output <<< "$JSONDATA")"
+  NEWRELEASENOTESURL="$(jq "$JQSCRIPT_RELEASENOTES" --raw-output <<< "$JSONDATA")"
 
   for img in ${JSONIMGLIST}; do
     # this splits a line in the format 'A:B' and assigns IMGTAGLIST[A]=B
@@ -158,6 +160,7 @@ function finalize() {
     # save the current release number to SKVS
     mkdir -p ${MOUNTROOT}/etc/protonet/system
     echo -n "$NEWBUILDNUMBER" > ${MOUNTROOT}/etc/protonet/system/release_number
+    echo -n "$NEWRELEASENOTESURL" > ${MOUNTROOT}/etc/protonet/system/release_notes_url
     sync
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
     download_and_verify_image experimentalplatform/buildstep:herokuish
