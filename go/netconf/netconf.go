@@ -375,9 +375,13 @@ func ResetToDHCP() (string, error) {
 
 func switchByCommandline() (string, error) {
 	var CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+	CommandLine.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		CommandLine.PrintDefaults()
+	}
 	show := CommandLine.Bool("show", false, "Show configuration and available interfaces")
 	reset_all := CommandLine.Bool("reset", false, "(Re)set all interfaces to DHCP")
-	mode := CommandLine.String("mode", "dhcp", "'dhcp' or 'static' (default 'dhcp'")
+	mode := CommandLine.String("mode", "", "'dhcp' or 'static'")
 	networkInterface := CommandLine.String("interface", "", "Interface name to be configured")
 	address := CommandLine.String("address", "", "IP address to be set for the interface")
 	netmask := CommandLine.String("netmask", "", "Set the netmask")
@@ -400,24 +404,18 @@ func switchByCommandline() (string, error) {
 	case *mode == "static":
 		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns, nl)
 	default:
-		flag.Usage()
+		// TODO: implement menu interface
+		CommandLine.Usage()
 		return "", errors.New("Invalid flag.")
 	}
 	return "Config done.", nil
 }
 
 func main() {
-	var err error
-	var message string
-	if len(os.Args) > 1 {
-		message, err = switchByCommandline()
-	} else {
-		// TODO: implement menu interface
-		err = errors.New("TODO: implement menu interface")
-	}
+	message, err := switchByCommandline()
 	if err != nil {
 		log.Fatal(err)
-	} else {
-		fmt.Println(message)
 	}
+	fmt.Println(message)
+	os.Exit(0)
 }
