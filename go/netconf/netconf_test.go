@@ -3,33 +3,33 @@ package main
 import (
 	"github.com/experimental-platform/platform-utils/netutil"
 	"github.com/vishvananda/netlink"
-	"net"
 	"os"
+	"net"
 	"strings"
 	"testing"
 )
 
 type mocNL struct {
-	link          netlink.Link
-	linkErr       error
-	routeList     []netlink.Route
-	routeError    error
-	addrList      []netlink.Addr
-	addrError     error
-	linkList      []netlink.Link
-	linkListError error
+	linkByNameData netlink.Link
+	linkByNameErr  error
+	routeList      []netlink.Route
+	routeListErr   error
+	addrList       []netlink.Addr
+	addrListErr    error
+	linkList       []netlink.Link
+	linkListError  error
 }
 
 func (n mocNL) LinkByName(s string) (netlink.Link, error) {
-	return n.link, n.linkErr
+	return n.linkByNameData, n.linkByNameErr
 }
 
 func (n mocNL) RouteList(l netlink.Link, f int) ([]netlink.Route, error) {
-	return n.routeList, n.routeError
+	return n.routeList, n.routeListErr
 }
 
 func (n mocNL) AddrList(l netlink.Link, f int) ([]netlink.Addr, error) {
-	return n.addrList, n.addrError
+	return n.addrList, n.addrListErr
 }
 
 func (n mocNL) LinkList() ([]netlink.Link, error) {
@@ -40,14 +40,8 @@ func (n mocNL) LinkList() ([]netlink.Link, error) {
 var _ NetLink = (*mocNL)(nil)
 
 type mocNU struct {
-	iface    string
-	ifaceErr error
 	stats    netutil.InterfaceData
 	statsErr error
-}
-
-func (n mocNU) GetDefaultInterface() (string, error) {
-	return n.iface, n.ifaceErr
 }
 
 func (n mocNU) GetInterfaceStats(name string) (netutil.InterfaceData, error) {
@@ -97,22 +91,20 @@ func TestShowConfig(t *testing.T) {
 		os.Args = oldArgs
 	}()
 	os.Args = []string{"foobar", "-show"}
-	nuMoc := mocNU{
+	nu = mocNU{
 		stats: netutil.InterfaceData{
 			ADMIN_STATE:     "configured",
 			OPER_STATE:      "routable",
 			NETWORK_FILE:    "/usr/lib64/systemd/network/zz-default.network",
 			DNS:             []string{"8.8.8.8", "10.11.0.2", "62.220.18.8"},
 			NTP:             "",
-			DOMAINS:         []string{"office.protorz.net"},
+			DOMAINS:         []string{"blablabla.lalala.net"},
 			WILDCARD_DOMAIN: false, LLMNR: true,
 			DHCP_LEASE: "/run/systemd/netif/leases/4",
 		},
 		statsErr: nil,
-		iface:    "fabooo",
-		ifaceErr: nil,
 	}
-	nlMoc := mocNL{
+	nl = mocNL{
 		addrList: []netlink.Addr{{
 			IPNet: func() *net.IPNet {
 				_, net, _ := net.ParseCIDR("172.16.0.123/16")
@@ -120,8 +112,8 @@ func TestShowConfig(t *testing.T) {
 			}(),
 			Label: "eno1", Flags: 0, Scope: 0},
 		},
-		addrError: nil,
-		link: &netlink.Device{
+		addrListErr: nil,
+		linkByNameData: &netlink.Device{
 			LinkAttrs: netlink.LinkAttrs{
 				Index: 4, MTU: 1500, TxQLen: 1000, Name: "eno1",
 				HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
@@ -130,7 +122,7 @@ func TestShowConfig(t *testing.T) {
 				Alias:     "",
 				Promisc:   0},
 		},
-		linkErr: nil,
+		linkByNameErr: nil,
 		routeList: []netlink.Route{
 			{
 				Dst:        nil,
@@ -150,15 +142,50 @@ func TestShowConfig(t *testing.T) {
 				Table: 254,
 			},
 		},
-		routeError: nil,
+		routeListErr: nil,
+		linkList: []netlink.Link{
+			&netlink.Device{
+				LinkAttrs: netlink.LinkAttrs{
+					Index: 4, MTU: 1500, TxQLen: 1000, Name: "enototallyyourdevice1",
+					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
+					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
+					Namespace: interface{}(nil),
+					Alias:     "",
+					Promisc:   0},
+			},
+			&netlink.Device{
+				LinkAttrs: netlink.LinkAttrs{
+					Index: 4, MTU: 1500, TxQLen: 1, Name: "enoyoudontseeme0",
+					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
+					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
+					Namespace: interface{}(nil),
+					Alias:     "",
+					Promisc:   0},
+			},
+			&netlink.Device{
+				LinkAttrs: netlink.LinkAttrs{
+					Index: 4, MTU: 1500, TxQLen: 1000, Name: "wl_my_home_network",
+					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
+					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
+					Namespace: interface{}(nil),
+					Alias:     "",
+					Promisc:   0},
+			},
+		},
 	}
-	result, err := switchByCommandline(nuMoc, nlMoc)
+	result, err := switchByCommandline()
 	if err != nil {
 		t.Errorf("Static mode failure: %v", err)
 	}
-	t.Log("RESULT: \n" + result)
-	if !strings.Contains("gagaga", result) {
-		t.Errorf("Expected 'gagaga', got '%v'.", result)
+
+	if !strings.Contains(result, "enototallyyourdevice1") {
+		t.Errorf("Expected 'enototallyyourdevice1', got '%v'.", result)
+	}
+	if strings.Contains(result, "enoyoudontseeme0") {
+		t.Errorf("Device with TxQLen 1 doesn't get filtered out properly: '%v'.", result)
+	}
+	if strings.Contains(result, "wl_my_home_network") {
+		t.Errorf("Wireless device doesn't get filtered out properly: '%v'.", result)
 	}
 }
 

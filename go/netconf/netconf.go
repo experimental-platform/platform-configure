@@ -76,21 +76,13 @@ func (n realNL) LinkList() ([]netlink.Link, error) {
 // make sure realNL satisfies the NetLink interface
 var _ NetLink = (*realNL)(nil)
 
+var nl NetLink = realNL{}
+
 type NetUtil interface {
-	GetDefaultInterface() (string, error)
 	GetInterfaceStats(string) (netutil.InterfaceData, error)
 }
 
 type realNU struct {
-	exec netutil.CmdExec
-}
-
-func newRealNU() *realNU {
-	return &realNU{exec: netutil.RealCmdExec{}}
-}
-
-func (n realNU) GetDefaultInterface() (string, error) {
-	return netutil.GetDefaultInterface(n.exec)
 }
 
 func (n realNU) GetInterfaceStats(name string) (netutil.InterfaceData, error) {
@@ -100,7 +92,9 @@ func (n realNU) GetInterfaceStats(name string) (netutil.InterfaceData, error) {
 // make sure realNU satisfies the NetUtil interface
 var _ NetUtil = (*realNU)(nil)
 
-func getNetInterfaceData(nu NetUtil, nl NetLink, name string) (*reportTemplateData, error) {
+var nu NetUtil = realNU{}
+
+func getNetInterfaceData(name string) (*reportTemplateData, error) {
 	result := new(reportTemplateData)
 	result.Interface = name
 	interfaceData, err := nu.GetInterfaceStats(result.Interface)
@@ -144,8 +138,8 @@ func getNetInterfaceData(nu NetUtil, nl NetLink, name string) (*reportTemplateDa
 	return result, nil
 }
 
-func reportOnInterface(nu NetUtil, nl NetLink, name string) (string, error) {
-	result, err := getNetInterfaceData(nu, nl, name)
+func reportOnInterface(name string) (string, error) {
+	result, err := getNetInterfaceData(name)
 	if err != nil {
 		return "", err
 	}
@@ -162,32 +156,38 @@ func reportOnInterface(nu NetUtil, nl NetLink, name string) (string, error) {
 	return buff.String(), nil
 }
 
-func ShowConfig(nu NetUtil, nl NetLink) (string, error) {
-	// TODO: test this!
-	var err error
-	var result string
+func listInterfaces() ([]string, error) {
+	result := []string{}
 	linkList, err := nl.LinkList()
 	if err != nil {
-		return "", err
+		return result, err
 	}
 	for _, entry := range linkList {
 		attrs := entry.Attrs()
 		// all hardware interfaces (NOT their aliases) have a TxQLen > 1
 		if attrs.TxQLen > 1 && !strings.HasPrefix(attrs.Name, "wl") {
-			report, err := reportOnInterface(nu, nl, attrs.Name)
-			if err != nil {
-				return "", err
-			}
-			result += report
+			result = append(result, attrs.Name)
 		}
 	}
 	return result, err
 }
 
-func RepairConfig() (string, error) {
-	// TODO: figure out what this should do and implement it.
-	flag.Usage()
-	return "", nil
+func ShowConfig() (string, error) {
+	// TODO: test this!
+	var err error
+	var result string
+	interfaceNames, err := listInterfaces()
+	if err != nil {
+		return result, err
+	}
+	for _, name := range interfaceNames {
+		report, err := reportOnInterface(name)
+		if err != nil {
+			return "", err
+		}
+		result += report
+	}
+	return result, err
 }
 
 func restartNetworkD() error {
@@ -210,7 +210,7 @@ func restartNetworkD() error {
 	return nil
 }
 
-func EnableDHCP(name string, nu NetUtil) (string, error) {
+func EnableDHCP(name string) (string, error) {
 	// TODO: Test this!
 	result := fmt.Sprintf("Getting interface stats for '%s'...", name)
 	iData, err := nu.GetInterfaceStats(name)
@@ -225,9 +225,14 @@ func EnableDHCP(name string, nu NetUtil) (string, error) {
 		// in most cases we'll just remove any user provided config, so the systems default takes hold
 		if strings.Contains(iData.NETWORK_FILE, "/etc/systemd/network/") {
 			result += fmt.Sprintf("Custon Config detected: '%s'\n", iData.NETWORK_FILE)
-			err = os.Remove(iData.NETWORK_FILE)
-			if err != nil {
-				return result, fmt.Errorf("ERROR removing '%s'\n", iData.NETWORK_FILE)
+			if _, err := os.Stat(iData.NETWORK_FILE); err == nil {
+				// It's okay if the file does not exists, as this frequently happens
+				// when configuring stuff manually or when not rebooting.
+				err = os.Remove(iData.NETWORK_FILE)
+				if err != nil {
+					return result, fmt.Errorf("ERROR removing '%s'\n", iData.NETWORK_FILE)
+				}
+
 			}
 			result += fmt.Sprintf("Successfully removed '%s'\n", iData.NETWORK_FILE)
 			err = restartNetworkD()
@@ -274,7 +279,7 @@ func parseMap(s string) (*net.IPMask, error) {
 	return &r, nil
 }
 
-func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink, nu NetUtil) (string, error) {
+func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (string, error) {
 	// TODO: test this!
 	iData, err := nu.GetInterfaceStats(iface)
 	result := fmt.Sprintf("Configuring interface '%v'...\n", iface)
@@ -339,7 +344,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink, n
 			return "", fmt.Errorf("No idea what to do with '%s', sorry!", iData.NETWORK_FILE)
 		}
 	}
-	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface+".network"), buff.Bytes(), 0644)
+	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface + ".network"), buff.Bytes(), 0644)
 	if err != nil {
 		return "", err
 	}
@@ -351,9 +356,27 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink, n
 	return result, err
 }
 
-func switchByCommandline(nu NetUtil, nl NetLink) (string, error) {
+func ResetToDHCP() (string, error) {
+	interfaceNames, err := listInterfaces()
+	var result string
+	if err != nil {
+		return "", err
+	}
+	for _, name := range interfaceNames {
+		result += fmt.Sprintf("Resetting interface '%s':\n", name)
+		message, err := EnableDHCP(name)
+		result += fmt.Sprintf("%s\n\n", message)
+		if err != nil {
+			return result, err
+		}
+	}
+	return result, err
+}
+
+func switchByCommandline() (string, error) {
 	var CommandLine = flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	show := CommandLine.Bool("show", false, "Show configuration and available interfaces")
+	reset_all := CommandLine.Bool("reset", false, "(Re)set all interfaces to DHCP")
 	mode := CommandLine.String("mode", "dhcp", "'dhcp' or 'static' (default 'dhcp'")
 	networkInterface := CommandLine.String("interface", "", "Interface name to be configured")
 	address := CommandLine.String("address", "", "IP address to be set for the interface")
@@ -361,22 +384,21 @@ func switchByCommandline(nu NetUtil, nl NetLink) (string, error) {
 	gateway := CommandLine.String("gateway", "", "Gateway address")
 	dns := CommandLine.String("dns", "", "IP addresses of DNS servers, separated by comma")
 	version := CommandLine.Bool("version", false, "Show the version of this tool.")
-	repair := CommandLine.Bool("repair", false, "Calculate/save missing gateway/dns config")
 	err := CommandLine.Parse(os.Args[1:])
 	if err != nil {
 		log.Fatalf("ERROR: %v", err)
 	}
 	switch {
 	case *show:
-		return ShowConfig(nu, nl)
+		return ShowConfig()
 	case *version:
 		return "Version: 0.9 (missing menu and repair)", nil
-	case *repair:
-		return RepairConfig()
+	case *reset_all:
+		return ResetToDHCP()
 	case *mode == "dhcp":
-		return EnableDHCP(*networkInterface, nu)
+		return EnableDHCP(*networkInterface)
 	case *mode == "static":
-		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns, nl, nu)
+		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns, nl)
 	default:
 		flag.Usage()
 		return "", errors.New("Invalid flag.")
@@ -388,7 +410,7 @@ func main() {
 	var err error
 	var message string
 	if len(os.Args) > 1 {
-		message, err = switchByCommandline(newRealNU(), realNL{})
+		message, err = switchByCommandline()
 	} else {
 		// TODO: implement menu interface
 		err = errors.New("TODO: implement menu interface")

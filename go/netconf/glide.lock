@@ -1,18 +1,18 @@
 hash: 8361af37f28af9ed1f34df0a407b5ea0f65447b3ad3c659d2356601b8379b376
-updated: 2016-08-22T15:20:44.936386699+02:00
+updated: 2016-08-25T15:36:27.912361901+02:00
 imports:
 - name: github.com/coreos/go-systemd
   version: d6c05a1dcbb5ac02b7653da4d99e5db340c20778
   subpackages:
   - dbus
 - name: github.com/experimental-platform/platform-utils
-  version: 9dc7664282442c1fa703df4b78fc380b40fb03c1
+  version: 535b8af0f9b55eab9ad8a52c19fc905c4d78ef6f
   subpackages:
   - netutil
 - name: github.com/godbus/dbus
-  version: 7a8c533d28e8162671a81090af5b9f78b74e2d26
+  version: 58b0385796c5b97c6934388174215143cbd111bf
 - name: github.com/vishvananda/netlink
-  version: 49a735373919c4c9a53aff1f9f63da73a243f32d
+  version: d710fbade461cd8e75f8d263df73cc2c9dfbe168
   subpackages:
   - nl
 - name: github.com/vishvananda/netns

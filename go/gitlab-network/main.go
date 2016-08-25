@@ -1,3 +1,5 @@
+// +build linux,amd64
+
 package main
 
 import (
@@ -67,7 +69,7 @@ func createInterface(ifName string) error {
 
 	mac := getMac()
 
-	defaultInterface, err := netutil.GetDefaultInterface(netutil.RealCmdExec{})
+	defaultInterface, err := netutil.GetDefaultInterface()
 	if err != nil {
 		return err
 	}
