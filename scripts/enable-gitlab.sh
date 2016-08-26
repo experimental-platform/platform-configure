@@ -23,6 +23,14 @@ enable_gitlab() {
 		skvs_cli set gitlab/secrets_db_key_base "$(generate_random)"
 	fi
 
+	if ! skvs_cli get gitlab/secrets_secret_key_base 2>/dev/null; then
+		skvs_cli set gitlab/secrets_secret_key_base "$(generate_random)"
+	fi
+
+	if ! skvs_cli get gitlab/secrets_otp_key_base 2>/dev/null; then
+		skvs_cli set gitlab/secrets_otp_key_base "$(generate_random)"
+	fi
+
 	MYSQL_QUERY="CREATE DATABASE IF NOT EXISTS gitlab DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
 	CREATE USER IF NOT EXISTS 'gitlab'@'%';
 	SET PASSWORD FOR 'gitlab'@'%' = PASSWORD('$MYSQL_PASSWORD');
