@@ -4,6 +4,7 @@ Description=Gitlab
 After=gitlab-redis.service platform-ldap.service
 Requires=gitlab-redis.service
 Wants=platform-ldap.service
+ConditionPathExists=/etc/protonet/gitlab/enabled
 
 [Service]
 TimeoutStartSec=0
