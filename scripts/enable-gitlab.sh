@@ -40,12 +40,15 @@ enable_gitlab() {
 	systemctl daemon-reload
 	systemctl start gitlab
 	systemctl enable gitlab
+	# Make sure the network ip timer is restarted, even on repeat reinstalls
+	systemctl start gitlab-network-ip.timer
 }
 
 disable_gitlab() {
 	systemctl disable gitlab
 	systemctl stop gitlab
 	systemctl stop gitlab-redis
+	systemctl stop gitlab-network-ip.timer
 	skvs_cli delete gitlab
 	systemctl daemon-reload
 #	Let's not drop the data
