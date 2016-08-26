@@ -239,7 +239,7 @@ func EnableDHCP(name string) (string, error) {
 			if err != nil {
 				result += "SUCCESS, PLEASE REBOOT!\n"
 			}
-			result += "SUCCESS, using DHCP now!\n"
+			result += "SUCCESS, using DHCP.\nPLEASE REBOOT NOW ('sudo reboot')!\n"
 			return result, nil
 		} else {
 			return result, fmt.Errorf("Sorry, no idea how to handle '%s'.", iData.NETWORK_FILE)
@@ -350,9 +350,10 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (
 	}
 	err = restartNetworkD()
 	if err != nil {
-		result += "SUCCESS, PLEASE REBOOT!\n"
+		result += "SUCCESS, PLEASE REBOOT NOW (with 'sudo reboot')!\n"
 	}
-	result += "SUCCESS, using static configuration now!\n"
+	result += "SUCCESS, using static configuration now!\n" +
+		"PLEASE REBOOT NOW WITH 'sudo reboot'.\n"
 	return result, err
 }
 
@@ -370,6 +371,7 @@ func ResetToDHCP() (string, error) {
 			return result, err
 		}
 	}
+	result += "\nSUCCESS.\n\nPLEASE REBOOT NOW ('sudo reboot')!\n"
 	return result, err
 }
 
