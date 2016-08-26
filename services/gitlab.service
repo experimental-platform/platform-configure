@@ -46,6 +46,8 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env 'LDAP_BASE=ou=People,dc=protonet,dc=com' \
     sameersbn/gitlab:8.11.2"
 ExecStart=/usr/bin/docker logs -f gitlab
+# Make sure haproxy picks up gitlab network IP
+ExecStartPost=/usr/bin/systemctl restart platform-haproxy
 ExecStop=/usr/bin/docker stop gitlab
 ExecStopPost=/usr/bin/docker stop gitlab
 
