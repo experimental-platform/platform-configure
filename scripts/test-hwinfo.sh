@@ -56,8 +56,8 @@ if [[ -f /etc/protonet/system/channel ]]; then
 fi
 
 # get support identifier
-if [[ -f /etc/protonet/support_identifier ]]; then
-    JSON="$(jq --arg val "$(cat /etc/protonet/support_identifier)" '.support_identifier |= $val' <<< "$JSON")"
+if [[ -f /etc/protonet/system/support_identifier ]]; then
+    JSON="$(jq --arg val "$(cat /etc/protonet/system/support_identifier)" '.support_identifier |= $val' <<< "$JSON")"
 fi
 
 
