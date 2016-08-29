@@ -36,14 +36,14 @@ ExecStopPost=-/usr/bin/ifconfig wl_private down
 ExecStopPost=-/usr/bin/ifconfig wl_public down
 
 ExecStartPost=-/usr/bin/docker rm -f hostapd-iptables-start
-ExecStartPost=/usr/bin/docker run -t \
+ExecStartPost=-/usr/bin/docker run -t \
     --name=hostapd-iptables-start \
     --net=host \
     --privileged=true \
     quay.io/experimentalplatform/hostapd:{{tag}} /src/exe/iptables.sh start
 
 ExecStop=-/usr/bin/docker rm -f hostapd-iptables-stop
-ExecStop=/usr/bin/docker run -t \
+ExecStop=-/usr/bin/docker run -t \
     --name=hostapd-iptables-stop \
     --net=host \
     --privileged=true \
