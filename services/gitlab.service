@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Gitlab
-After=gitlab-redis.service platform-ldap.service
-Requires=gitlab-redis.service
+After=gitlab-redis.service platform-ldap.service mysql.service
+Requires=gitlab-redis.service mysql.service
 Wants=platform-ldap.service
 ConditionPathExists=/etc/protonet/gitlab/enabled
 
