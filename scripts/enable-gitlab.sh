@@ -7,8 +7,38 @@ generate_random () {
 	dd if=/dev/urandom bs=1k count=1 2>/dev/null | sha256sum -b | cut -f1 -d ' '
 }
 
+
+configure_network () {
+    cat > "/etc/systemd/network/gitlab.network" <<EOF
+# Created by the Protonet Gitlab Installer -- do not edit this line!
+[Match]
+Name=engitlab*
+
+[Network]
+DHCP=yes
+
+[DHCP]
+UseDomains=false
+UseRoutes=false
+RouteMetric=65000
+EOF
+    systemctl daemon-reload
+    systemctl restart systemd-networkd.service
+}
+
+
+unconfigure_network () {
+    if grep "Created by the Protonet Gitlab Installer" "/etc/systemd/network/gitlab.network" &>/dev/null; then
+        rm -f "/etc/systemd/network/gitlab.network"
+    fi
+}
+
+
 enable_gitlab() {
 	local MYSQL_PASSWORD
+
+	# needs to be successfull prior to enabling gitlab (which creates the interface)
+	configure_network
 
 	skvs_cli set gitlab/enabled ' '
 
@@ -44,13 +74,16 @@ enable_gitlab() {
 	systemctl start gitlab-network-ip.timer
 }
 
+
 disable_gitlab() {
 	systemctl disable gitlab
 	systemctl stop gitlab
 	systemctl stop gitlab-redis
 	systemctl stop gitlab-network-ip.timer
 	skvs_cli delete gitlab
-	systemctl daemon-reload
+    unconfigure_network
+    systemctl daemon-reload
+    systemctl restart systemd-networkd.service
 #	Let's not drop the data
 #	echo "DROP DATABASE IF EXISTS gitlab; DROP USER IF EXISTS 'gitlab'@'%';" | docker exec -i mysql mysql --password=s3kr3t --batch
 }
