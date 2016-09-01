@@ -1,5 +1,3 @@
-// +build linux,amd64
-
 package main
 
 import (
@@ -9,7 +7,6 @@ import (
 	"fmt"
 	"github.com/coreos/go-systemd/dbus"
 	"github.com/experimental-platform/platform-utils/netutil"
-	"github.com/vishvananda/netlink"
 	"io/ioutil"
 	"log"
 	"net"
@@ -48,51 +45,15 @@ type reportTemplateData struct {
 }
 
 type NetLink interface {
-	LinkByName(string) (netlink.Link, error)
-	RouteList(netlink.Link, int) ([]netlink.Route, error)
-	AddrList(netlink.Link, int) ([]netlink.Addr, error)
-	LinkList() ([]netlink.Link, error)
+	GetMacAddress(string) (string, error)
+	GetListOfRoutes(string) ([]string, error)
+	GetListOfAddresses(string) ([]string, error)
+	GetListOfInterfaces() ([]string, error)
 }
-
-type realNL struct {
-}
-
-func (n realNL) LinkByName(s string) (netlink.Link, error) {
-	return netlink.LinkByName(s)
-}
-
-func (n realNL) RouteList(l netlink.Link, f int) ([]netlink.Route, error) {
-	return netlink.RouteList(l, f)
-}
-
-func (n realNL) AddrList(l netlink.Link, f int) ([]netlink.Addr, error) {
-	return netlink.AddrList(l, f)
-}
-
-func (n realNL) LinkList() ([]netlink.Link, error) {
-	return netlink.LinkList()
-}
-
-// make sure realNL satisfies the NetLink interface
-var _ NetLink = (*realNL)(nil)
-
-var nl NetLink = realNL{}
 
 type NetUtil interface {
 	GetInterfaceStats(string) (netutil.InterfaceData, error)
 }
-
-type realNU struct {
-}
-
-func (n realNU) GetInterfaceStats(name string) (netutil.InterfaceData, error) {
-	return netutil.GetInterfaceStats(name)
-}
-
-// make sure realNU satisfies the NetUtil interface
-var _ NetUtil = (*realNU)(nil)
-
-var nu NetUtil = realNU{}
 
 func getNetInterfaceData(name string) (*reportTemplateData, error) {
 	result := new(reportTemplateData)
@@ -109,31 +70,22 @@ func getNetInterfaceData(name string) (*reportTemplateData, error) {
 	result.Nameserver = interfaceData.DNS
 	result.Domains = interfaceData.DOMAINS
 	result.State = interfaceData.OPER_STATE
-	link, err := nl.LinkByName(result.Interface)
-	if err != nil {
-		return result, err
-	}
 	// add hardware address
-	linkAttrs := link.Attrs()
-	result.HWAddress = linkAttrs.HardwareAddr.String()
-	// add ip addresses and netmasks
-	addrList, err := nl.AddrList(link, netlink.FAMILY_ALL)
+	result.HWAddress, err = nl.GetMacAddress(result.Interface)
 	if err != nil {
 		return result, err
 	}
-	for _, addr := range addrList {
-		result.Addresses = append(result.Addresses, fmt.Sprintf("%s", addr.IPNet))
-	}
-	// Add Gateway
-	routeList, err := nl.RouteList(link, netlink.FAMILY_V4)
-	if err != nil && len(routeList) < 1 {
+	// add ip addresses and netmasks
+	result.Addresses, err = nl.GetListOfAddresses(result.Interface)
+	if err != nil {
 		return result, err
 	}
-	for _, route := range routeList {
-		if route.Gw != nil {
-			result.Gateway = route.Gw.String()
-			break
-		}
+	routes, err := nl.GetListOfRoutes(result.Interface)
+	if err != nil {
+		return result, err
+	}
+	if len(routes) >= 1 {
+		result.Gateway = routes[0]
 	}
 	return result, nil
 }
@@ -156,27 +108,11 @@ func reportOnInterface(name string) (string, error) {
 	return buff.String(), nil
 }
 
-func listInterfaces() ([]string, error) {
-	result := []string{}
-	linkList, err := nl.LinkList()
-	if err != nil {
-		return result, err
-	}
-	for _, entry := range linkList {
-		attrs := entry.Attrs()
-		// all hardware interfaces (NOT their aliases) have a TxQLen > 1
-		if attrs.TxQLen > 1 && !strings.HasPrefix(attrs.Name, "wl") {
-			result = append(result, attrs.Name)
-		}
-	}
-	return result, err
-}
-
 func ShowConfig() (string, error) {
 	// TODO: test this!
 	var err error
 	var result string
-	interfaceNames, err := listInterfaces()
+	interfaceNames, err := nl.GetListOfInterfaces()
 	if err != nil {
 		return result, err
 	}
@@ -279,7 +215,7 @@ func parseMap(s string) (*net.IPMask, error) {
 	return &r, nil
 }
 
-func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (string, error) {
+func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, error) {
 	// TODO: test this!
 	iData, err := nu.GetInterfaceStats(iface)
 	result := fmt.Sprintf("Configuring interface '%v'...\n", iface)
@@ -287,13 +223,11 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (
 		return result, fmt.Errorf("\nERROR: Interface '%s' not found.", iface)
 	}
 	templateData := new(staticData)
-	// get the mac address
-	link, err := nl.LinkByName(iface)
+	templateData.Mac, err = nl.GetMacAddress(iface)
 	if err != nil {
 		return "", err
 	}
-	linkAttrs := link.Attrs()
-	templateData.Mac = linkAttrs.HardwareAddr.String()
+
 	// create IP/MASK entry
 	mask, err := parseMap(netmask)
 	if err != nil {
@@ -344,7 +278,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (
 			return "", fmt.Errorf("No idea what to do with '%s', sorry!", iData.NETWORK_FILE)
 		}
 	}
-	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface + ".network"), buff.Bytes(), 0644)
+	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface+".network"), buff.Bytes(), 0644)
 	if err != nil {
 		return "", err
 	}
@@ -358,7 +292,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string, nl NetLink) (
 }
 
 func ResetToDHCP() (string, error) {
-	interfaceNames, err := listInterfaces()
+	interfaceNames, err := nl.GetListOfInterfaces()
 	var result string
 	if err != nil {
 		return "", err
@@ -404,7 +338,7 @@ func switchByCommandline() (string, error) {
 	case *mode == "dhcp":
 		return EnableDHCP(*networkInterface)
 	case *mode == "static":
-		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns, nl)
+		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns)
 	default:
 		// TODO: implement menu interface
 		CommandLine.Usage()

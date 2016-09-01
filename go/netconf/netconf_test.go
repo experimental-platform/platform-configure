@@ -2,54 +2,10 @@ package main
 
 import (
 	"github.com/experimental-platform/platform-utils/netutil"
-	"github.com/vishvananda/netlink"
 	"os"
-	"net"
 	"strings"
 	"testing"
 )
-
-type mocNL struct {
-	linkByNameData netlink.Link
-	linkByNameErr  error
-	routeList      []netlink.Route
-	routeListErr   error
-	addrList       []netlink.Addr
-	addrListErr    error
-	linkList       []netlink.Link
-	linkListError  error
-}
-
-func (n mocNL) LinkByName(s string) (netlink.Link, error) {
-	return n.linkByNameData, n.linkByNameErr
-}
-
-func (n mocNL) RouteList(l netlink.Link, f int) ([]netlink.Route, error) {
-	return n.routeList, n.routeListErr
-}
-
-func (n mocNL) AddrList(l netlink.Link, f int) ([]netlink.Addr, error) {
-	return n.addrList, n.addrListErr
-}
-
-func (n mocNL) LinkList() ([]netlink.Link, error) {
-	return n.linkList, n.linkListError
-}
-
-// make sure the moc satisfies the interface
-var _ NetLink = (*mocNL)(nil)
-
-type mocNU struct {
-	stats    netutil.InterfaceData
-	statsErr error
-}
-
-func (n mocNU) GetInterfaceStats(name string) (netutil.InterfaceData, error) {
-	return n.stats, n.statsErr
-}
-
-// make sure realNU satisfies the NetUtil interface
-var _ NetUtil = (*mocNU)(nil)
 
 /*
 	Test DHCP
@@ -105,73 +61,10 @@ func TestShowConfig(t *testing.T) {
 		statsErr: nil,
 	}
 	nl = mocNL{
-		addrList: []netlink.Addr{{
-			IPNet: func() *net.IPNet {
-				_, net, _ := net.ParseCIDR("172.16.0.123/16")
-				return net
-			}(),
-			Label: "eno1", Flags: 0, Scope: 0},
-		},
-		addrListErr: nil,
-		linkByNameData: &netlink.Device{
-			LinkAttrs: netlink.LinkAttrs{
-				Index: 4, MTU: 1500, TxQLen: 1000, Name: "eno1",
-				HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
-				Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
-				Namespace: interface{}(nil),
-				Alias:     "",
-				Promisc:   0},
-		},
-		linkByNameErr: nil,
-		routeList: []netlink.Route{
-			{
-				Dst:        nil,
-				Src:        net.ParseIP("172.16.10.239"),
-				Gw:         net.ParseIP("172.16.0.1"),
-				Table:      254,
-				ILinkIndex: 4,
-			},
-			{
-				ILinkIndex: 4,
-				Dst: func() *net.IPNet {
-					_, net, _ := net.ParseCIDR("172.16.0.0/16")
-					return net
-				}(),
-				Src:   net.ParseIP("172.16.10.239"),
-				Gw:    nil,
-				Table: 254,
-			},
-		},
-		routeListErr: nil,
-		linkList: []netlink.Link{
-			&netlink.Device{
-				LinkAttrs: netlink.LinkAttrs{
-					Index: 4, MTU: 1500, TxQLen: 1000, Name: "enototallyyourdevice1",
-					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
-					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
-					Namespace: interface{}(nil),
-					Alias:     "",
-					Promisc:   0},
-			},
-			&netlink.Device{
-				LinkAttrs: netlink.LinkAttrs{
-					Index: 4, MTU: 1500, TxQLen: 1, Name: "enoyoudontseeme0",
-					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
-					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
-					Namespace: interface{}(nil),
-					Alias:     "",
-					Promisc:   0},
-			},
-			&netlink.Device{
-				LinkAttrs: netlink.LinkAttrs{
-					Index: 4, MTU: 1500, TxQLen: 1000, Name: "wl_my_home_network",
-					HardwareAddr: net.HardwareAddr{0x54, 0xbe, 0xf7, 0x66, 0x2c, 0x49},
-					Flags:        0x13, ParentIndex: 0, MasterIndex: 0,
-					Namespace: interface{}(nil),
-					Alias:     "",
-					Promisc:   0},
-			},
-		},
+		listOfAddressesData:  []string{"172.16.0.123/16"},
+		listOfInterfacesData: []string{"eno0", "eno1", "enototallyyourdevice1"},
+		listOfRoutesData:     []string{"172.16.0.1"},
+		macAddressData:       "0a:66:7f:12:8d:15",
 	}
 	result, err := switchByCommandline()
 	if err != nil {
@@ -200,3 +93,8 @@ func TestShowConfig(t *testing.T) {
 */
 
 // TODO: make sure every menu item starts the correct functions.
+
+/*
+	TEST LINUX
+*/
+// TODO: make sure that on Linux the real NetLink and NetUtil are compiled in...
