@@ -157,6 +157,8 @@ ExecStart=/usr/bin/env bash /opt/self_destruct --stage 2
 WantedBy=multi-user.target
 EOM
 		systemctl enable self-destruct-stage-2.service
+		sysctl kernel.hung_task_timeout_secs=30
+		sysctl kernel.hung_task_panic=1
 		sync
 		echo "SELF DESTRUCT ARMED"
 		# hard reboot
