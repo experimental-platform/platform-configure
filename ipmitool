@@ -5,7 +5,7 @@ set -eu
 if ! docker inspect --type=image ipmitool:latest &>/dev/null; then
   CONTEXT="$(mktemp -d)"
   trap "rm -rf $CONTEXT" SIGINT SIGTERM EXIT
-  echo -e 'FROM alpine\nRUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories\nRUN apk update && apk add ipmitool && rm -rf /var/cache/apk/*' > "$CONTEXT/Dockerfile"
+  echo -e 'FROM quay.io/experimentalplatform/ubuntu:latest\nRUN apt-get update && apt-get install -y -q --no-install-recommends ipmitool && apt-get clean && rm -rf /var/lib/apt/lists/*' > "$CONTEXT/Dockerfile"
   docker build -t ipmitool:latest "$CONTEXT"
 fi
 
