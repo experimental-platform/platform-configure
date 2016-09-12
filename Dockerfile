@@ -23,4 +23,6 @@ ADD self_destruct /self_destruct
 
 COPY binaries /binaries
 
+LABEL com.protonet.platform.build-number="${TRAVIS_BUILD_NUMBER}"
+
 CMD [ "/prep.sh" ]
