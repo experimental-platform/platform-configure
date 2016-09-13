@@ -154,6 +154,12 @@ func createOutputArchive() (string, *os.File, *gzip.Writer, *tar.Writer, error) 
 	return filename, archiveFile, compressor, tarWriter, nil
 }
 
+func bailIfNotRoot() {
+	if os.Getuid() != 0 {
+		log.Fatal("You must run this as root")
+	}
+}
+
 func rmOutOnCtrlC(path string) {
 	signalChan := make(chan os.Signal, 1)
 	signal.Notify(signalChan, os.Interrupt)
@@ -167,6 +173,8 @@ func rmOutOnCtrlC(path string) {
 }
 
 func main() {
+	bailIfNotRoot()
+
 	dir, err := ioutil.TempDir("", "platform-feedback")
 	if err != nil {
 		log.Fatal(err)
