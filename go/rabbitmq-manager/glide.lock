@@ -1,5 +1,5 @@
-hash: a1d64cee2f003d109892d3253795d1b43fbefcfb8af9959ac45010e88d30e4a4
-updated: 2016-09-09T11:26:58.821153485+02:00
+hash: 386c6b011390b6e0212865ecad38b7faff4544c85c38c54a0140479246f89ad5
+updated: 2016-09-15T11:20:17.216937683+02:00
 imports:
 - name: github.com/docker/distribution
   version: 41f383fb9a3b4e3ff428a92db4f7836f8053058b
@@ -31,12 +31,16 @@ imports:
   - tlsconfig
 - name: github.com/docker/go-units
   version: 2c1805a1c750c4ea749899f49221e1d5f3e5ce42
+- name: github.com/experimental-platform/platform-skvs
+  version: c3e76669572d9ac71984ad28768b1d9d11234efb
+  subpackages:
+  - client
 - name: github.com/experimental-platform/platform-utils
   version: 7e2b609a94b703d0710d2ed461856536daf0ff34
   subpackages:
   - dockerutil
 - name: github.com/michaelklishin/rabbit-hole
-  version: 1560b2e1bef4ef7a8757165a1c56be095deede15
+  version: 56cd787eb47617b7f5d2b3c014e63605612e5b2d
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc

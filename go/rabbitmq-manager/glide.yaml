@@ -1,7 +1,12 @@
 package: .
 import:
+- package: github.com/experimental-platform/platform-skvs
+  version: ^1.0.0
+  subpackages:
+  - client
 - package: github.com/experimental-platform/platform-utils
   version: ^1.0.0
   subpackages:
   - dockerutil
 - package: github.com/michaelklishin/rabbit-hole
+  version: ^1.0.0
