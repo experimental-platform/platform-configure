@@ -3,18 +3,22 @@
 Description=Run 'central gateway' service
 After=init-protonet.service
 Requires=init-protonet.service
-ConditionPathExists=!/etc/protonet/soul/enabled
 
 [Service]
 TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+ExecStartPre=/usr/bin/mkdir -p /data/central-gateway/ssl
 ExecStartPre=-/usr/bin/docker rm -f central-gateway
 ExecStartPre=/usr/bin/docker run -d \
     --name=central-gateway \
     --net=host \
-  quay.io/experimentalplatform/central-gateway:{{tag}} --interface=0.0.0.0:80 --apps=http://127.0.0.1:9001 --management=http://127.0.0.1:9002
+    --privileged \
+    -v /data/central-gateway/ssl:/data/ssl \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e DOCKER_API_VERSION=1.22 \
+  quay.io/experimentalplatform/central-gateway:{{tag}}
 ExecStart=/usr/bin/docker logs -f central-gateway
 ExecStop=/usr/bin/docker stop central-gateway
 ExecStopPost=/usr/bin/docker stop central-gateway
