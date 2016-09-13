@@ -1,50 +1,117 @@
 package main
 
 import (
-	rabbit "github.com/michaelklishin/rabbit-hole"
-	"flag"
-	"os"
-	"fmt"
-	"log"
-	"errors"
 	"bytes"
-	"text/template"
-	"github.com/experimental-platform/platform-utils/dockerutil"
+	"errors"
+	"flag"
+	"fmt"
 	skvs "github.com/experimental-platform/platform-skvs/client"
+	"github.com/experimental-platform/platform-utils/dockerutil"
+	"github.com/michaelklishin/rabbit-hole"
+	"log"
 	"math/rand"
+	"net/http"
+	"os"
+	"text/template"
 	"time"
 )
 
-// TODO: create setting (create user, create vhost, connect user and vhost)
-// TODO: delete setting
-
-func getRabbitConfig() *rabbit.Client {
-	host, err := dockerutil.GetContainerIP("rabbitmq")
-	if err != nil {
-		// TODO: THIS IS BULLSHIT!
-		host = "127.0.0.1"
-	}
-	// TODO: get user and password from skvs
-	con, err := rabbit.NewClient(fmt.Sprintf("http://%s:15672", host), "guest", "guest")
-	if err != nil {
-		panic(err)
-	}
-	return con
+type rabbitConnector interface {
+	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
+	DeleteVhost(string) (*http.Response, error)
+	PutUser(string, rabbithole.UserSettings) (*http.Response, error)
+	DeleteUser(string) (*http.Response, error)
+	UpdatePermissionsIn(string, string, rabbithole.Permissions) (*http.Response, error)
+	ListPermissions() ([]rabbithole.PermissionInfo, error)
 }
 
+type realRabbit struct {
+	con *rabbithole.Client
+}
+
+func (rec *realRabbit) connect() {
+	if rec.con == nil {
+		// TODO: get host, user and password from skvs
+		host, err := dockerutil.GetContainerIP("rabbitmq")
+		if err != nil {
+			// TODO: THIS IS BULLSHIT!
+			host = "127.0.0.1"
+		}
+		con, err := rabbithole.NewClient(fmt.Sprintf("http://%s:15672", host), "guest", "guest")
+		if err != nil {
+			panic(err)
+		}
+		rec.con = con
+	}
+	return
+}
+
+func (rec *realRabbit) PutVhost(a string, b rabbithole.VhostSettings) (*http.Response, error) {
+	rec.connect()
+	return rec.con.PutVhost(a, b)
+}
+
+func (rec *realRabbit) DeleteVhost(a string) (*http.Response, error) {
+	rec.connect()
+	return rec.con.DeleteVhost(a)
+}
+
+func (rec *realRabbit) PutUser(a string, b rabbithole.UserSettings) (*http.Response, error) {
+	rec.connect()
+	return rec.con.PutUser(a, b)
+}
+
+func (rec *realRabbit) DeleteUser(a string) (*http.Response, error) {
+	rec.connect()
+	return rec.con.DeleteUser(a)
+}
+
+func (rec *realRabbit) UpdatePermissionsIn(a string, b string, c rabbithole.Permissions) (*http.Response, error) {
+	rec.connect()
+	return rec.con.UpdatePermissionsIn(a, b, c)
+}
+
+func (rec *realRabbit) ListPermissions() ([]rabbithole.PermissionInfo, error) {
+	rec.connect()
+	return rec.con.ListPermissions()
+}
+
+var r rabbitConnector = new(realRabbit)
+
+type skvsConnector interface {
+	Delete(string) error
+	Get(string) (string, error)
+	Set(string, string) error
+}
+
+type realSKVS struct{}
+
+func (rec *realSKVS) Delete(key string) error {
+	return skvs.Delete(key)
+}
+
+func (rec *realSKVS) Get(key string) (string, error) {
+	return skvs.Get(key)
+}
+
+func (rec *realSKVS) Set(key, value string) error {
+	return skvs.Set(key, value)
+}
+
+var s skvsConnector = new(realSKVS)
+
 func deleteSettings(name string) (string, error) {
-	con := getRabbitConfig()
-	_, err := con.DeleteVhost(name)
+	_, err := r.DeleteVhost(name)
 	if err != nil {
 		fmt.Printf("ERROR DELETING VHOST: %v", err)
 	}
-	_, err = con.DeleteUser(name)
+	_, err = r.DeleteUser(name)
 	if err != nil {
 		fmt.Printf("ERROR DELETING USER: %v", err)
 	}
 	// delete url from SKVS
 	key := fmt.Sprintf("app/%s/rabbitmq", name)
-	err = skvs.Delete(key)
+	err = s.Delete(key)
 	return "DONE\n", err
 }
 
@@ -60,33 +127,30 @@ func randomString(strlen int) string {
 }
 
 func createUser(name string) (string, error) {
-	con := getRabbitConfig()
 	// create password and (update or create) user
 	password := randomString(20)
-	userInfo := rabbit.UserSettings{
-		Name: name,
+	userInfo := rabbithole.UserSettings{
+		Name:     name,
 		Password: password,
-		Tags: "autocreated",
+		Tags:     "autocreated",
 	}
-	_, err := con.PutUser(name, userInfo)
+	_, err := r.PutUser(name, userInfo)
 	return password, err
 }
 
 func createVHost(name string) error {
-	con := getRabbitConfig()
-	vhostSetting := rabbit.VhostSettings{}
-	_, err := con.PutVhost(name, vhostSetting)
+	vhostSetting := rabbithole.VhostSettings{}
+	_, err := r.PutVhost(name, vhostSetting)
 	return err
 }
 
 func updatePermissions(name string) error {
-	con := getRabbitConfig()
-	permissions := rabbit.Permissions{
-		Read:".*",
-		Write:".*",
-		Configure:".*",
+	permissions := rabbithole.Permissions{
+		Read:      ".*",
+		Write:     ".*",
+		Configure: ".*",
 	}
-	_, err := con.UpdatePermissionsIn(name, name, permissions)
+	_, err := r.UpdatePermissionsIn(name, name, permissions)
 	return err
 }
 
@@ -106,7 +170,7 @@ func createSettings(name string) (string, error) {
 	// write user, password and vhost to SKVS
 	key := fmt.Sprintf("app/%s/rabbitmq", name)
 	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", name, password, name)
-	err = skvs.Set(key, url)
+	err = s.Set(key, url)
 	return "DONE.\nNew Password was set\n", err
 }
 
@@ -121,8 +185,7 @@ const reportTemplate = `Access Control and Permissions:
 `
 
 func listSettings() (string, error) {
-	con := getRabbitConfig()
-	perms, err := con.ListPermissions()
+	perms, err := r.ListPermissions()
 	if err != nil {
 		panic(err)
 	}
