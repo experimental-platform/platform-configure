@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"time"
@@ -153,7 +154,27 @@ func createOutputArchive() (string, *os.File, *gzip.Writer, *tar.Writer, error) 
 	return filename, archiveFile, compressor, tarWriter, nil
 }
 
+func bailIfNotRoot() {
+	if os.Getuid() != 0 {
+		log.Fatal("You must run this as root")
+	}
+}
+
+func rmOutOnCtrlC(path string) {
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, os.Interrupt)
+	go func() {
+		for _ = range signalChan {
+			log.Println("Received user interrupt, cleaning up output")
+			os.Remove(path)
+			os.Exit(1)
+		}
+	}()
+}
+
 func main() {
+	bailIfNotRoot()
+
 	dir, err := ioutil.TempDir("", "platform-feedback")
 	if err != nil {
 		log.Fatal(err)
@@ -165,6 +186,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	rmOutOnCtrlC(archiveName)
 
 	defer archiveFile.Close()
 	defer archiveFile.Sync()
