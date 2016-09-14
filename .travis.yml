@@ -1,0 +1,11 @@
+sudo: false
+services:
+  - docker
+
+script:
+  - 'docker build -t quay.io/experimentalplatform/configure:${TRAVIS_BRANCH} .'
+
+after_success:
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "$TRAVIS_BRANCH" != "master" ] && DEPLOY=true || DEPLOY=false'
+  - '[ "${DEPLOY}" = "true" ] && docker login -e none -u "$QUAY_USER" -p "$QUAY_PASS" quay.io'
+  - '[ "${DEPLOY}" = "true" ] && docker push quay.io/experimentalplatform/configure:${TRAVIS_BRANCH}'
