@@ -71,6 +71,17 @@ function cleanup_systemd() {
 }
 
 
+function systemd_enable_units() {
+    if [ $# -eq 0 ]; then return; fi
+    busctl call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager EnableUnitFiles asbb $# $@ false true
+}
+
+
+function systemd_daemon_reload() {
+    busctl call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager Reload
+}
+
+
 function setup_systemd() {
     echo -n "Setting up systemd services... "
     cp /services/* ${MOUNTROOT}/etc/systemd/system/
@@ -80,17 +91,15 @@ function setup_systemd() {
     # Network configuration
     cp /config/*.network  ${MOUNTROOT}/etc/systemd/network
     echo "Reloading the config files."
-    systemctl daemon-reload
+    systemd_daemon_reload
     # Make sure we're actually waiting for the network if it's required.
-    systemctl --root=${MOUNTROOT} enable systemd-networkd-wait-online.service
+    systemd_enable_units systemd-networkd-wait-online.service
     echo "ENABLing all config files."
-    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f | \
-        xargs --no-run-if-empty basename -a | \
-        xargs --no-run-if-empty systemctl --root=${MOUNTROOT} enable
+    systemd_enable_units $(find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 ! -name "*.sh" -type f | \
+      xargs --no-run-if-empty basename -a )
     echo "RESTARTing all .path files."
-    find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.path" -type f | \
-        xargs --no-run-if-empty basename -a | \
-        xargs --no-run-if-empty systemctl restart
+    systemd_enable_units $(find ${MOUNTROOT}/etc/systemd/system -maxdepth 1 -name "*.path" -type f | \
+      xargs --no-run-if-empty basename -a )
     echo "DONE."
 }
 
@@ -101,10 +110,11 @@ function setup_channel_file() {
     echo -n "Detecting channel... "
     if [[ ! -f ${CHANNEL_FILE} ]] || [[ ! $(cat ${CHANNEL_FILE}) = "${CHANNEL}" ]]; then
         echo -n "using NEW '${CHANNEL}'... "
-        systemctl stop trigger-update-protonet.path
+        busctl call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StopUnit 'ss' trigger-update-protonet.path replace
+        sleep 1
         mkdir -p $(dirname ${CHANNEL_FILE})
         echo ${CHANNEL} > ${CHANNEL_FILE}
-        systemctl start trigger-update-protonet.path
+        busctl call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager StartUnit 'ss' trigger-update-protonet.path replace
     else
         echo -n "using OLD '${CHANNEL}'... "
     fi
@@ -166,8 +176,9 @@ function finalize() {
     download_and_verify_image experimentalplatform/buildstep:herokuish
     set_status "finalizing"
     if [ "$PLATFORM_INSTALL_RELOAD" = true ]; then
-        echo "Reloading systemctl after update."
-        systemctl restart init-protonet.service
+        echo "Reloading SystemD after update."
+        systemd_daemon_reload
+        busctl call org.freedesktop.systemd1 /org/freedesktop/systemd1 org.freedesktop.systemd1.Manager RestartUnit 'ss' init-protonet.service replace
         exit 0
     fi
 
