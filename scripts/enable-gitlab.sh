@@ -70,8 +70,6 @@ enable_gitlab() {
 	systemctl daemon-reload
 	systemctl start gitlab
 	systemctl enable gitlab
-	# Make sure the network ip timer is restarted, even on repeat reinstalls
-	systemctl start gitlab-network-ip.timer
 }
 
 
@@ -79,7 +77,6 @@ disable_gitlab() {
 	systemctl disable gitlab
 	systemctl stop gitlab
 	systemctl stop gitlab-redis
-	systemctl stop gitlab-network-ip.timer
 	skvs_cli delete gitlab
     unconfigure_network
     systemctl daemon-reload
@@ -93,5 +90,5 @@ if [ $# -gt 0 ] && [ "$1" == '--disable' ]; then
 else
 #	generate_random
 	enable_gitlab
-	echo "The address is: http://$(gitlab-network show)/"
+	echo "The address is: http://$(curl -X GET http://127.0.0.1:81/apps/gitlab/macvlan)/"
 fi
