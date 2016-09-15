@@ -1,9 +1,0 @@
-# ExperimentalPlatform
-[Unit]
-Description=Trigger a Restart of HAProxy if the gitlab IP address changes
-
-[Path]
-PathChanged=/etc/protonet/gitlab/ip
-
-[Install]
-WantedBy=multi-user.target

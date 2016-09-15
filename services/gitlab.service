@@ -1,8 +1,8 @@
 # ExperimentalPlatform
 [Unit]
 Description=Gitlab
-After=gitlab-redis.service platform-ldap.service mysql.service
-Requires=gitlab-redis.service mysql.service
+After=gitlab-redis.service platform-ldap.service mysql.service central-gateway-protonet.service
+Requires=gitlab-redis.service mysql.service central-gateway-protonet.service
 Wants=platform-ldap.service
 ConditionPathExists=/etc/protonet/gitlab/enabled
 
@@ -12,15 +12,15 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=/usr/bin/mkdir -p /data/gitlab/data
-ExecStartPre=/opt/bin/gitlab-network start
+ExecStartPre=/usr/bin/curl -X POST http://127.0.0.1:81/apps/gitlab/macvlan
 ExecStartPre=-/usr/bin/docker rm -f gitlab
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name gitlab \
     --net protonet \
     --volume /data/gitlab/data:/home/git/data \
-    -p \"$(/opt/bin/gitlab-network show):2222:22\" \
+    -p \"$(curl -X GET http://127.0.0.1:81/apps/gitlab/macvlan):2222:22\" \
     --env \"GITLAB_HOST=gitlab.$(</etc/protonet/hostname).protonet.info\" \
-    --env \"GITLAB_SSH_HOST=$(/opt/bin/gitlab-network show)\" \
+    --env \"GITLAB_SSH_HOST=$(curl -X GET http://127.0.0.1:81/apps/gitlab/macvlan)\" \
     --env 'GITLAB_HTTPS=false' \
     --env 'GITLAB_SSH_PORT=2222' \
     --env 'GITLAB_SIGNUP_ENABLED=false' \
@@ -49,8 +49,8 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env 'LDAP_BASE=ou=People,dc=protonet,dc=com' \
     sameersbn/gitlab:8.11.2"
 ExecStart=/usr/bin/docker logs -f gitlab
-# Make sure haproxy picks up gitlab network IP
-ExecStartPost=/usr/bin/systemctl restart platform-haproxy
+# reload central GW config
+ExecStartPost=/usr/bin/curl -X POST http://127.0.0.1:81/reload-proxies
 ExecStop=/usr/bin/docker stop gitlab
 ExecStopPost=/usr/bin/docker stop gitlab
 

@@ -7,7 +7,7 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-ADD https://get.docker.com/builds/Linux/x86_64/docker-1.8.3 /docker
+ADD https://get.docker.com/builds/Linux/x86_64/docker-1.10.3 /docker
 RUN chmod +x /docker
 ADD services /services
 ADD config /config
