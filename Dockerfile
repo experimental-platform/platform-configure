@@ -20,7 +20,6 @@ ADD speedtest /speedtest
 ADD masterpassword /masterpassword
 ADD ipmitool /ipmitool
 ADD self_destruct /self_destruct
-
 COPY binaries /binaries
 
 CMD [ "/prep.sh" ]
