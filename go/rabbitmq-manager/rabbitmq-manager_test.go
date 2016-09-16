@@ -2,14 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/michaelklishin/rabbit-hole"
 	"net/http"
 	"os"
 	"strings"
 	"testing"
-)
 
-// import "testing"
+	"github.com/michaelklishin/rabbit-hole"
+)
 
 type mocRabbit struct {
 	PutVhostData             *http.Response
@@ -51,27 +50,32 @@ func (rec mocRabbit) ListPermissions() ([]rabbithole.PermissionInfo, error) {
 }
 
 type mocSKVS struct {
-	data map[string]string
+	data        map[string]string
+	callHistory map[string]int
 }
 
 func (rec *mocSKVS) Get(key string) (string, error) {
+	rec.callHistory["Get"]++
 	return rec.data[key], nil
 }
 
 func (rec *mocSKVS) Delete(key string) error {
+	rec.callHistory["Delete"]++
 	delete(rec.data, key)
 	return nil
 }
 
 func (rec *mocSKVS) Set(key, value string) error {
+	rec.callHistory["Set"]++
 	rec.data[key] = value
 	return nil
 }
 
-func newMocSKVS() *mocSKVS {
-	var bla mocSKVS
-	bla.data = make(map[string]string)
-	return &bla
+func newMocSKVS() (*mocSKVS, *map[string]int) {
+	var moc mocSKVS
+	moc.data = make(map[string]string)
+	moc.callHistory = make(map[string]int)
+	return &moc, &moc.callHistory
 }
 
 func TestListSettings(t *testing.T) {
@@ -89,7 +93,8 @@ func TestListSettings(t *testing.T) {
 		Write:     ".*",
 		Read:      ".*"},
 	}}
-	s = newMocSKVS()
+	var hist *map[string]int
+	s, hist = newMocSKVS()
 	result, err := switchByCommandLine()
 	if err != nil {
 		t.Errorf("ERROR: %#v", err)
@@ -99,6 +104,9 @@ func TestListSettings(t *testing.T) {
 	}
 	if !strings.Contains(result, username) {
 		t.Errorf("Expected '%s' to contain '%s'", result, username)
+	}
+	if (*hist)["Delete"]+(*hist)["Set"] != 0 {
+		t.Error("Write access to SKVS detected!")
 	}
 	return
 }
@@ -111,7 +119,8 @@ func TestCreate(t *testing.T) {
 	name := "blupp"
 	os.Args = []string{"foobar", "-create", name}
 	r = mocRabbit{}
-	s = newMocSKVS()
+	var hist *map[string]int
+	s, hist = newMocSKVS()
 	_, err := switchByCommandLine()
 	if err != nil {
 		t.Errorf("ERROR: %#v", err)
@@ -119,6 +128,9 @@ func TestCreate(t *testing.T) {
 	url, _ := s.Get(fmt.Sprintf("app/%s/rabbitmq", name))
 	if !strings.Contains(url, name) {
 		t.Errorf("Expected '%s' in url '%s'", name, url)
+	}
+	if (*hist)["Delete"]+(*hist)["Set"] == 0 {
+		t.Error("Not writing to SKVS?")
 	}
 	return
 }
@@ -131,7 +143,8 @@ func TestDelete(t *testing.T) {
 	name := "blupp"
 	os.Args = []string{"foobar", "-delete", name}
 	r = mocRabbit{}
-	s = newMocSKVS()
+	var hist *map[string]int
+	s, hist = newMocSKVS()
 	s.Set(fmt.Sprintf("app/%s/rabbitmq", name), "lalala")
 	_, err := switchByCommandLine()
 	if err != nil {
@@ -139,7 +152,10 @@ func TestDelete(t *testing.T) {
 	}
 	value, _ := s.Get(fmt.Sprintf("app/%s/rabbitmq", name))
 	if value != "" {
-		t.Errorf("App wasn't removed in SKVS: %#v", value)
+		t.Errorf("App wasn't removed in SKVS: %#v: %#v", name, value)
+	}
+	if (*hist)["Delete"]+(*hist)["Set"] == 0 {
+		t.Error("Not writing to SKVS?")
 	}
 	return
 }

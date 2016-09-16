@@ -5,15 +5,16 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	skvs "github.com/experimental-platform/platform-skvs/client"
-	"github.com/experimental-platform/platform-utils/dockerutil"
-	"github.com/michaelklishin/rabbit-hole"
 	"log"
 	"math/rand"
 	"net/http"
 	"os"
 	"text/template"
 	"time"
+
+	skvs "github.com/experimental-platform/platform-skvs/client"
+	"github.com/experimental-platform/platform-utils/dockerutil"
+	"github.com/michaelklishin/rabbit-hole"
 )
 
 type rabbitConnector interface {
