@@ -1,11 +1,6 @@
 package: .
 import:
-- package: github.com/docker/engine-api
-  version: ~0.4.0
+- package: github.com/experimental-platform/platform-skvs
+  version: ^1.0.0
   subpackages:
   - client
-  - types
-  - types/filters
-- package: golang.org/x/net
-  subpackages:
-  - context
