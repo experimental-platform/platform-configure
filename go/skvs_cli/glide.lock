@@ -1,46 +1,52 @@
-hash: 61c850c1147f8a8aecdac41baccd13dd078e9292d17c8b7673b27d8c595731eb
-updated: 2016-08-18T11:28:03.987461276+02:00
+hash: 592557f671fd810d494e3b2d975c2cc93ddc27e388ca5b4dc23710ac340b2b1f
+updated: 2016-09-16T15:13:22.69254259+02:00
 imports:
 - name: github.com/docker/distribution
-  version: 010e063270be37cfa8547ccfb9717e5d874c88a8
+  version: 41f383fb9a3b4e3ff428a92db4f7836f8053058b
   subpackages:
-  - reference
   - digest
+  - reference
 - name: github.com/docker/engine-api
   version: 3d1601b9d2436a70b0dfc045a23f6503d19195df
   subpackages:
   - client
-  - types
-  - types/filters
   - client/transport
   - client/transport/cancellable
+  - types
+  - types/blkiodev
   - types/container
+  - types/filters
   - types/network
   - types/reference
   - types/registry
+  - types/strslice
   - types/swarm
   - types/time
   - types/versions
-  - types/blkiodev
-  - types/strslice
 - name: github.com/docker/go-connections
   version: 0bad1a3951398f88ef4dd75fdb42af374430be89
   subpackages:
+  - nat
   - sockets
   - tlsconfig
-  - nat
 - name: github.com/docker/go-units
-  version: eb879ae3e2b84e2a142af415b679ddeda47ec71c
+  version: 2c1805a1c750c4ea749899f49221e1d5f3e5ce42
+- name: github.com/experimental-platform/platform-skvs
+  version: c3e76669572d9ac71984ad28768b1d9d11234efb
+  subpackages:
+  - client
+- name: github.com/experimental-platform/platform-utils
+  version: 7e2b609a94b703d0710d2ed461856536daf0ff34
+  subpackages:
+  - dockerutil
 - name: github.com/Microsoft/go-winio
   version: ce2922f643c8fd76b46cadc7f404a06282678b34
 - name: github.com/opencontainers/runc
-  version: 6df383c2f881fbdeb85060fd27d8bf61afedacd9
+  version: b79076544e2edbe4180b7bc424d793dd6a8f1f90
   subpackages:
   - libcontainer/user
 - name: github.com/Sirupsen/logrus
   version: 55eb11d21d2a31a3cc93838241d04800f52e823d
-  subpackages:
-  - formatters/logstash
 - name: golang.org/x/net
   version: 4876518f9e71663000c348837735820161a42df7
   subpackages:
