@@ -1,3 +1,4 @@
 go/rabbitmq-manager/vendor
 rabbitmq-manager
 go/skvs_cli/vendor
+go/netconf/vendor

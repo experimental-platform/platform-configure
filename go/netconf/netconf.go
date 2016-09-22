@@ -5,9 +5,6 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/coreos/go-systemd/dbus"
-	"github.com/experimental-platform/platform-utils/netutil"
-	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -15,6 +12,8 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/experimental-platform/platform-utils/netutil"
 )
 
 const reportTemplate = `
@@ -44,15 +43,25 @@ type reportTemplateData struct {
 	Nameserver []string
 }
 
-type NetLink interface {
+type netLink interface {
 	GetMacAddress(string) (string, error)
 	GetListOfRoutes(string) ([]string, error)
 	GetListOfAddresses(string) ([]string, error)
 	GetListOfInterfaces() ([]string, error)
 }
 
-type NetUtil interface {
+type netUtil interface {
 	GetInterfaceStats(string) (netutil.InterfaceData, error)
+}
+
+type dbusUtil interface {
+	restartNetworkD() error
+}
+
+type fsUtil interface {
+	WriteFile(string, []byte, os.FileMode) error
+	Remove(string) error
+	Stat(name string) (os.FileInfo, error)
 }
 
 func getNetInterfaceData(name string) (*reportTemplateData, error) {
@@ -108,7 +117,7 @@ func reportOnInterface(name string) (string, error) {
 	return buff.String(), nil
 }
 
-func ShowConfig() (string, error) {
+func showConfig() (string, error) {
 	// TODO: test this!
 	var err error
 	var result string
@@ -126,61 +135,39 @@ func ShowConfig() (string, error) {
 	return result, err
 }
 
-func restartNetworkD() error {
-	var connection, err = dbus.New()
-	if err != nil {
-		return err
-	}
-	result_channel := make(chan string, 1)
-	var result string
-	_, err = connection.RestartUnit("systemd-networkd.service", "fail", result_channel)
-	if err == nil {
-		result = <-result_channel
-	} else {
-		// Systemd Unit ERROR
-		return err
-	}
-	if result != "done" {
-		return fmt.Errorf("Unexpected SYSTEMD API result: %s", result)
-	}
-	return nil
-}
-
-func EnableDHCP(name string) (string, error) {
+func enableDHCP(name string) (string, error) {
 	// TODO: Test this!
 	result := fmt.Sprintf("Getting interface stats for '%s'...", name)
 	iData, err := nu.GetInterfaceStats(name)
 	if err != nil {
-		return result, fmt.Errorf("\nERROR: Interface '%s' not found.", name)
+		return result, fmt.Errorf("\nERROR: Interface '%s' not found", name)
 	}
 	result += "OKAY\n"
 	if iData.NETWORK_FILE == "/usr/lib64/systemd/network/zz-default.network" {
 		result += "SUCCESS: Already using DHCP\n"
 		return result, nil
-	} else {
-		// in most cases we'll just remove any user provided config, so the systems default takes hold
-		if strings.Contains(iData.NETWORK_FILE, "/etc/systemd/network/") {
-			result += fmt.Sprintf("Custon Config detected: '%s'\n", iData.NETWORK_FILE)
-			if _, err := os.Stat(iData.NETWORK_FILE); err == nil {
-				// It's okay if the file does not exists, as this frequently happens
-				// when configuring stuff manually or when not rebooting.
-				err = os.Remove(iData.NETWORK_FILE)
-				if err != nil {
-					return result, fmt.Errorf("ERROR removing '%s'\n", iData.NETWORK_FILE)
-				}
-
-			}
-			result += fmt.Sprintf("Successfully removed '%s'\n", iData.NETWORK_FILE)
-			err = restartNetworkD()
-			if err != nil {
-				result += "SUCCESS, PLEASE REBOOT!\n"
-			}
-			result += "SUCCESS, using DHCP.\nPLEASE REBOOT NOW ('sudo reboot')!\n"
-			return result, nil
-		} else {
-			return result, fmt.Errorf("Sorry, no idea how to handle '%s'.", iData.NETWORK_FILE)
-		}
 	}
+	// in most cases we'll just remove any user provided config, so the systems default takes hold
+	if strings.Contains(iData.NETWORK_FILE, "/etc/systemd/network/") {
+		result += fmt.Sprintf("Custon Config detected: '%s'\n", iData.NETWORK_FILE)
+		if _, err := os.Stat(iData.NETWORK_FILE); err == nil {
+			// It's okay if the file does not exists, as this frequently happens
+			// when configuring stuff manually or when not rebooting.
+			err = fs.Remove(iData.NETWORK_FILE)
+			if err != nil {
+				return result, fmt.Errorf("ERROR removing '%s'\n", iData.NETWORK_FILE)
+			}
+
+		}
+		result += fmt.Sprintf("Successfully removed '%s'\n", iData.NETWORK_FILE)
+		err = db.restartNetworkD()
+		if err != nil {
+			result += "SUCCESS, PLEASE REBOOT!\n"
+		}
+		result += "SUCCESS, using DHCP.\nPLEASE REBOOT NOW ('sudo reboot')!\n"
+		return result, nil
+	}
+	return result, fmt.Errorf("Sorry, no idea how to handle '%s'.", iData.NETWORK_FILE)
 }
 
 type staticData struct {
@@ -215,12 +202,12 @@ func parseMap(s string) (*net.IPMask, error) {
 	return &r, nil
 }
 
-func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, error) {
+func setStaticConfig(iface, address, netmask, gateway, dns string) (string, error) {
 	// TODO: test this!
 	iData, err := nu.GetInterfaceStats(iface)
 	result := fmt.Sprintf("Configuring interface '%v'...\n", iface)
 	if err != nil {
-		return result, fmt.Errorf("\nERROR: Interface '%s' not found.", iface)
+		return result, fmt.Errorf("\nERROR: Interface '%s' not found", iface)
 	}
 	templateData := new(staticData)
 	templateData.Mac, err = nl.GetMacAddress(iface)
@@ -235,16 +222,16 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, erro
 	}
 	ipAddress := net.ParseIP(address)
 	if ipAddress == nil {
-		return "", fmt.Errorf("'%s' (address) is not a valid IP address.", address)
+		return "", fmt.Errorf("'%s' (address) is not a valid IP address", address)
 	}
 	ipNet := net.IPNet{IP: ipAddress, Mask: *mask}
 	templateData.Address = ipNet.String()
 	gatewayIP := net.ParseIP(gateway)
 	if !ipNet.Contains(gatewayIP) {
-		return "", fmt.Errorf("🖕\tGateway address '%s' is not within the network '%s'.", gatewayIP, ipNet.String())
+		return "", fmt.Errorf("🖕\tGateway address '%s' is not within the network '%s'", gatewayIP, ipNet.String())
 	}
 	if gatewayIP == nil {
-		return "", fmt.Errorf("'%s' (gateway) is not a valid IP address.", gateway)
+		return "", fmt.Errorf("'%s' (gateway) is not a valid IP address", gateway)
 	}
 	templateData.Gateway = gatewayIP.String()
 	// parse dns
@@ -252,7 +239,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, erro
 	for _, s := range strings.Split(strings.Trim(dns, " "), ",") {
 		ip := net.ParseIP(strings.Trim(s, " "))
 		if ip == nil {
-			return "", fmt.Errorf("'%s' (dns) is not a valid IP address.", s)
+			return "", fmt.Errorf("'%s' (dns) is not a valid IP address", s)
 		}
 		dnsList = append(dnsList, ip.String())
 	}
@@ -270,19 +257,19 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, erro
 
 	if iData.NETWORK_FILE != "/usr/lib64/systemd/network/zz-default.network" {
 		if strings.Contains(iData.NETWORK_FILE, "/etc/systemd/network/") {
-			err = os.Remove(iData.NETWORK_FILE)
+			err = fs.Remove(iData.NETWORK_FILE)
 			if err != nil {
 				return "", err
 			}
 		} else {
-			return "", fmt.Errorf("No idea what to do with '%s', sorry!", iData.NETWORK_FILE)
+			return "", fmt.Errorf("No idea what to do with '%s', sorry", iData.NETWORK_FILE)
 		}
 	}
-	err = ioutil.WriteFile(path.Join("/etc/systemd/network/", iface+".network"), buff.Bytes(), 0644)
+	err = fs.WriteFile(path.Join("/etc/systemd/network/", iface+".network"), buff.Bytes(), 0644)
 	if err != nil {
 		return "", err
 	}
-	err = restartNetworkD()
+	err = db.restartNetworkD()
 	if err != nil {
 		result += "SUCCESS, PLEASE REBOOT NOW (with 'sudo reboot')!\n"
 	}
@@ -291,7 +278,7 @@ func SetStaticConfig(iface, address, netmask, gateway, dns string) (string, erro
 	return result, err
 }
 
-func ResetToDHCP() (string, error) {
+func resetToDHCP() (string, error) {
 	interfaceNames, err := nl.GetListOfInterfaces()
 	var result string
 	if err != nil {
@@ -299,7 +286,7 @@ func ResetToDHCP() (string, error) {
 	}
 	for _, name := range interfaceNames {
 		result += fmt.Sprintf("Resetting interface '%s':\n", name)
-		message, err := EnableDHCP(name)
+		message, err := enableDHCP(name)
 		result += fmt.Sprintf("%s\n\n", message)
 		if err != nil {
 			return result, err
@@ -316,7 +303,7 @@ func switchByCommandline() (string, error) {
 		CommandLine.PrintDefaults()
 	}
 	show := CommandLine.Bool("show", false, "Show configuration and available interfaces")
-	reset_all := CommandLine.Bool("reset", false, "(Re)set all interfaces to DHCP")
+	resetAll := CommandLine.Bool("reset", false, "(Re)set all interfaces to DHCP")
 	mode := CommandLine.String("mode", "", "'dhcp' or 'static'")
 	networkInterface := CommandLine.String("interface", "", "Interface name to be configured")
 	address := CommandLine.String("address", "", "IP address to be set for the interface")
@@ -330,21 +317,20 @@ func switchByCommandline() (string, error) {
 	}
 	switch {
 	case *show:
-		return ShowConfig()
+		return showConfig()
 	case *version:
 		return "Version: 0.9 (missing menu and repair)", nil
-	case *reset_all:
-		return ResetToDHCP()
+	case *resetAll:
+		return resetToDHCP()
 	case *mode == "dhcp":
-		return EnableDHCP(*networkInterface)
+		return enableDHCP(*networkInterface)
 	case *mode == "static":
-		return SetStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns)
+		return setStaticConfig(*networkInterface, *address, *netmask, *gateway, *dns)
 	default:
 		// TODO: implement menu interface
 		CommandLine.Usage()
 		return "", errors.New("Invalid flag.")
 	}
-	return "Config done.", nil
 }
 
 func main() {

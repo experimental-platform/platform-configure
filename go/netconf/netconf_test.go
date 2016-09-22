@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/experimental-platform/platform-utils/netutil"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/experimental-platform/platform-utils/netutil"
 )
 
 /*
@@ -18,6 +19,72 @@ import (
 /*
 	Test static configuration
 */
+
+func TestSetStaticSimple(t *testing.T) {
+	oldArgs := os.Args
+	defer func() {
+		os.Args = oldArgs
+	}()
+	os.Args = []string{
+		"foobar", "-mode", "static", "-interface", "enomeno42",
+		"-address", "192.168.23.42", "-netmask", "255.255.255.128",
+		"-gateway", "192.168.23.45", "-dns", "8.8.8.8, 8.8.4.4",
+	}
+	nu = mocNU{
+		stats: netutil.InterfaceData{
+			ADMIN_STATE:     "configured",
+			OPER_STATE:      "routable",
+			NETWORK_FILE:    "/usr/lib64/systemd/network/zz-default.network",
+			DNS:             []string{"8.8.8.8", "10.11.0.2", "62.220.18.8"},
+			NTP:             "",
+			DOMAINS:         []string{"blablabla.lalala.net"},
+			WILDCARD_DOMAIN: false, LLMNR: true,
+			DHCP_LEASE: "/run/systemd/netif/leases/4",
+		},
+		statsErr: nil,
+	}
+	nl = mocNL{
+		listOfAddressesData:  []string{"172.16.0.123/16"},
+		listOfInterfacesData: []string{"eno0", "eno1", "enomeno42"},
+		listOfRoutesData:     []string{"172.16.0.1"},
+		macAddressData:       "0a:66:7f:12:8d:15",
+	}
+	db = mocDBUS{}
+	var fsNames *[]string
+	var fsData *[][]byte
+	fs, fsNames, fsData = newMocFS()
+	result, err := switchByCommandline()
+	if err != nil {
+		t.Errorf("Static mode failure: %v", err)
+	}
+	if !strings.Contains(result, "enomeno42") {
+		t.Errorf("Expected 'enomeno42', got '%v'.", result)
+	}
+	// checking the file name the data gets written to
+	fileNameCorrect := false
+	for _, name := range *fsNames {
+		if name == "/etc/systemd/network/enomeno42.network" {
+			fileNameCorrect = true
+		}
+	}
+	if !fileNameCorrect {
+		t.Errorf("Error writing config file, got: '%#v'.", (*fsNames))
+	}
+	// checking the content of the config file
+	expectedData := []string{
+		"[Match]\nMACAddress=0a:66:7f:12:8d:15\n",
+		"Address=192.168.23.42/25\n",
+		"Gateway=192.168.23.45\n",
+		"DNS=8.8.8.8\n",
+		"DNS=8.8.4.4\n",
+	}
+	receivedData := string((*fsData)[0])
+	for _, line := range expectedData {
+		if !strings.Contains(receivedData, line) {
+			t.Errorf("Missing line:\n%s\n\nConfig:%s\n", line, receivedData)
+		}
+	}
+}
 
 // TODO: test static with gateway outside netmask
 // TODO: test static with invalid values for ip, gateway, netmask, dns
@@ -73,12 +140,6 @@ func TestShowConfig(t *testing.T) {
 
 	if !strings.Contains(result, "enototallyyourdevice1") {
 		t.Errorf("Expected 'enototallyyourdevice1', got '%v'.", result)
-	}
-	if strings.Contains(result, "enoyoudontseeme0") {
-		t.Errorf("Device with TxQLen 1 doesn't get filtered out properly: '%v'.", result)
-	}
-	if strings.Contains(result, "wl_my_home_network") {
-		t.Errorf("Wireless device doesn't get filtered out properly: '%v'.", result)
 	}
 }
 
