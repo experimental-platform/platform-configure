@@ -1,12 +1,12 @@
-hash: 8361af37f28af9ed1f34df0a407b5ea0f65447b3ad3c659d2356601b8379b376
-updated: 2016-09-01T17:45:26.059780827+02:00
+hash: 6cdaa2f7bd10dcff2232369814d033d9cfecfa18ebad291cd1dd475bb69ea928
+updated: 2016-09-22T08:56:52.009806613+02:00
 imports:
 - name: github.com/coreos/go-systemd
-  version: d6c05a1dcbb5ac02b7653da4d99e5db340c20778
+  version: 43e4800a6165b4e02bb2a36673c54b230d6f7b26
   subpackages:
   - dbus
 - name: github.com/experimental-platform/platform-utils
-  version: 535b8af0f9b55eab9ad8a52c19fc905c4d78ef6f
+  version: 7e2b609a94b703d0710d2ed461856536daf0ff34
   subpackages:
   - netutil
 - name: github.com/godbus/dbus
