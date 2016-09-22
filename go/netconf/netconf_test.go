@@ -49,6 +49,7 @@ func TestSetStaticSimple(t *testing.T) {
 		listOfRoutesData:     []string{"172.16.0.1"},
 		macAddressData:       "0a:66:7f:12:8d:15",
 	}
+	db = mocDBUS{}
 	var fsNames *[]string
 	var fsData *[][]byte
 	fs, fsNames, fsData = newMocFS()
