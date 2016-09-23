@@ -18,7 +18,7 @@ import (
 )
 
 // where RabbitMQ lives in SKVS
-var RabbitSKVS string = "app/rabbitmq"
+var RabbitSKVS string = "rabbitmq"
 
 type rabbitConnector interface {
 	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
