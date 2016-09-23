@@ -14,6 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f soul-worker
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-worker \
     --net=protonet \
+    --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \

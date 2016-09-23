@@ -11,6 +11,7 @@ Type=oneshot
 KillMode=none
 RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/soul
+ExecStartPre=/opt/bin/rabbitmq-manager -create german-shepherd
 ExecStartPre=/usr/bin/docker run -d \
                --net=protonet \
                --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
