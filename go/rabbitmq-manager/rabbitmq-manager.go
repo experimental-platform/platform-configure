@@ -17,6 +17,9 @@ import (
 	"github.com/michaelklishin/rabbit-hole"
 )
 
+// where RabbitMQ lives in SKVS
+var RabbitSKVS string = "rabbitmq"
+
 type rabbitConnector interface {
 	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
 	DeleteVhost(string) (*http.Response, error)
@@ -30,19 +33,34 @@ type realRabbit struct {
 	con *rabbithole.Client
 }
 
+func getOrCreateCredentials() (string, string) {
+	user, err := s.Get(fmt.Sprintf("%s/user", RabbitSKVS))
+	if err != nil {
+		user = "guest"
+	}
+	passwd, err := s.Get(fmt.Sprintf("%s/passwd", RabbitSKVS))
+	if err != nil {
+		passwd = "guest"
+	}
+	return user, passwd
+}
+
 func (rec *realRabbit) connect() {
 	if rec.con == nil {
-		// TODO: get host, user and password from skvs
+		// get rabbitmq IP address
 		host, err := dockerutil.GetContainerIP("rabbitmq")
-		if err != nil {
-			// TODO: THIS IS BULLSHIT!
-			host = "127.0.0.1"
-		}
-		con, err := rabbithole.NewClient(fmt.Sprintf("http://%s:15672", host), "guest", "guest")
 		if err != nil {
 			panic(err)
 		}
-		rec.con = con
+		host = fmt.Sprintf("http://%s:15672", host)
+		user, passwd := getOrCreateCredentials()
+		if err != nil {
+			panic(err)
+		}
+		rec.con, err = rabbithole.NewClient(host, user, passwd)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return
 }
@@ -145,32 +163,32 @@ func createVHost(name string) error {
 	return err
 }
 
-func updatePermissions(name string) error {
+func updatePermissions(name, vhost string) error {
 	permissions := rabbithole.Permissions{
 		Read:      ".*",
 		Write:     ".*",
 		Configure: ".*",
 	}
-	_, err := r.UpdatePermissionsIn(name, name, permissions)
+	_, err := r.UpdatePermissionsIn(vhost, name, permissions)
 	return err
 }
 
-func createSettings(name string) (string, error) {
+func createSettings(name, vhost string) (string, error) {
 	password, err := createUser(name)
 	if err != nil {
 		panic(err)
 	}
-	err = createVHost(name)
+	err = createVHost(vhost)
 	if err != nil {
 		panic(err)
 	}
-	err = updatePermissions(name)
+	err = updatePermissions(name, vhost)
 	if err != nil {
 		panic(err)
 	}
 	// write user, password and vhost to SKVS
-	key := fmt.Sprintf("app/%s/rabbitmq", name)
-	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", name, password, name)
+	key := fmt.Sprintf("app/%s/rabbitmq", vhost)
+	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", name, password, vhost)
 	err = s.Set(key, url)
 	return "DONE.\nNew Password was set\n", err
 }
@@ -220,7 +238,7 @@ func switchByCommandLine() (string, error) {
 	case *delete != "":
 		return deleteSettings(*delete)
 	case *create != "":
-		return createSettings(*create)
+		return createSettings(*create, *create)
 	case *list:
 		return listSettings()
 	default:
