@@ -14,6 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f soul-push-service
 ExecStartPre=/usr/bin/docker run -d \
     --name soul-push-service \
     --net=protonet \
+    --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
     quay.io/protonetinc/german-shepherd:{{tag}} \
     bundle exec foreman start push_service
 ExecStart=/usr/bin/docker logs -f soul-push-service

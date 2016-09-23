@@ -16,6 +16,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --net=protonet \
     --user webdav \
     --hostname soul-webdav \
+    --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
