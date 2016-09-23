@@ -17,6 +17,9 @@ import (
 	"github.com/michaelklishin/rabbit-hole"
 )
 
+// where RabbitMQ lives in SKVS
+var RabbitSKVS string = "app/rabbitmq"
+
 type rabbitConnector interface {
 	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
 	DeleteVhost(string) (*http.Response, error)
@@ -30,19 +33,73 @@ type realRabbit struct {
 	con *rabbithole.Client
 }
 
-func (rec *realRabbit) connect() {
-	if rec.con == nil {
-		// TODO: get host, user and password from skvs
-		host, err := dockerutil.GetContainerIP("rabbitmq")
-		if err != nil {
-			// TODO: THIS IS BULLSHIT!
-			host = "127.0.0.1"
-		}
-		con, err := rabbithole.NewClient(fmt.Sprintf("http://%s:15672", host), "guest", "guest")
+func getOrCreateCredentials() (string, string, bool, error) {
+	var user, passwd string
+	var err error
+	created := false
+	// make sure that SKVS holds some credentials
+	user, err = s.Get(fmt.Sprintf("%s/user", RabbitSKVS))
+	if err != nil {
+		created = true
+		user = "rabbitadmin"
+		err = s.Set(fmt.Sprintf("%s/user", RabbitSKVS), user)
 		if err != nil {
 			panic(err)
 		}
-		rec.con = con
+	}
+	passwd, err = s.Get(fmt.Sprintf("%s/passwd", RabbitSKVS))
+	if err != nil {
+		created = true
+		passwd = randomString(32)
+		err = s.Set(fmt.Sprintf("%s/passwd", RabbitSKVS), passwd)
+		if err != nil {
+			panic(err)
+		}
+	}
+	return user, passwd, created, err
+}
+
+func (rec *realRabbit) connect() {
+	if rec.con == nil {
+		// get rabbitmq IP address
+		host, err := dockerutil.GetContainerIP("rabbitmq")
+		if err != nil {
+			panic(err)
+		}
+		host = fmt.Sprintf("http://%s:15672", host)
+		// get or create login credentials
+		user, passwd, created, err := getOrCreateCredentials()
+		if err != nil {
+			panic(err)
+		}
+		// if the credentials were newly created, use default credentials to create a new admin
+		if created {
+			con, err := rabbithole.NewClient(host, "guest", "guest")
+			if err != nil {
+				panic(err)
+			}
+			userInfo := rabbithole.UserSettings{
+				Name:     user,
+				Password: passwd,
+				Tags:     "administrator",
+			}
+			_, err = con.PutUser(user, userInfo)
+			if err != nil {
+				panic(err)
+			}
+		}
+		// create a new connection using credentials
+		rec.con, err = rabbithole.NewClient(host, user, passwd)
+		if err != nil {
+			panic(err)
+		}
+		if created {
+			// remove the old guest account
+			_, err = rec.con.DeleteUser("guest")
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 	return
 }
@@ -145,32 +202,32 @@ func createVHost(name string) error {
 	return err
 }
 
-func updatePermissions(name string) error {
+func updatePermissions(name, vhost string) error {
 	permissions := rabbithole.Permissions{
 		Read:      ".*",
 		Write:     ".*",
 		Configure: ".*",
 	}
-	_, err := r.UpdatePermissionsIn(name, name, permissions)
+	_, err := r.UpdatePermissionsIn(vhost, name, permissions)
 	return err
 }
 
-func createSettings(name string) (string, error) {
+func createSettings(name, vhost string) (string, error) {
 	password, err := createUser(name)
 	if err != nil {
 		panic(err)
 	}
-	err = createVHost(name)
+	err = createVHost(vhost)
 	if err != nil {
 		panic(err)
 	}
-	err = updatePermissions(name)
+	err = updatePermissions(name, vhost)
 	if err != nil {
 		panic(err)
 	}
 	// write user, password and vhost to SKVS
-	key := fmt.Sprintf("app/%s/rabbitmq", name)
-	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", name, password, name)
+	key := fmt.Sprintf("app/%s/rabbitmq", vhost)
+	url := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", name, password, vhost)
 	err = s.Set(key, url)
 	return "DONE.\nNew Password was set\n", err
 }
@@ -220,7 +277,7 @@ func switchByCommandLine() (string, error) {
 	case *delete != "":
 		return deleteSettings(*delete)
 	case *create != "":
-		return createSettings(*create)
+		return createSettings(*create, *create)
 	case *list:
 		return listSettings()
 	default:
