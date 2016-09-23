@@ -7,7 +7,7 @@ import (
 )
 
 type mocNL struct {
-	macAddressData        string
+	macAddressData        map[string]string
 	macAddressError       error
 	listOfRoutesData      []string
 	listOfRoutesError     error
@@ -17,8 +17,8 @@ type mocNL struct {
 	listOfInterfacesError error
 }
 
-func (n mocNL) GetMacAddress(string) (string, error) {
-	return n.macAddressData, n.macAddressError
+func (n mocNL) GetMacAddress(name string) (string, error) {
+	return n.macAddressData[name], n.macAddressError
 }
 
 func (n mocNL) GetListOfRoutes(string) ([]string, error) {

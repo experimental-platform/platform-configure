@@ -47,7 +47,9 @@ func TestSetStaticSimple(t *testing.T) {
 		listOfAddressesData:  []string{"172.16.0.123/16"},
 		listOfInterfacesData: []string{"eno0", "eno1", "enomeno42"},
 		listOfRoutesData:     []string{"172.16.0.1"},
-		macAddressData:       "0a:66:7f:12:8d:15",
+		macAddressData:       map[string]string{
+			"enomeno42": "0a:66:7f:12:8d:15",
+		},
 	}
 	db = mocDBUS{}
 	var fsNames *[]string
@@ -131,7 +133,9 @@ func TestShowConfig(t *testing.T) {
 		listOfAddressesData:  []string{"172.16.0.123/16"},
 		listOfInterfacesData: []string{"eno0", "eno1", "enototallyyourdevice1"},
 		listOfRoutesData:     []string{"172.16.0.1"},
-		macAddressData:       "0a:66:7f:12:8d:15",
+		macAddressData:       map[string]string{
+			"enomeno42": "0a:66:7f:12:8d:15",
+		},
 	}
 	result, err := switchByCommandline()
 	if err != nil {
