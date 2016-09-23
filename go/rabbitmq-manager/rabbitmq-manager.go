@@ -33,30 +33,16 @@ type realRabbit struct {
 	con *rabbithole.Client
 }
 
-func getOrCreateCredentials() (string, string, bool, error) {
-	var user, passwd string
-	var err error
-	created := false
-	// make sure that SKVS holds some credentials
-	user, err = s.Get(fmt.Sprintf("%s/user", RabbitSKVS))
+func getOrCreateCredentials() (string, string) {
+	user, err := s.Get(fmt.Sprintf("%s/user", RabbitSKVS))
 	if err != nil {
-		created = true
-		user = "rabbitadmin"
-		err = s.Set(fmt.Sprintf("%s/user", RabbitSKVS), user)
-		if err != nil {
-			panic(err)
-		}
+		user = "guest"
 	}
-	passwd, err = s.Get(fmt.Sprintf("%s/passwd", RabbitSKVS))
+	passwd, err := s.Get(fmt.Sprintf("%s/passwd", RabbitSKVS))
 	if err != nil {
-		created = true
-		passwd = randomString(32)
-		err = s.Set(fmt.Sprintf("%s/passwd", RabbitSKVS), passwd)
-		if err != nil {
-			panic(err)
-		}
+		passwd = "guest"
 	}
-	return user, passwd, created, err
+	return user, passwd
 }
 
 func (rec *realRabbit) connect() {
@@ -67,38 +53,13 @@ func (rec *realRabbit) connect() {
 			panic(err)
 		}
 		host = fmt.Sprintf("http://%s:15672", host)
-		// get or create login credentials
-		user, passwd, created, err := getOrCreateCredentials()
+		user, passwd := getOrCreateCredentials()
 		if err != nil {
 			panic(err)
 		}
-		// if the credentials were newly created, use default credentials to create a new admin
-		if created {
-			con, err := rabbithole.NewClient(host, "guest", "guest")
-			if err != nil {
-				panic(err)
-			}
-			userInfo := rabbithole.UserSettings{
-				Name:     user,
-				Password: passwd,
-				Tags:     "administrator",
-			}
-			_, err = con.PutUser(user, userInfo)
-			if err != nil {
-				panic(err)
-			}
-		}
-		// create a new connection using credentials
 		rec.con, err = rabbithole.NewClient(host, user, passwd)
 		if err != nil {
 			panic(err)
-		}
-		if created {
-			// remove the old guest account
-			_, err = rec.con.DeleteUser("guest")
-			if err != nil {
-				panic(err)
-			}
 		}
 	}
 	return
