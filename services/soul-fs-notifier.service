@@ -12,13 +12,13 @@ Restart=always
 RestartSec=5s
 ExecStartPre=/usr/sbin/sysctl fs.inotify.max_user_watches=3000000
 ExecStartPre=-/usr/bin/docker rm -f soul-fs-notifier
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
   --name soul-fs-notifier \
   --net=protonet \
   --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
   --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
   quay.io/protonetinc/german-shepherd:{{tag}} \
-  bundle exec foreman start fs_notifier
+  bundle exec foreman start fs_notifier"
 ExecStart=/usr/bin/docker logs -f soul-fs-notifier
 ExecStop=/usr/bin/docker stop soul-fs-notifier
 ExecStopPost=/usr/bin/docker stop soul-fs-notifier

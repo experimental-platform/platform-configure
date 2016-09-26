@@ -11,7 +11,7 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-webdav
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name soul-webdav \
     --net=protonet \
     --user webdav \
@@ -21,7 +21,7 @@ ExecStartPre=/usr/bin/docker run -d \
     --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
     --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
     quay.io/protonetinc/german-shepherd:{{tag}} \
-    bundle exec foreman start webdav
+    bundle exec foreman start webdav"
 ExecStart=/usr/bin/docker logs -f soul-webdav
 ExecStop=/usr/bin/docker stop soul-webdav
 ExecStopPost=/usr/bin/docker stop soul-webdav
