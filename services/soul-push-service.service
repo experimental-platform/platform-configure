@@ -11,12 +11,12 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-push-service
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --name soul-push-service \
     --net=protonet \
     --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
     quay.io/protonetinc/german-shepherd:{{tag}} \
-    bundle exec foreman start push_service
+    bundle exec foreman start push_service"
 ExecStart=/usr/bin/docker logs -f soul-push-service
 ExecStop=/usr/bin/docker stop soul-push-service
 ExecStopPost=/usr/bin/docker stop soul-push-service

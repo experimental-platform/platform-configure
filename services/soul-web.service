@@ -11,7 +11,7 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-web
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
       --name soul-web \
       --net=protonet \
       --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
@@ -26,7 +26,7 @@ ExecStartPre=/usr/bin/docker run -d \
       --volume /data/hardware:/tmp/hardware \
       --volume /var/run/soul-backup:/tmp/backup \
       quay.io/protonetinc/german-shepherd:{{tag}} \
-      bundle exec foreman start web
+      bundle exec foreman start web"
 ExecStart=/usr/bin/docker logs -f soul-web
 ExecStop=/usr/bin/docker stop soul-web
 ExecStopPost=/usr/bin/docker stop soul-web
