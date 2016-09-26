@@ -1,0 +1,24 @@
+# ExperimentalPlatform
+[Unit]
+Description=Unoconv
+ConditionPathExists=/etc/protonet/soul/enabled
+After=soul-prepare.service
+Requires=soul-prepare.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f unoconv
+ExecStartPre=/usr/bin/docker run -d \
+    --name unoconv \
+    --net protonet \
+      --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+    quay.io/experimentalplatform/unoconv:{{tag}}
+ExecStart=/usr/bin/docker logs -f unoconv
+ExecStop=/usr/bin/docker stop unoconv
+ExecStopPost=/usr/bin/docker stop unoconv
+
+[Install]
+WantedBy=multi-user.target
