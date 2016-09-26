@@ -57,10 +57,19 @@ func (rec *realRabbit) connect() {
 		if err != nil {
 			panic(err)
 		}
-		rec.con, err = rabbithole.NewClient(host, user, passwd)
-		if err != nil {
-			panic(err)
+		// RabbitMQ is slow *and* starts to listen prior to being fully running, so we
+		// try this 10 times and wait a sec between each try.
+		for i := 0; i < 10; i++ {
+			rec.con, err = rabbithole.NewClient(host, user, passwd)
+			if err == nil {
+				_, err = rec.con.ListNodes()
+				if err == nil {
+					return
+				}
+			}
+			time.Sleep(time.Second)
 		}
+		panic(err)
 	}
 	return
 }
@@ -250,10 +259,7 @@ func switchByCommandLine() (string, error) {
 func main() {
 	result, err := switchByCommandLine()
 	if err != nil {
-		log.Fatalf("ERROR:\n%#v", err)
-		fmt.Printf(result)
-		log.Fatalf("ERROR (REPEATED):\n%#v", err)
-		os.Exit(23)
+		log.Fatalf("ERROR:\n%#v\n", err)
 	}
 	fmt.Printf(result)
 	os.Exit(0)
