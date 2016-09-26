@@ -59,16 +59,19 @@ func (rec *realRabbit) connect() {
 		}
 		// RabbitMQ is slow *and* starts to listen prior to being fully running, so we
 		// try this 10 times and wait a sec between each try.
-		for i := 0; i < 10; i++ {
+		var i int
+		for i = 0; i < 200; i++ {
 			rec.con, err = rabbithole.NewClient(host, user, passwd)
 			if err == nil {
 				_, err = rec.con.ListNodes()
 				if err == nil {
+					fmt.Printf("Success on %d of 100.\n", i)
 					return
 				}
 			}
-			time.Sleep(time.Second)
+			time.Sleep(3 * time.Second)
 		}
+		fmt.Printf("NO WAY TO CONNECT, GIVING UP AFTER %d ATTEMPTS.\n", i)
 		panic(err)
 	}
 	return
