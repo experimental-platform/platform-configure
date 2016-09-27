@@ -13,7 +13,7 @@ RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-dispatcher
 ExecStartPre=-/usr/bin/chown 1000:1000 -R /data/samba/
 ExecStartPre=-/usr/bin/chmod 644 /data/samba/etc/smbpasswd
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
   --name soul-dispatcher \
   --net=protonet \
   --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
@@ -27,7 +27,7 @@ ExecStartPre=/usr/bin/docker run -d \
   --volume /data/samba/extrausers:/var/lib/extrausers/ \
   --volume /data/hardware:/tmp/hardware \
   quay.io/protonetinc/german-shepherd:{{tag}} \
-  bundle exec foreman start dispatcher
+  bundle exec foreman start dispatcher"
 ExecStart=/usr/bin/docker logs -f soul-dispatcher
 ExecStop=/usr/bin/docker stop soul-dispatcher
 ExecStopPost=/usr/bin/docker stop soul-dispatcher
