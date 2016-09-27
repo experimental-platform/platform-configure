@@ -45,65 +45,84 @@ func getOrCreateCredentials() (string, string) {
 	return user, passwd
 }
 
-func (rec *realRabbit) connect() {
+func (rec *realRabbit) connect() error {
 	if rec.con == nil {
 		// get rabbitmq IP address
 		host, err := dockerutil.GetContainerIP("rabbitmq")
 		if err != nil {
-			panic(err)
+			return err
 		}
 		host = fmt.Sprintf("http://%s:15672", host)
 		user, passwd := getOrCreateCredentials()
 		if err != nil {
-			panic(err)
+			return err
 		}
 		// RabbitMQ is slow *and* starts to listen prior to being fully running, so we
 		// try this 10 times and wait a sec between each try.
 		var i int
-		for i = 0; i < 200; i++ {
+		m := 200
+		for i = 0; i < m; i++ {
 			rec.con, err = rabbithole.NewClient(host, user, passwd)
 			if err == nil {
 				_, err = rec.con.ListNodes()
 				if err == nil {
-					fmt.Printf("Success on %d of 100.\n", i)
-					return
+					fmt.Printf("Success on %d of %d.\n", i, m)
+					return nil
 				}
 			}
 			time.Sleep(3 * time.Second)
 		}
 		fmt.Printf("NO WAY TO CONNECT, GIVING UP AFTER %d ATTEMPTS.\n", i)
-		panic(err)
+		return err
 	}
-	return
+	return nil
 }
 
 func (rec *realRabbit) PutVhost(a string, b rabbithole.VhostSettings) (*http.Response, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.PutVhost(a, b)
 }
 
 func (rec *realRabbit) DeleteVhost(a string) (*http.Response, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.DeleteVhost(a)
 }
 
 func (rec *realRabbit) PutUser(a string, b rabbithole.UserSettings) (*http.Response, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.PutUser(a, b)
 }
 
 func (rec *realRabbit) DeleteUser(a string) (*http.Response, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.DeleteUser(a)
 }
 
 func (rec *realRabbit) UpdatePermissionsIn(a string, b string, c rabbithole.Permissions) (*http.Response, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.UpdatePermissionsIn(a, b, c)
 }
 
 func (rec *realRabbit) ListPermissions() ([]rabbithole.PermissionInfo, error) {
-	rec.connect()
+	err := rec.connect()
+	if err != nil {
+		return nil, err
+	}
 	return rec.con.ListPermissions()
 }
 
@@ -124,7 +143,7 @@ func (rec *realSKVS) checkAvailability(retries int, delay time.Duration) bool {
 		return true
 	}
 	for i := 0; i < retries; i++ {
-		_, err := rec.Get("hostname")
+		_, err := skvs.Get("hostname")
 		if err == nil {
 			rec.available = true
 			return true
