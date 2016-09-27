@@ -17,8 +17,8 @@ import (
 	"github.com/michaelklishin/rabbit-hole"
 )
 
-// where RabbitMQ lives in SKVS
-var RabbitSKVS string = "rabbitmq"
+// RabbitSKVS contains the location of RabbitMQ settings in SKVS.
+var RabbitSKVS = "rabbitmq"
 
 type rabbitConnector interface {
 	PutVhost(string, rabbithole.VhostSettings) (*http.Response, error)
@@ -115,14 +115,34 @@ type skvsConnector interface {
 	Set(string, string) error
 }
 
-type realSKVS struct{}
+type realSKVS struct {
+	available bool
+}
+
+func (rec *realSKVS) checkAvailability(retries int, delay time.Duration) bool {
+	if rec.available {
+		return true
+	}
+	for i := 0; i < retries; i++ {
+		_, err := rec.Get("hostname")
+		if err == nil {
+			rec.available = true
+			return true
+		}
+		time.Sleep(delay)
+	}
+	return false
+}
 
 func (rec *realSKVS) Delete(key string) error {
 	return skvs.Delete(key)
 }
 
 func (rec *realSKVS) Get(key string) (string, error) {
-	return skvs.Get(key)
+	if rec.checkAvailability(100, 3) {
+		return skvs.Get(key)
+	}
+	return "", errors.New("SKVS appears to be unavailable")
 }
 
 func (rec *realSKVS) Set(key, value string) error {
