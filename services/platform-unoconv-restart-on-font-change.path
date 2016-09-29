@@ -1,6 +1,6 @@
 # ExperimentalPlatform
 [Unit]
-Description=Trigger a Restart of LDAP if the users collection changes
+Description=Trigger a Restart of unoconv listener when fonts change
 
 [Path]
 PathChanged=/data/fonts

@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger a Restart of unoconv listener when fonts change
+After=platform-unoconv.service
+Requires=platform-unoconv.service
+
+[Service]
+ExecStart=/usr/bin/env systemctl restart platform-unoconv.service
+KillMode=none
+Type=oneshot
