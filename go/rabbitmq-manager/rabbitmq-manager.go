@@ -163,18 +163,24 @@ func (rec *realSKVS) checkAvailability(retries int, delay time.Duration) bool {
 }
 
 func (rec *realSKVS) Delete(key string) error {
-	return skvs.Delete(key)
+	if rec.checkAvailability(100, 3) {
+		return skvs.Delete(key)
+	}
+	return fmt.Errorf("Can't DELETE '%s', SKVS appears to be unavailable", key)
 }
 
 func (rec *realSKVS) Get(key string) (string, error) {
 	if rec.checkAvailability(100, 3) {
 		return skvs.Get(key)
 	}
-	return "", errors.New("SKVS appears to be unavailable")
+	return "", fmt.Errorf("Can't GET '%s', SKVS appears to be unavailable", key)
 }
 
 func (rec *realSKVS) Set(key, value string) error {
-	return skvs.Set(key, value)
+	if rec.checkAvailability(100, 3) {
+		return skvs.Set(key, value)
+	}
+	return fmt.Errorf("Can't SET '%s', SKVS appears to be unavailable", key)
 }
 
 var s skvsConnector = new(realSKVS)
