@@ -45,6 +45,18 @@ func getOrCreateCredentials() (string, string) {
 	return user, passwd
 }
 
+func allNodesRunning(nodes []rabbithole.NodeInfo) bool {
+	if len(nodes) == 0 {
+		return false
+	}
+	for _, node := range nodes {
+		if !node.IsRunning {
+			return false
+		}
+	}
+	return true
+}
+
 func (rec *realRabbit) connect() error {
 	if rec.con == nil {
 		// get rabbitmq IP address
@@ -54,9 +66,6 @@ func (rec *realRabbit) connect() error {
 		}
 		host = fmt.Sprintf("http://%s:15672", host)
 		user, passwd := getOrCreateCredentials()
-		if err != nil {
-			return err
-		}
 		// RabbitMQ is slow *and* starts to listen prior to being fully running, so we
 		// try this 10 times and wait a sec between each try.
 		var i int
@@ -64,8 +73,8 @@ func (rec *realRabbit) connect() error {
 		for i = 0; i < m; i++ {
 			rec.con, err = rabbithole.NewClient(host, user, passwd)
 			if err == nil {
-				_, err = rec.con.ListNodes()
-				if err == nil {
+				nodes, err := rec.con.ListNodes()
+				if err == nil && allNodesRunning(nodes) {
 					fmt.Printf("Success on %d of %d.\n", i, m)
 					return nil
 				}

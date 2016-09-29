@@ -1,5 +1,5 @@
 hash: 386c6b011390b6e0212865ecad38b7faff4544c85c38c54a0140479246f89ad5
-updated: 2016-09-15T11:20:17.216937683+02:00
+updated: 2016-09-29T13:34:33.978442273+02:00
 imports:
 - name: github.com/docker/distribution
   version: 41f383fb9a3b4e3ff428a92db4f7836f8053058b
@@ -36,7 +36,7 @@ imports:
   subpackages:
   - client
 - name: github.com/experimental-platform/platform-utils
-  version: 7e2b609a94b703d0710d2ed461856536daf0ff34
+  version: 85666f4dba184f00d16af1b9210fcdb7f7bbd98e
   subpackages:
   - dockerutil
 - name: github.com/michaelklishin/rabbit-hole
