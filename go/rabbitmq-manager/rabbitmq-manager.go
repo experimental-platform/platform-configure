@@ -74,7 +74,7 @@ func (rec *realRabbit) connect() error {
 			if err == nil {
 				nodes, err := rec.con.ListNodes()
 				if err == nil && allNodesRunning(nodes) {
-					fmt.Printf("Success on %d of %d.\n", i, m)
+					fmt.Printf("Success on %d of %d.\n", i + 1, m)
 					return nil
 				}
 			}
@@ -154,7 +154,7 @@ func (rec *realSKVS) checkAvailability(retries int, delay time.Duration) bool {
 		_, err := skvs.Get("hostname")
 		if err == nil {
 			rec.available = true
-			fmt.Printf("Success on %d of %d.\n", i, retries)
+			fmt.Printf("Success on %d of %d.\n", i + 1, retries)
 			return true
 		}
 		time.Sleep(delay)
