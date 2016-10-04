@@ -68,9 +68,8 @@ func (rec *realRabbit) connect() error {
 		user, passwd := getOrCreateCredentials()
 		// RabbitMQ is slow *and* starts to listen prior to being fully running, so we
 		// try this 10 times and wait a sec between each try.
-		var i int
 		m := 200
-		for i = 0; i < m; i++ {
+		for i := 0; i < m; i++ {
 			rec.con, err = rabbithole.NewClient(host, user, passwd)
 			if err == nil {
 				nodes, err := rec.con.ListNodes()
@@ -81,7 +80,7 @@ func (rec *realRabbit) connect() error {
 			}
 			time.Sleep(3 * time.Second)
 		}
-		fmt.Printf("NO WAY TO CONNECT, GIVING UP AFTER %d ATTEMPTS.\n", i)
+		fmt.Printf("NO WAY TO CONNECT, GIVING UP AFTER %d ATTEMPTS.\n", m)
 		return err
 	}
 	return nil
@@ -155,10 +154,12 @@ func (rec *realSKVS) checkAvailability(retries int, delay time.Duration) bool {
 		_, err := skvs.Get("hostname")
 		if err == nil {
 			rec.available = true
+			fmt.Printf("Success on %d of %d.\n", i, retries)
 			return true
 		}
 		time.Sleep(delay)
 	}
+	fmt.Printf("NO WAY TO CONNECT SKVS, GIVING UP AFTER %d ATTEMPTS.\n", retries)
 	return false
 }
 
