@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f unoconv
 ExecStartPre=/usr/bin/docker run -d \
     --name unoconv \
     --net protonet \
-    --volume /data/fonts:/usr/local/share/fonts \
+    --volume /data/unoconv/fonts:/usr/local/share/fonts \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
     quay.io/experimentalplatform/unoconv:{{tag}}
 ExecStart=/usr/bin/docker logs -f unoconv
