@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Trigger a Restart of unoconv listener when fonts change
+
+[Path]
+PathChanged=/data/unoconv/fonts
+
+[Install]
+WantedBy=multi-user.target
