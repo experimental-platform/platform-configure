@@ -26,7 +26,9 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
                --volume /data/hardware:/tmp/hardware \
                quay.io/protonetinc/german-shepherd:{{tag}} \
                bundle exec rake docker:prepare"
-ExecStart=/usr/bin/env true
+ExecStart=/usr/bin/docker logs -f soul-prepare
+ExecStop=/usr/bin/docker stop soul-prepare
+ExecStopPost=/usr/bin/docker stop soul-prepare
 
 [Install]
 WantedBy=multi-user.target
