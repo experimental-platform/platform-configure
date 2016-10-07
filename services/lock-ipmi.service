@@ -7,6 +7,10 @@ Requires=docker.service
 [Service]
 ExecStartPre=/usr/sbin/modprobe ipmi_devintf
 ExecStart=/opt/bin/ipmitool user disable 2
+# This switches to dedicated mode. Reference:
+# http://www.supermicro.com/support/faqs/faq.cfm?faq=9829
+# http://www.supermicro.com/support/faqs/faq.cfm?faq=14417
+ExecStart=/opt/bin/ipmitool raw 0x30 0x70 0x0c 1 0
 KillMode=none
 Type=oneshot
 
