@@ -14,6 +14,7 @@ ExecStartPre=/bin/mkdir -p /data/soul
 ExecStartPre=/opt/bin/rabbitmq-manager -create german-shepherd
 ExecStartPre=-/usr/bin/docker rm -f soul-prepare
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
+               --name soul-prepare \
                --net=protonet \
                --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
                --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
@@ -23,7 +24,6 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
                --volume /data/soul/public:/home/protonet/dashboard/shared/public/ \
                --volume /data/soul/uploads:/home/protonet/dashboard/shared/uploads/ \
                --volume /data/hardware:/tmp/hardware \
-               --name soul-prepare \
                quay.io/protonetinc/german-shepherd:{{tag}} \
                bundle exec rake docker:prepare"
 ExecStart=/usr/bin/env true
