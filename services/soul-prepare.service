@@ -13,8 +13,9 @@ RemainAfterExit=yes
 ExecStartPre=/bin/mkdir -p /data/soul
 ExecStartPre=/opt/bin/rabbitmq-manager -create german-shepherd
 ExecStartPre=-/usr/bin/docker rm -f soul-prepare
-ExecStartPre=/usr/bin/docker run -d \
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
                --net=protonet \
+               --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
                --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
                --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
                --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
@@ -24,7 +25,7 @@ ExecStartPre=/usr/bin/docker run -d \
                --volume /data/hardware:/tmp/hardware \
                --name soul-prepare \
                quay.io/protonetinc/german-shepherd:{{tag}} \
-               bundle exec rake docker:prepare
+               bundle exec rake docker:prepare"
 ExecStart=/usr/bin/env true
 
 [Install]
