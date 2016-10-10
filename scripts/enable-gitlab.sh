@@ -90,5 +90,6 @@ if [ $# -gt 0 ] && [ "$1" == '--disable' ]; then
 else
 #	generate_random
 	enable_gitlab
+	curl -X POST 'http://127.0.0.1:81/reload-proxies'
 	echo "The address is: http://$(curl -X GET http://127.0.0.1:81/apps/gitlab/macvlan)/"
 fi
