@@ -6,6 +6,6 @@ Requires=init-protonet.service
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
-ExecStart=/usr/bin/env systemctl restart smb-protonet.service
+ExecStart=/usr/bin/env docker exec -it smb smbd reload-config
 KillMode=none
 Type=oneshot
