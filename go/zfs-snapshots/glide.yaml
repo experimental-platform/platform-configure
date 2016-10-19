@@ -1,0 +1,4 @@
+package: github.com/njiuko/zfs-snapshots
+import:
+- package: github.com/mistifyio/go-zfs
+  version: ^2.1.1

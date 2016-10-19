@@ -1,0 +1,8 @@
+[Unit]
+Description=Creates a zfs snapshot and store it in the backup inbox directory
+
+[Service]
+KillMode=none
+Type=oneshot
+ExecStart=/usr/bin/env bash -c '/etc/systemd/system/scripts/create-backup.sh'
+Restart=no
