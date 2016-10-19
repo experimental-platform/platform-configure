@@ -10,6 +10,10 @@ TimeoutStartSec=0
 TimeoutStopSec=15
 Restart=always
 RestartSec=5s
+# See smb-protonet service and specifically platform-configure commits 
+# 6fd6b4d6 and 02a9dfe9 on why we are doing this - basically needed for 
+# clean file permissions, samba takes full 600 ownership of smbpasswd, and that
+# breaks stuff.
 ExecStartPre=/usr/bin/rm -rf /data/samba/etc-mounted
 ExecStartPre=/usr/bin/cp -r /data/samba/etc /data/samba/etc-mounted
 ExecStartPre=-/usr/bin/docker rm -f smb

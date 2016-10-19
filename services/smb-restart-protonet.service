@@ -6,6 +6,15 @@ Requires=init-protonet.service
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]
-ExecStart=/usr/bin/env docker exec -it smb smbd reload-config
+# See smb-protonet service and specifically platform-configure commits 
+# 6fd6b4d6 and 02a9dfe9 on why we are doing this - basically needed for 
+# clean file permissions, samba takes full 600 ownership of smbpasswd, and that
+# breaks stuff.
+ExecStartPre=/usr/bin/bash -c "rm -rf /data/samba/etc-mounted/*"
+ExecStartPre=/usr/bin/bash -c "cp -r /data/samba/etc/* /data/samba/etc-mounted/"
+# When the configuration has changed, send PID 1 in the container a SIGHUP,
+# which triggers reloading configuration (and is correctly propagated on by
+# dumb-init as PID1 in the container)
+ExecStart=/usr/bin/docker exec smb kill -HUP 1
 KillMode=none
 Type=oneshot
