@@ -11,7 +11,8 @@ TimeoutStopSec=15
 Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f nmbd
-ExecStartPre=/usr/bin/docker run -d \
+# The terminal allocation here ('-t') prevents nmbd from bailing out on stdin EOF
+ExecStartPre=/usr/bin/docker run -d -t \
     --name=nmbd \
     --net=host \
     --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
