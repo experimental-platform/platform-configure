@@ -36,6 +36,7 @@ func SetDriver(d ZFSDriver) {
 // TakeSnapshot takes a snapshot from a dataset by its name with a label that's
 // suffixed with the current timestamp in the format `-YYYY-MM-DD-HH-mm`
 // The Keep argument defines how many versions of this snapshot should be kept
+// is 0, all versions are kept
 func TakeSnapshot(names []string, label string, keep int, send bool, dir string) error {
 	oldSnapshots, err := Snapshots("")
 	if err != nil {
@@ -43,13 +44,15 @@ func TakeSnapshot(names []string, label string, keep int, send bool, dir string)
 	}
 
 	labelWithTimestamp := fmt.Sprintf("%s-%s", label, time.Now().Format(timeFormat))
+	newSnapshots := []string{}
 	for _, n := range names {
+		fullName := fmt.Sprintf("%s@%s", n, labelWithTimestamp)
 		for _, ss := range oldSnapshots {
-			fullName := fmt.Sprintf("%s@%s", n, labelWithTimestamp)
 			if strings.HasSuffix(ss, fullName) {
 				return fmt.Errorf("snapshot %s already exists", fullName)
 			}
 		}
+		newSnapshots = append(newSnapshots, fullName)
 	}
 
 	if keep != 0 {
@@ -58,11 +61,20 @@ func TakeSnapshot(names []string, label string, keep int, send bool, dir string)
 
 	err = driver.CreateSnapshots(names, labelWithTimestamp)
 	if err != nil {
+		for _, n := range newSnapshots {
+			_ = DeleteSnapshot(n)
+		}
 		return err
 	}
 
 	if send {
-		return sendSnapshots(names, label, labelWithTimestamp, dir)
+		err = sendSnapshots(names, label, labelWithTimestamp, dir)
+		if err != nil {
+			for _, n := range newSnapshots {
+				_ = DeleteSnapshot(n)
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -115,7 +127,6 @@ func sendSnapshots(names []string, label, labelWithTimestamp, dir string) error 
 func newest(snapshots []string, name, label string) (from string, to string, err error) {
 	var filtered []string
 	prefix := fmt.Sprintf("%s@%s-", name, label)
-	log.Println(prefix, name, label)
 	for _, s := range snapshots {
 		if strings.HasPrefix(s, prefix) {
 			filtered = append(filtered, s)
