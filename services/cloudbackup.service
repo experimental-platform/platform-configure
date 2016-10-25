@@ -1,0 +1,30 @@
+[Unit]
+Description=Cloud backup service
+After=skvs-protonet.service
+Requires=skvs-protonet.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=-/usr/bin/docker rm -f cloudbackup
+ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
+      --name cloudbackup \
+      --net=protonet \
+      --volume /backup:/inbox \
+      --volume /data/pgp:/keys \
+      --env PARANOIA_KEY_LOCATION=/keys \
+      --env PARANOIA_INBOX_LOCATION=/inbox \
+      --env \"AWS_ACCESS_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_access_key)\" \
+      --env \"AWS_SECRET_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_secret_key)\" \
+      --env \"AWS_BUCKET_NAME=$(/opt/bin/skvs_cli get cloudbackup/aws_bucket_name)\" \
+      quay.io/protonetinc/cloudbackup:{{tag}} \
+      /paranoia
+ExecStart=/usr/bin/docker logs -f cloudbackup
+ExecStop=/usr/bin/docker stop cloudbackup
+ExecStopPost=/usr/bin/docker stop cloudbackup
+
+[Install]
+WantedBy=multi-user.target
+
