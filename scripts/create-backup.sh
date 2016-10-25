@@ -2,6 +2,8 @@
 
 set -e
 
+zfs create -p -o mountpoint=/backup protonet_storage/backup || true
+
 echo 'creating zfs snapshots'
 /opt/bin/zfs-snapshots -dir /backup -send create \
   protonet_storage/data \
