@@ -2,7 +2,6 @@
 
 set -e
 
-
 echo 'creating zfs snapshots'
 /opt/bin/zfs-snapshots -dir /backup -send create \
   protonet_storage/data \

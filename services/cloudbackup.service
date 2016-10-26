@@ -1,7 +1,7 @@
 [Unit]
 Description=Cloud backup service
-After=skvs-protonet.service
-Requires=skvs-protonet.service
+After=init-protonet.service skvs-protonet.service
+Requires=init-protonet.service skvs-protonet.service
 
 [Service]
 TimeoutStartSec=0
