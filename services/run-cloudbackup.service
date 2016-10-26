@@ -1,6 +1,6 @@
 [Unit]
 Description=Creates a zfs snapshot and store it in the backup inbox directory
-ConditionPathExists=/data/pgp/pubring.gpg
+ConditionPathExists=/data/pgp/public.key
 
 [Service]
 KillMode=none
