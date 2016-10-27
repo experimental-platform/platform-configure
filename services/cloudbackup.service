@@ -20,7 +20,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
       --env \"AWS_SECRET_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_secret_key)\" \
       --env \"AWS_BUCKET_NAME=$(/opt/bin/skvs_cli get cloudbackup/aws_bucket_name)\" \
       quay.io/protonetinc/cloudbackup:{{tag}} \
-      /paranoia
+      /paranoia"
 ExecStart=/usr/bin/docker logs -f cloudbackup
 ExecStop=/usr/bin/docker stop cloudbackup
 ExecStopPost=/usr/bin/docker stop cloudbackup
