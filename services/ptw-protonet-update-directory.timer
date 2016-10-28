@@ -1,0 +1,12 @@
+# ExperimentalPlatform
+[Unit]
+Description=Run ptw-protonet-update-directory service periodically
+After=ptw-protonet.service
+Requires=ptw-protonet.service
+ConditionFileNotEmpty=/etc/protonet/ptw/node_name
+
+[Timer]
+OnCalendar=*:0/120
+
+[Install]
+WantedBy=multi-user.target
