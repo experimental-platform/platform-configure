@@ -19,6 +19,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
       --env \"AWS_ACCESS_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_access_key)\" \
       --env \"AWS_SECRET_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_secret_key)\" \
       --env \"AWS_BUCKET_NAME=$(/opt/bin/skvs_cli get cloudbackup/aws_bucket_name)\" \
+      --env AWS_REGION=eu-de \
       quay.io/protonetinc/cloudbackup:{{tag}} \
       /paranoia"
 ExecStart=/usr/bin/docker logs -f cloudbackup
