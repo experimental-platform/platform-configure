@@ -6,7 +6,7 @@ keyhash=$(md5sum /data/pgp/public.key)
 label=${keyhash:0:10}
 
 echo 'creating zfs snapshots'
-/opt/bin/zfs-snapshots -dir /backup -send -label ${label} create \
+/opt/bin/zfs-snapshots -dir /backup -send -label ${label} -keep 5 create \
   protonet_storage/data \
   protonet_storage/home
 
