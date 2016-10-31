@@ -15,7 +15,7 @@ ExecStartPre=-/usr/bin/docker rm -f soul-fs-notifier
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
   --name soul-fs-notifier \
   --net=protonet \
-  --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
+  --volume /data/soul:/home/protonet/dashboard/shared/ \
   --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
   quay.io/protonetinc/german-shepherd:{{tag}} \
   bundle exec foreman start fs_notifier"

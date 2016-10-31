@@ -17,9 +17,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --user webdav \
     --hostname soul-webdav \
     --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
-    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
-    --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
-    --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
+    --volume /data/soul:/home/protonet/dashboard/shared/ \
     quay.io/protonetinc/german-shepherd:{{tag}} \
     bundle exec foreman start webdav"
 ExecStart=/usr/bin/docker logs -f soul-webdav
