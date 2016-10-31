@@ -1,0 +1,11 @@
+# ExperimentalPlatform
+[Unit]
+Description=ptw-protonet update directory config periodically
+After=ptw-protonet.service
+Requires=ptw-protonet.service
+ConditionFileNotEmpty=/etc/protonet/ptw/node_name
+
+[Service]
+ExecStart=/usr/bin/docker kill -s USR1 ptw
+KillMode=none
+Type=oneshot
