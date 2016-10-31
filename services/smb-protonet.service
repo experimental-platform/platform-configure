@@ -20,10 +20,7 @@ ExecStartPre=-/usr/bin/docker rm -f smb
 ExecStartPre=/usr/bin/docker run -d \
     --name=smb \
     --net=host \
-    --volume /data/soul/files:/home/protonet/dashboard/shared/files/ \
-    --volume /data/soul/samba_includes:/home/protonet/dashboard/shared/samba_includes/ \
-    --volume /data/soul/trash:/home/protonet/dashboard/shared/trash/ \
-    --volume /data/soul/log:/home/protonet/dashboard/shared/log/ \
+    --volume /data/soul:/home/protonet/dashboard/shared/ \
     --volume /data/samba/etc-mounted:/etc/samba/ \
     --volume /data/samba/extrausers:/var/lib/extrausers/ \
     quay.io/protonetinc/soul-smb:{{tag}}
