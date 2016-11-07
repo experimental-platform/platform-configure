@@ -30,7 +30,10 @@ get_default_mac() {
 
 get_hw() {
     local INTERFACE_COUNT=$(ip link show | grep -P '^\d+:\s+[ew][a-z0-9]+'| wc -l)
-    if [[ "${INTERFACE_COUNT}" -eq 2 ]]; then
+
+    if [[ -f '/etc/protonet-vm' ]]; then
+        echo -n "V"
+    elif [[ "${INTERFACE_COUNT}" -eq 2 ]]; then
         echo -n "M"
     else
         echo -n "C"
