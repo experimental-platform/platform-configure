@@ -11,4 +11,4 @@ echo 'creating zfs snapshots'
   protonet_storage/home
 
 echo 'backing up /etc protonet'
-/usr/bin/tar -czPf /backup/etc-protonet-$(date +%Y-%m-%d-%H-%M-%S).tgz /etc/protonet
+/usr/bin/tar -czPf /backup/etc-protonet-$(date +%Y-%m-%d-%H-%M-%S).tar.gz /etc/protonet
