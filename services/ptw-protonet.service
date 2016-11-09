@@ -3,7 +3,7 @@
 Description=Run 'ptw' service
 After=skvs-protonet.service
 Requires=skvs-protonet.service
-ConditionPathExists=/etc/protonet/ptw/control/enabled
+ConditionPathExists=/etc/protonet/soul/enabled
 
 [Service]
 TimeoutStartSec=0
