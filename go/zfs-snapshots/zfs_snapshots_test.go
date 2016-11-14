@@ -128,6 +128,20 @@ func TestTakeSnapshot(t *testing.T) {
 		t.Errorf("should cleanup all snap files if one snapshot fails, but didn't: %#v", files)
 	}
 	driver.reset(files)
+
+	driver.snapshots = []string{
+		"foo@bar-2010-10-21-14-01-32",
+		"foo@bar-2010-10-21-14-01-33",
+		"unrelated-should-not-be-touched@bar-2010-10-21-14-01-34",
+		"unrelated-should-not-be-touched@bar-2010-10-21-14-01-35",
+	}
+	err = TakeSnapshot([]string{"foo"}, "bar", 1, true, inboxPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(driver.snapshots) != 3 {
+		t.Errorf("Cleaning up was done incorrectly. %#v", driver.snapshots)
+	}
 }
 
 func (b *testBackend) CreateSnapshots(names []string, label string) error {

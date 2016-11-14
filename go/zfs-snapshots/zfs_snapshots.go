@@ -38,25 +38,25 @@ func SetDriver(d ZFSDriver) {
 // The Keep argument defines how many versions of this snapshot should be kept
 // is 0, all versions are kept
 func TakeSnapshot(names []string, label string, keep int, send bool, dir string) error {
-	oldSnapshots, err := Snapshots("")
+	allSnapshots, err := Snapshots("")
 	if err != nil {
 		return err
 	}
 
 	labelWithTimestamp := fmt.Sprintf("%s-%s", label, time.Now().Format(timeFormat))
+	var oldSnapshots []string
 	newSnapshots := []string{}
 	for _, n := range names {
 		fullName := fmt.Sprintf("%s@%s", n, labelWithTimestamp)
-		for _, ss := range oldSnapshots {
+		for _, ss := range allSnapshots {
 			if strings.HasSuffix(ss, fullName) {
 				return fmt.Errorf("snapshot %s already exists", fullName)
 			}
+			if strings.HasPrefix(ss, fmt.Sprintf("%s@", n)) {
+				oldSnapshots = append(oldSnapshots, ss)
+			}
 		}
 		newSnapshots = append(newSnapshots, fullName)
-	}
-
-	if keep != 0 {
-		cleanup(oldSnapshots, keep)
 	}
 
 	err = driver.CreateSnapshots(names, labelWithTimestamp)
@@ -77,22 +77,28 @@ func TakeSnapshot(names []string, label string, keep int, send bool, dir string)
 		}
 	}
 
+	if keep != 0 {
+		cleanup(oldSnapshots, keep)
+	}
+
 	return nil
 }
 
 func sendSnapshots(names []string, label, labelWithTimestamp, dir string) error {
 	var err error
-	var snapshotFiles []string
+	tmpFiles := make(map[string]string)
 	for _, name := range names {
 		nameWithoutSlashes := strings.Replace(name, "/", "-", -1)
 		snapshotFile := fmt.Sprintf("%s-%s.snap", nameWithoutSlashes, labelWithTimestamp)
+		snapshotFile = path.Join(dir, snapshotFile)
+		tmpFile := snapshotFile + ".tmp"
 		var f *os.File
-		f, err = os.Create(path.Join(dir, snapshotFile))
+		f, err = os.Create(tmpFile)
 		if err != nil {
 			break
 		}
 		defer f.Close()
-		snapshotFiles = append(snapshotFiles, snapshotFile)
+		tmpFiles[tmpFile] = snapshotFile
 
 		var snapshots []string
 		snapshots, err = driver.Snapshots(name)
@@ -115,9 +121,16 @@ func sendSnapshots(names []string, label, labelWithTimestamp, dir string) error 
 
 	if err != nil {
 		log.Printf("error while sending snapshots. Cleaning up: %s", err)
-		for _, file := range snapshotFiles {
+		for file := range tmpFiles {
 			log.Printf("removing %s", file)
 			os.Remove(file)
+		}
+		return err
+	}
+
+	for tmpFile, snapFile := range tmpFiles {
+		if e := os.Rename(tmpFile, snapFile); e != nil {
+			err = e
 		}
 	}
 
