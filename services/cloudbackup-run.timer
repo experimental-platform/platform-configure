@@ -4,7 +4,6 @@ ConditionPathExists=/etc/protonet/soul/cloudbackup/enabled
 
 [Timer]
 OnCalendar=*-*-* 02:00:00
-Unit=run-cloudbackup.service
 
 [Install]
 WantedBy=multi-user.target
