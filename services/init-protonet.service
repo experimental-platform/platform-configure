@@ -26,7 +26,7 @@ ExecStartPre=/bin/mkdir -p /data/soul/log
 ExecStartPre=/bin/mkdir -p /data/soul/public
 ExecStartPre=/bin/mkdir -p /data/soul/uploads
 ExecStartPre=/bin/mkdir -p /data/soul/protosync
-ExecStartPre=/bin/mkdir -p /data/pgp
+ExecStartPre=/bin/mkdir -p /data/cloudbackup
 ExecStartPre=-/bin/bash -c '[[ ! -d /backup ]] && zfs create -p -o mountpoint=/backup protonet_storage/backup'
 ExecStartPre=/bin/chown 1000:1000 -R /data/samba
 ExecStartPre=/bin/chown 1000:1000 /data/soul/files
@@ -36,7 +36,7 @@ ExecStartPre=/bin/chown 1000:1000 /data/soul/log
 ExecStartPre=/bin/chown 1000:1000 /data/soul/public
 ExecStartPre=/bin/chown 1000:1000 /data/soul/uploads
 ExecStartPre=/bin/chown 1000:1000 /data/soul/protosync
-ExecStartPre=/bin/chown 1000:1000 /data/pgp
+ExecStartPre=/bin/chown 1000:1000 /data/cloudbackup
 ExecStartPre=/bin/chown 1000:1000 /data/unoconv/fonts
 ExecStartPre=/bin/mkdir -p /etc/protonet/ssh/
 ExecStartPre=/bin/mkdir -p /etc/protonet/system/ssh/

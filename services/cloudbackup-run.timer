@@ -1,6 +1,6 @@
 [Unit]
 Description=Starts creating a zfs snapshot for the cloud backup
-ConditionPathExists=/etc/protonet/soul/enabled
+ConditionPathExists=/etc/protonet/soul/cloudbackup/enabled
 
 [Timer]
 OnCalendar=*-*-* 02:00:00
