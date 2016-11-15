@@ -1,0 +1,6 @@
+hash: 10f2fe70550b4bad4eefbad4dbbac61afac8f8e8070f932ee58defa6783096cf
+updated: 2016-10-19T18:00:31.307991789+02:00
+imports:
+- name: github.com/mistifyio/go-zfs
+  version: cdc0f941c4d0e0e94d85348285568d921891e138
+testImports: []

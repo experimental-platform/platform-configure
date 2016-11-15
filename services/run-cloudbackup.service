@@ -1,0 +1,11 @@
+[Unit]
+Description=Creates a zfs snapshot and store it in the backup inbox directory
+ConditionPathExists=/data/pgp/public.key
+Requires=init-protonet.service
+After=init-protonet.service
+
+[Service]
+KillMode=none
+Type=oneshot
+ExecStart=/usr/bin/env bash -c '/etc/systemd/system/scripts/create-backup.sh'
+Restart=no
