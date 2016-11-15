@@ -2,6 +2,7 @@
 Description=Cloud backup service
 After=init-protonet.service skvs-protonet.service
 Requires=init-protonet.service skvs-protonet.service
+ConditionPathExists=/etc/protonet/soul/cloudbackup/enabled
 
 [Service]
 TimeoutStartSec=0
@@ -13,7 +14,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
       --name cloudbackup \
       --net=protonet \
       --volume /backup:/inbox \
-      --volume /data/pgp:/keys \
+      --volume /data/cloudbackup:/keys \
       --env PARANOIA_KEY_LOCATION=/keys \
       --env PARANOIA_INBOX_LOCATION=/inbox \
       --env \"AWS_ACCESS_KEY=$(/opt/bin/skvs_cli get cloudbackup/aws_access_key)\" \

@@ -1,6 +1,7 @@
 [Unit]
 Description=Creates a zfs snapshot and store it in the backup inbox directory
-ConditionPathExists=/data/pgp/public.key
+ConditionPathExists=/data/cloudbackup/public.key
+ConditionPathExists=/etc/protonet/soul/cloudbackup/enabled
 Requires=init-protonet.service
 After=init-protonet.service
 

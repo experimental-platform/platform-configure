@@ -2,7 +2,7 @@
 
 set -e
 
-keyhash=$(md5sum /data/pgp/public.key)
+keyhash=$(md5sum /data/cloudbackup/public.key)
 label=${keyhash:0:10}
 
 echo 'creating zfs snapshots'
