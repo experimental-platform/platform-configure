@@ -4,6 +4,7 @@ Description=Time Machine AFPD service
 After=init-protonet.service hostname-avahi-protonet.service
 Requires=init-protonet.service hostname-avahi-protonet.service
 ConditionPathExists=/etc/protonet/soul/enabled
+ConditionPathExists=!/etc/protonet/afpd/disabled
 
 [Service]
 TimeoutStartSec=0
