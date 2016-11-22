@@ -67,12 +67,13 @@ for i in /sys/class/net/*; do
 	LABEL="$(cat $i/device/label 2>/dev/null || echo null)"
 	IPV4="$(ifconfig "$NAME" | grep -E --only-matching 'inet [0-9\.]+' | sed 's/^inet //')"
 	IPV6="$(ifconfig "$NAME" | grep -E --only-matching 'inet6 [0-9a-f\:]+' | sed 's/^inet6 //')"
+	CARRIER="$(cat $i/carrier 2>/dev/null || echo null)"
 	if [ -z "$IPV4" ]; then IPV4='null'; fi
 	if [ -z "$IPV6" ]; then IPV6='null'; fi
 	NIC="$(jq \
 		--arg name "$NAME" \
 		--arg mac "$(<$i/address)" \
-		--argjson carrier "$(<$i/carrier)" \
+		--argjson carrier "$CARRIER" \
 		--argjson mtu "$(<$i/mtu)" \
 		--argjson speed "$SPEED" \
 		--arg devlabel "$LABEL" \
