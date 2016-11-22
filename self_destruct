@@ -170,6 +170,10 @@ EOM
 		echo -n "REMOVING ZFS POOL... "
 		remove_zfs && echo "OKAY."
 
+		echo -n "CLEARING MOUNTPOINTS..."
+		find /home/ /data/ /var/lib/docker/ /var/log/journal/ /var/lib/rkt/ -mindepth 1 -delete && echo "OKAY."
+		sync; sync; sync
+
 		echo "UNLABELING DRIVES... "
 		modprobe zfs
 		unlabel_drives && echo "OKAY"
@@ -199,4 +203,3 @@ EOM
 		exit 1
 	;;
 esac
-
