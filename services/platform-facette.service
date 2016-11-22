@@ -1,0 +1,27 @@
+# ExperimentalPlatform
+[Unit]
+Description=facette
+ConditionPathExists=/etc/protonet/facette/enabled
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStartPre=/usr/bin/mkdir -p /data/collectd/rrd /data/facette
+ExecStartPre=-/usr/bin/docker rm -f facette
+ExecStartPre=/usr/bin/docker run -d \
+    --name facette \
+    -p 12003:80 \
+    --net protonet \
+    --volume /data/facette:/data:rw \
+    --volume /data/collectd/rrd:/rrd:ro \
+    quay.io/experimentalplatform/facette:{{tag}}
+ExecStart=/usr/bin/docker logs -f facette
+ExecStop=/usr/bin/docker stop facette
+ExecStopPost=/usr/bin/docker stop facette
+
+[Install]
+WantedBy=multi-user.target
