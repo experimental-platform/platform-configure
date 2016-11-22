@@ -56,7 +56,7 @@ test_soul() {
 
 run_tests() {
     # TODO: add test_soul
-    for testname in test-disks test-ipmi-disabled test-software-overview; do
+    for testname in test-disks test-ipmi-disabled test-ipmi-sdr test-software-overview test-stress; do
         if [[ -x "/etc/systemd/system/scripts/${testname}.sh" ]]; then
             OUTFILE=$(mktemp)
             /etc/systemd/system/scripts/${testname}.sh > "$OUTFILE" | true
