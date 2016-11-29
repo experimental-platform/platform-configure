@@ -12,16 +12,19 @@ Restart=always
 RestartSec=5s
 ExecStartPre=-/usr/bin/docker rm -f soul-worker
 ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
-    --name soul-worker \
-    --net=protonet \
-    --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
-    --volume /data/soul:/home/protonet/dashboard/shared/ \
-    --volume /data/samba/etc:/etc/samba/ \
-    --volume /data/samba/extrausers:/var/lib/extrausers/ \
-    --volume /data/hardware:/tmp/hardware \
-    --volume /var/run/soul-backup:/tmp/backup \
-    quay.io/protonetinc/german-shepherd:{{tag}} \
-    bundle exec foreman start -m worker=3"
+	--name soul-worker \
+	--net=protonet \
+	--env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
+  --env \"RAILS_ENV=production\" \
+  --env \"RACK_ENV=production\" \
+  --env \"DATABASE_URL=mysql2://root:s3kr3t@mysql:3306/german-shepherd?pool=30&encoding=utf8&reconnect=true\" \
+	--volume /data/soul:/home/protonet/dashboard/shared/ \
+	--volume /data/samba/etc:/etc/samba/ \
+	--volume /data/samba/extrausers:/var/lib/extrausers/ \
+	--volume /data/hardware:/tmp/hardware \
+	--volume /var/run/soul-backup:/tmp/backup \
+	quay.io/protonetinc/german-shepherd:{{tag}} \
+	bundle exec foreman start -m worker=3"
 ExecStart=/usr/bin/docker logs -f soul-worker
 ExecStop=/usr/bin/docker stop soul-worker
 ExecStopPost=/usr/bin/docker stop soul-worker

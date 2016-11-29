@@ -17,6 +17,9 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
   --net=protonet \
   --volume /data/soul:/home/protonet/dashboard/shared/ \
   --env \"RABBITMQ_URL=$(/opt/bin/skvs_cli get app/german-shepherd/rabbitmq)\" \
+  --env \"RAILS_ENV=production\" \
+  --env \"RACK_ENV=production\" \
+  --env \"DATABASE_URL=mysql2://root:s3kr3t@mysql:3306/german-shepherd?pool=30&encoding=utf8&reconnect=true\" \
   quay.io/protonetinc/german-shepherd:{{tag}} \
   bundle exec foreman start fs_notifier"
 ExecStart=/usr/bin/docker logs -f soul-fs-notifier
