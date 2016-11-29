@@ -47,7 +47,7 @@ ExecStartPre=/usr/bin/env bash -c "/usr/bin/docker run -d \
     --env 'LDAP_UID=uid' \
     --env 'LDAP_ACTIVE_DIRECTORY=false' \
     --env 'LDAP_BASE=ou=People,dc=protonet,dc=com' \
-    sameersbn/gitlab:8.13.3"
+    sameersbn/gitlab:8.14.0"
 ExecStart=/usr/bin/docker logs -f gitlab
 # reload central GW config
 ExecStartPost=/usr/bin/curl -X POST http://127.0.0.1:81/reload-proxies
