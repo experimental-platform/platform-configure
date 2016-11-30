@@ -23,9 +23,11 @@ function fetch_release_data() {
 
   JQSCRIPT_IMAGES='max_by(.build) | .images | keys[] as $k | $k + ":" + .[$k]'
   JQSCRIPT_BUILDNO='max_by(.build) | .build'
+  JQSCRIPT_CODENAME='max_by(.build) | .codename'
   JQSCRIPT_RELEASENOTES='max_by(.build) | .url'
   JSONIMGLIST="$(jq "$JQSCRIPT_IMAGES" --raw-output <<< "$JSONDATA")"
   NEWBUILDNUMBER="$(jq "$JQSCRIPT_BUILDNO" --raw-output <<< "$JSONDATA")"
+  NEWCODENAME="$(jq "$JQSCRIPT_CODENAME" --raw-output <<< "$JSONDATA")"
   NEWRELEASENOTESURL="$(jq "$JQSCRIPT_RELEASENOTES" --raw-output <<< "$JSONDATA")"
 
   for img in ${JSONIMGLIST}; do
@@ -167,9 +169,10 @@ function download_and_verify_image() {
 
 
 function finalize() {
-    # save the current release number to SKVS
+    # save the current release information to SKVS
     mkdir -p ${MOUNTROOT}/etc/protonet/system
     echo -n "$NEWBUILDNUMBER" > ${MOUNTROOT}/etc/protonet/system/release_number
+    echo -n "$NEWCODENAME" > ${MOUNTROOT}/etc/protonet/system/codename
     echo -n "$NEWRELEASENOTESURL" > ${MOUNTROOT}/etc/protonet/system/release_notes_url
     sync
     # prefetch buildstep. so the first deployment doesn't have to fetch it.
