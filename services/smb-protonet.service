@@ -4,6 +4,7 @@ Description=Samba file server
 ConditionPathExists=/etc/protonet/soul/enabled
 After=nmbd-protonet.service
 Requires=nmbd-protonet.service
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 TimeoutStartSec=0

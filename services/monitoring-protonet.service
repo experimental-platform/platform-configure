@@ -2,6 +2,7 @@
 [Unit]
 Description=Run 'monitoring' service
 ConditionPathExists=!/etc/protonet/soul/enabled
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 After=init-protonet.service
 Requires=init-protonet.service
 

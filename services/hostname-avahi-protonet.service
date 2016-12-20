@@ -3,6 +3,7 @@
 Description=AVAHI Service -- hostname resolution via mDNS
 After=init-protonet.service
 Requires=init-protonet.service
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 TimeoutStartSec=0

@@ -5,6 +5,7 @@ After=init-protonet.service hostname-avahi-protonet.service
 Requires=init-protonet.service hostname-avahi-protonet.service
 ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=!/etc/protonet/afpd/disabled
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 TimeoutStartSec=0
