@@ -3,6 +3,7 @@
 Description=Lock IPMI external access
 After=docker.service
 Requires=docker.service
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 ExecStartPre=/usr/sbin/modprobe ipmi_devintf

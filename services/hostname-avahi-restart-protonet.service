@@ -3,6 +3,7 @@
 Description=Restart Service hostname-avahi-protonet
 After= network-online.target
 Requires=dokku-protonet.service network-online.target
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 ConditionFileNotEmpty=/etc/protonet/hostname
 
 [Service]

@@ -4,6 +4,7 @@ Description=Restart Service nmbd-protonet
 After=init-protonet.service
 Requires=init-protonet.service
 ConditionFileNotEmpty=/etc/protonet/hostname
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 ExecStart=/usr/bin/env systemctl restart nmbd-protonet.service

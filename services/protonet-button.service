@@ -4,6 +4,7 @@ Description=Protonet Button switcher
 After=systemd-udev-settle.service
 Before=network.target
 ConditionFileNotEmpty=/etc/protonet/system/button
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 ExecStartPre=/usr/bin/mkdir -p /etc/protonet/system

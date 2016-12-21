@@ -5,6 +5,7 @@ After=gitlab-redis.service platform-ldap.service mysql.service central-gateway-p
 Requires=gitlab-redis.service mysql.service central-gateway-protonet.service
 Wants=platform-ldap.service
 ConditionPathExists=/etc/protonet/gitlab/enabled
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 TimeoutStartSec=0

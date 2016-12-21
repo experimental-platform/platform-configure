@@ -1,6 +1,7 @@
 [Unit]
 Description=Prepare Button for Startup
 ConditionPathExists=/opt/bin/button
+ConditionPathExists=!/etc/protonet/system/virtual-machine
 
 [Service]
 Type=oneshot
