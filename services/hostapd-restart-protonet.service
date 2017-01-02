@@ -2,7 +2,7 @@
 [Unit]
 Description=Restart Service hostapd-protonet
 ConditionPathExists=!/etc/protonet/system/wifi/hostname
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 After=init-protonet.service
 Requires=init-protonet.service
 

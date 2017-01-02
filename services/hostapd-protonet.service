@@ -1,7 +1,7 @@
 # ExperimentalPlatform
 [Unit]
 Description=Run and configure the WIFI HOSTSPOT 'hostapd' service
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=|/etc/protonet/system/wifi/enabled
 ConditionPathExists=|/etc/protonet/system/wifi/guest/enabled

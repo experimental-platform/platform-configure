@@ -4,7 +4,7 @@ Description=Restart Service smb-protonet
 After=init-protonet.service
 Requires=init-protonet.service
 ConditionFileNotEmpty=/etc/protonet/hostname
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 
 [Service]
 # See smb-protonet service and specifically platform-configure commits 
