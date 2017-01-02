@@ -3,7 +3,7 @@
 Description=Experimental Platform: Copy SSH key to generic proxy user
 After=init-protonet.service
 Requires=init-protonet.service
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 
 [Service]
 ExecStart=/usr/bin/bash -c 'cp /etc/protonet/proxytunnel/keys /home/proxytunnel/.ssh/authorized_keys && chmod 600 /home/proxytunnel/.ssh/authorized_keys && chown proxytunnel:proxytunnel /home/proxytunnel/.ssh/authorized_keys'

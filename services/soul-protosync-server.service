@@ -2,7 +2,7 @@
 [Unit]
 Description=Protonet Soul Protosync Server Service
 ConditionPathExists=/etc/protonet/soul/enabled
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 After=init-protonet.service
 Requires=init-protonet.service
 

@@ -3,7 +3,7 @@
 Description=public dns and dhcp for WIFI HOTSPOT, 'dnsmasq' service
 ConditionPathExists=/etc/protonet/soul/enabled
 ConditionPathExists=/etc/protonet/system/wifi/guest/enabled
-ConditionPathExists=!/etc/protonet/system/virtual-machine
+ConditionPathExists=!/etc/protonet-vm
 After=hostapd-protonet.service
 Requires=hostapd-protonet.service
 
