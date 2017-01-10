@@ -1,0 +1,9 @@
+# ExperimentalPlatform
+[Unit]
+Description=Trigger restart of central gateway on changes to SKVS SSL configuration
+
+[Path]
+PathModified=/etc/protonet/ssl/
+
+[Install]
+WantedBy=multi-user.target
