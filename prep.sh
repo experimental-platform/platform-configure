@@ -10,6 +10,42 @@ DOCKER="/docker"
 NEWBUILDNUMBER=
 declare -A IMGTAGLIST
 
+function is_float() {
+  [ -z "$@" ] && return 1
+  grep -q -E '^\d*(\.\d+)?$' <<< "$@"
+}
+
+
+function build_status_json() {
+  local STATUS PROGRESS WHAT JSON
+
+  # status
+  JSON="$(jq --arg status "$1" '.status = $status' -n)"
+
+  # progress
+  if [ $# -gt 1 ]; then
+    if is_float "$2"; then
+      JSON="$(jq --argjson progress "$2" '.progress = $progress' <<< "$JSON")"
+    else
+      JSON="$(jq --argjson progress null '.progress = $progress' <<< "$JSON")"
+    fi
+  fi
+
+  # the "what"
+  if [ $# -gt 2 ]; then
+    JSON="$(jq --arg what "$3" '.what = $what' <<< "$JSON")"
+  fi
+
+  echo "$JSON"
+}
+
+
+function set_status() {
+  mkdir -p ${MOUNTROOT}/etc/protonet/system
+  build_status_json $@ > ${MOUNTROOT}/etc/protonet/system/configure-script-status
+}
+
+
 function fetch_release_json() {
   local CHANNEL JSON JQSCRIPT
   CHANNEL="$1"
@@ -41,11 +77,6 @@ function pull_all_images() {
   for i in ${!IMGTAGLIST[@]}; do
     download_and_verify_image "$i:${IMGTAGLIST[$i]}"
   done
-}
-
-function set_status() {
-  mkdir -p ${MOUNTROOT}/etc/protonet/system
-  echo "$@" > ${MOUNTROOT}/etc/protonet/system/configure-script-status
 }
 
 
