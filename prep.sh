@@ -12,7 +12,7 @@ declare -A IMGTAGLIST
 
 function is_float() {
   [ -z "$@" ] && return 1
-  grep -q -E '^\d*(\.\d+)?$' <<< "$@"
+  grep -q -P '^\d*(\.\d+)?$' <<< "$@"
 }
 
 
@@ -27,7 +27,7 @@ function build_status_json() {
     if is_float "$2"; then
       JSON="$(jq --argjson progress "$2" '.progress = $progress' <<< "$JSON")"
     else
-      JSON="$(jq --argjson progress null '.progress = $progress' <<< "$JSON")"
+      JSON="$(jq --arg progress null '.progress = $progress' <<< "$JSON")"
     fi
   fi
 
@@ -74,8 +74,15 @@ function fetch_release_data() {
 }
 
 function pull_all_images() {
+  local IMG_TOTAL=${#IMGTAGLIST[@]}
+  local CURR_IMG_COUNT=0
+  local STATUS_PROGRESS
+
   for i in ${!IMGTAGLIST[@]}; do
+    STATUS_PROGRESS="$(jq -n "$CURR_IMG_COUNT/$IMG_TOTAL*100")"
+    set_status downloading_image "$STATUS_PROGRESS" "$i"
     download_and_verify_image "$i:${IMGTAGLIST[$i]}"
+    CURR_IMG_COUNT=$((CURR_IMG_COUNT+1))
   done
 }
 
