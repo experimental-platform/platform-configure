@@ -206,8 +206,7 @@ function finalize() {
     echo -n "$NEWCODENAME" > ${MOUNTROOT}/etc/protonet/system/codename
     echo -n "$NEWRELEASENOTESURL" > ${MOUNTROOT}/etc/protonet/system/release_notes_url
     sync
-    # prefetch buildstep. so the first deployment doesn't have to fetch it.
-    download_and_verify_image experimentalplatform/buildstep:herokuish
+
     set_status "finalizing"
     if [ "$PLATFORM_INSTALL_RELOAD" = true ]; then
         echo "Reloading SystemD after update."
