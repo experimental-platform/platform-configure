@@ -1,0 +1,13 @@
+# ExperimentalPlatform
+[Unit]
+Description=SoP install status
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=15
+Restart=always
+RestartSec=5s
+ExecStart=/opt/bin/platform-install-status --port 7887
+
+[Install]
+WantedBy=multi-user.target
