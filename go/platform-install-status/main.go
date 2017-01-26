@@ -64,7 +64,7 @@ function loadStatus() {
 
 		document.getElementById("status_text").innerHTML += status + "<br />";
 		if (progress != null) {
-			document.getElementById("status_text").innerHTML += "Download progress: " + progress + "%<br />";
+			document.getElementById("status_text").innerHTML += "Download progress: " + progress.toFixed(1) + "%<br />";
 		}
 		if (what != null) {
 			document.getElementById("status_text").innerHTML += "Currently downloading: '" + what + "'<br />";
