@@ -250,9 +250,6 @@ function remove_old_images() {
 
 function setup_udev() {
     echo -n "Setting up UDEV rules..."
-    cp /config/sound-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/sound-permissions.rules
-    cp /config/video-permissions.rules ${MOUNTROOT}/etc/udev/rules.d/video-permissions.rules
-    cp /config/tty-permissions.rules   ${MOUNTROOT}/etc/udev/rules.d/tty-permissions.rules
     cp /config/80-protonet.rules   ${MOUNTROOT}/etc/udev/rules.d/80-protonet.rules
     udevadm control --reload-rules || true
     echo "DONE."
