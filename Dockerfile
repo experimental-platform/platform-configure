@@ -20,6 +20,7 @@ ADD speedtest /speedtest
 ADD masterpassword /masterpassword
 ADD ipmitool /ipmitool
 ADD self_destruct /self_destruct
+ADD platconf-v4 /platconf
 COPY binaries /binaries
 
 CMD [ "/prep.sh" ]

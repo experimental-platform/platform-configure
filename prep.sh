@@ -264,7 +264,8 @@ function setup_utility_scripts () {
     BIN_PATH=${BIN_PATH:=${MOUNTROOT}/opt/bin/}
 
     # must be '-not -name protonet_zpool.sh' or it will break the bootstick
-    find ${BIN_PATH} -mindepth 1 -not -name protonet_zpool.sh -delete
+    # must be '-not -name platconf' or it will remove existing platconf
+    find ${BIN_PATH} -mindepth 1 -not -name protonet_zpool.sh -not -name platconf -delete
     find ${ETC_PATH}systemd/system/scripts/ -mindepth 1 -delete
     for f in scripts/*.sh; do
         name=$(basename ${f} .sh)
@@ -286,6 +287,13 @@ function setup_utility_scripts () {
     cp /self_destruct "${MOUNTROOT}/opt/"
 
     cp /binaries/* "${BIN_PATH}"
+
+    # don't overwrite existing
+    if [[ ! -x "${BIN_PATH}/platconf" ]]; then
+      echo "Pre-installing platconf"
+      cp /platconf "${BIN_PATH}/platconf"
+    fi
+
     echo "ALL DONE"
 }
 
