@@ -188,7 +188,7 @@ EOM
 		enable_ignition && echo "OKAY"
 
 		echo -n "REMOVING SCRIPTS..."
-		find /opt/bin/ -mindepth 1 -not -name platconf -delete
+		find /opt/bin/ -mindepth 1 -not -name platconf -not -name self_destruct -delete
 
 		if [[ "${ERROR}" == true ]]; then
 			echo "ERRORS detected, please fix manually!"
