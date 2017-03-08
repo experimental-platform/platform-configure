@@ -102,7 +102,7 @@ func getNetInterfaceData(name string) (*reportTemplateData, error) {
 func reportOnInterface(name string) (string, error) {
 	result, err := getNetInterfaceData(name)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("getNetInterfaceData(): %s", err.Error())
 	}
 	// Create the report
 	report, err := template.New("Report").Parse(reportTemplate)
