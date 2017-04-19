@@ -172,7 +172,7 @@ function download_and_verify_image() {
     MAXRETRIES=10
     while ( ! $DOCKER pull $image &>/dev/null ) && [ $RETRIES -ne $MAXRETRIES ]; do
         sleep 1
-        echo " Pull failed, retrying."
+        echo -n " Pull failed, retrying.... "
         RETRIES=$(($RETRIES+1))
     done
 
